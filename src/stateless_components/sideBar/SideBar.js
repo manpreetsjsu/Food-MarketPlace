@@ -33,6 +33,7 @@ const SideBar = (props) =>{
 
                 <List.Item className='spacingBetweenItems'>
                     <Button
+                        onClick={props.click}
                     name='sellItem'
                     color='blue'>
                         <Icon name='plus'/>
