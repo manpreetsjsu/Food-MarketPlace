@@ -1,0 +1,13 @@
+#signUpText{
+    color: red;
+    text-align: center;
+}
+
+#form{
+    width: 450px;
+    position: absolute;
+    top:40%;
+    left:50%;
+    transform: translate(-50%,-50%);
+
+}

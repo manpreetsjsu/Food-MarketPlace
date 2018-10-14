@@ -1,0 +1,15 @@
+.seeAllButtonClass{
+    position: relative;
+    left:90%;
+    bottom:7px;
+
+}
+
+#foodTextCategory{
+    position:relative;
+    color: black;
+    font-size: 30px;
+    top:15px;
+    bottom:15px;
+    margin:-15px;
+}
