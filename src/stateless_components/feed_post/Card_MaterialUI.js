@@ -7,6 +7,7 @@ import Modal from '../ItemClickModal/ItemClickModal'
 const CardExampleCardProps = (props) => (
     <Modal img={props.img} header={props.header} info={props.info} extraInfo={props.extraInfo}>
     <Card onClick={props.click}>
+        {/*props.click is not working... it is just there when hovering over card , it converts to hover mouse button*/}
         <Image src={props.img} />
         <Card.Content>
             <Card.Header>{props.header}</Card.Header>

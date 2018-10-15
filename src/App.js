@@ -4,7 +4,7 @@ import LandingPage from './stateful_components/landingPage/landingpage'
 class App extends Component {
   render() {
     return (
-      <div >
+      <div className='app'>
         <LandingPage />
       </div>
     );

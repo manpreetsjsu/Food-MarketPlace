@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Button } from 'semantic-ui-react'
+import { Segment,Grid, Button,Label } from 'semantic-ui-react'
 import './Grid.css'
 
 const GridComponent = (props) => {
@@ -11,7 +11,8 @@ const GridComponent = (props) => {
         border:'1px solid lightGrey',
         borderRadius: '5px',
         padding:'0px 5px 20px 35px',
-        marginTop:'3px'
+        marginTop:'20px',
+        overflow:'scroll'
     };
     return(
     <div style={style}>
@@ -27,17 +28,39 @@ const GridComponent = (props) => {
 
         <Grid.Row>
             <Grid.Column>
-                {props.card}
+                <Segment raised>
+                    <Label as='a' color='red' ribbon>
+                        {props.price}
+                    </Label>
+                    {props.card}
+                </Segment>
             </Grid.Column>
             <Grid.Column>
-                {props.card}
+                <Segment raised>
+                    <Label as='a' color='blue' ribbon>
+                        {props.price}
+                    </Label>
+                    {props.card}
+                </Segment>
             </Grid.Column>
             <Grid.Column>
-                {props.card}
+                <Segment raised>
+                    <Label as='a' color='teal' ribbon>
+                        {props.price}
+                    </Label>
+                    {props.card}
+                </Segment>
             </Grid.Column>
             <Grid.Column>
-                {props.card}
+                <Segment raised>
+                    <Label as='a' color='green' ribbon>
+                        {props.price}
+                    </Label>
+                    {props.card}
+                </Segment>
             </Grid.Column>
+
+
 
         </Grid.Row>
 

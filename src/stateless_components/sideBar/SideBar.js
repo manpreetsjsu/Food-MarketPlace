@@ -7,7 +7,7 @@ const SideBar = (props) =>{
         <div id='sideBar'>
             <List >
                 <List.Item as='a' className='spacingBetweenItems'>
-                    <Label horizontal>
+                    <Label onClick={props.marketPlaceClickHandler} horizontal>
                         <Icon link size='huge' name='chess'/>
                         <p style={{fontSize:'20px'}}>Marketplace</p>
                     </Label>
@@ -29,6 +29,12 @@ const SideBar = (props) =>{
                 <Label size='huge' horizontal>
                     Other Food
                 </Label>
+                </List.Item>
+
+                <List.Item  as='a' className='spacingBetweenItems'>
+                    <Label onClick={props.newsFeedClickHandler} size='huge' horizontal>
+                        News Feed
+                    </Label>
                 </List.Item>
 
                 <List.Item className='spacingBetweenItems'>
