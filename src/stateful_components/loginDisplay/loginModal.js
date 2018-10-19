@@ -70,7 +70,8 @@ class LoginModal extends Component {
                                 onClick={this.login}
                                 color='blue'
                                 fluid
-                                size='large'>SignUp</Button>
+                                size='large'
+                                onClick={this.props.signUp}>SignUp</Button>
                         </Segment>
 
                     </Form>

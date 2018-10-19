@@ -1,14 +1,12 @@
 import React , {Component} from 'react';
 import LoginModal from '../loginDisplay/loginModal';
-import './landingpage.css';
-import Card from '../../stateless_components/feed_post/Card'
 import Grid from '../../stateless_components/Grid/Grid'
 import AppBar from '../../stateless_components/AppBar/AppBar'
 import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
-import ItemsCard from '../../stateless_components/feed_post/Card_MaterialUI'
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
+import SignUpModal from '../signupModal/signupModal'
 
 class landingPage extends Component {
     constructor(props){
@@ -23,6 +21,9 @@ class landingPage extends Component {
             },
             accountLogin: {
                 status: false
+            },
+            signUp:{
+                status: false
             }
         }
     }
@@ -33,7 +34,7 @@ class landingPage extends Component {
         console.log('[landing page] shouldComponent update]');
         console.log(nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace || nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed);
         return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed;
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status;
     }
 
     componentDidMount(){
@@ -78,7 +79,16 @@ class landingPage extends Component {
             }
         })
     };
+    signUpClickHandler = ()=> {
+        console.log("sign up clicked")
+        this.setState({
+            signUp: {
+                status: true
+            }
+        })
+    }
 
+    ;
 
     render() {
         console.log('render method of landing page');
@@ -94,7 +104,7 @@ class landingPage extends Component {
                 price: '$5'
             },
             item2: {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits.',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -107,7 +117,7 @@ class landingPage extends Component {
         const  data = [
 
             {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP!',
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
                 extraInfo:'cucumber, keel',
                 timestamp: 'Oct 13, 9AM',
                 header: 'BackYard Fresh Vegetables',
@@ -116,7 +126,7 @@ class landingPage extends Component {
                 foodCategory:'Fruits'
             },
              {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits.',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -125,7 +135,7 @@ class landingPage extends Component {
                  foodCategory:'Vegetables'
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -134,7 +144,7 @@ class landingPage extends Component {
                 foodCategory:'Vegetables'
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -143,7 +153,7 @@ class landingPage extends Component {
                 foodCategory:'Vegetables'
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -152,7 +162,7 @@ class landingPage extends Component {
                 foodCategory:'Vegetables'
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
                 extraInfo:'strawberries, rasberries, kiwis...',
                 timestamp: 'Oct 13, 9AM',
                 header: 'Organic Fruits ',
@@ -165,9 +175,6 @@ class landingPage extends Component {
         let landingPageOutput = null;
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
-
-
-
 
         if(this.state.guestLogin.status && this.state.guestLogin.marketPlace ){
             marketPlacePageSection = (
@@ -189,7 +196,7 @@ class landingPage extends Component {
                 </Aux>
             );
         }
-        else if (! this.state.guestLogin.marketPlace && !this.state.guestLogin.newsFeed){
+        else if (!this.state.guestLogin.status){
              landingPageOutput= (
 
                 <Aux >
@@ -200,11 +207,11 @@ class landingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-
-                    <LoginModal guestLogin={this.guestLogin}/>
+                    {this.state.signUp.status ?  <SignUpModal /> : <LoginModal guestLogin={this.guestLogin} signUp={this.signUpClickHandler}/> }
                 </Aux>
             );
         }
+
         return (
             <Aux>
                 {landingPageOutput}
