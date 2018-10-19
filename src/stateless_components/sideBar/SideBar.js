@@ -2,9 +2,18 @@ import React from 'react';
 import {List,Icon,Label,Button,Input} from 'semantic-ui-react';
 import './SideBar.css'
 
+
 const SideBar = (props) =>{
+    const style={
+        position:'absolute',
+        width:'10%',
+        left:'8%',
+        border:'0px solid white',
+        padding:'5px',
+        margin:'5px',
+    };
     return (
-        <div id='sideBar'>
+        <div style={style}>
             <List >
                 <List.Item as='a' className='spacingBetweenItems'>
                     <Label onClick={props.marketPlaceClickHandler} horizontal>

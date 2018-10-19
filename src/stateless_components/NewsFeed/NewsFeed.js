@@ -40,7 +40,7 @@ const NewsFeed = () =>
 
                 <Feed.Event>
                     <Feed.Label>
-                        <img src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
+                        <img alt='' src='https://react.semantic-ui.com/images/avatar/small/jenny.jpg' />
                     </Feed.Label>
                     <Feed.Content>
                         <Feed.Summary>
@@ -59,10 +59,10 @@ const NewsFeed = () =>
                         </Feed.Summary>
                         <Feed.Extra images>
                             <a>
-                                <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
+                                <img alt='' src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                             <a>
-                                <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
+                                <img alt='' src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                         </Feed.Extra>
                     </Feed.Content>
@@ -153,10 +153,10 @@ const NewsFeed = () =>
 
                         <Feed.Extra images>
                             <a>
-                                <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
+                                <img alt="" src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                             <a>
-                                <img src='https://react.semantic-ui.com/images/wireframe/image.png' />
+                                <img alt="" src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                         </Feed.Extra>
 

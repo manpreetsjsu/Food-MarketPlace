@@ -6,14 +6,16 @@ import Grid from '../../stateless_components/Grid/Grid'
 import AppBar from '../../stateless_components/AppBar/AppBar'
 import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
-import Card_MaterialUI from '../../stateless_components/feed_post/Card_MaterialUI'
-import SearchBar from '../../stateless_components/SearchBar/SearchBar'
+import ItemsCard from '../../stateless_components/feed_post/Card_MaterialUI'
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
+import Aux from '../../HOC/Auxillary'
 
 class landingPage extends Component {
     constructor(props){
+        console.log('constructor of landing');
         super(props);
         this.state={
+
             guestLogin: {
                 status : false,
                 newsFeed: false,
@@ -24,13 +26,37 @@ class landingPage extends Component {
             }
         }
     }
+    componentWillMount(){
+        console.log('[landing page] componentWillMount update]');
+    }
+    shouldComponentUpdate(nextProps,nextState){
+        console.log('[landing page] shouldComponent update]');
+        console.log(nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace || nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed);
+        return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed;
+    }
 
-    guestLogin = () =>{
-        this.setState({
-            guestLogin:{
-                status: true,
-                marketPlace: true
-            }
+    componentDidMount(){
+        console.log('[landing page] componentDidMount update]');
+    }
+
+    componentWillUpdate(){
+        console.log('[landing page] willComponent update]');
+    }
+
+    componentWillUnmount(){
+        console.log('[landing page] componentWillUnmount update]');
+    }
+
+    componentDidUpdate(){
+        console.log('[landing page componentDidUpdate update]');
+    }
+    componentWillReceiveProps(){
+        console.log('[landing page ComponentWillReceiveProps update]');
+    }
+    guestLogin = () => {
+        this.setState((prevState, props) => {
+            return {guestLogin: {status:true,newsFeed:false,marketPlace: true}}
         })
     };
     newsFeedClickHandler= ()=>{
@@ -55,8 +81,9 @@ class landingPage extends Component {
 
 
     render() {
-
+        console.log('render method of landing page');
         // this will come from backend
+
         const  dummyData = {
             item1: {
                 info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP!',
@@ -76,6 +103,65 @@ class landingPage extends Component {
             }
 
         };
+
+        const  data = [
+
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP!',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+             {
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                extraInfo:'strawberries, rasberries, kiwis...',
+                timestamp: 'Oct 13, 9AM',
+                header: 'Organic Fruits ',
+                subHeader: '',
+                price:'$3',
+                 foodCategory:'Vegetables'
+            },
+            {
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                extraInfo:'strawberries, rasberries, kiwis...',
+                timestamp: 'Oct 13, 9AM',
+                header: 'Organic Fruits ',
+                subHeader: '',
+                price:'$3',
+                foodCategory:'Vegetables'
+            },
+            {
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                extraInfo:'strawberries, rasberries, kiwis...',
+                timestamp: 'Oct 13, 9AM',
+                header: 'Organic Fruits ',
+                subHeader: '',
+                price:'$3',
+                foodCategory:'Vegetables'
+            },
+            {
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                extraInfo:'strawberries, rasberries, kiwis...',
+                timestamp: 'Oct 13, 9AM',
+                header: 'Organic Fruits ',
+                subHeader: '',
+                price:'$3',
+                foodCategory:'Vegetables'
+            },
+            {
+                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. We have plenty in backyard. Hurry up to pick of your choice',
+                extraInfo:'strawberries, rasberries, kiwis...',
+                timestamp: 'Oct 13, 9AM',
+                header: 'Organic Fruits ',
+                subHeader: '',
+                price:'$3',
+                foodCategory:'Vegetables'
+            }
+        ];
+
         let landingPageOutput = null;
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
@@ -84,37 +170,29 @@ class landingPage extends Component {
 
 
         if(this.state.guestLogin.status && this.state.guestLogin.marketPlace ){
-            console.log('guest login-true, marketplace -true')
             marketPlacePageSection = (
-                <div style={{backgroundColor:''}}>
+                <Aux>
                     <HeaderBar AppBar={<AppBar/>}/>
-                    <div style={{position:'absolute',left:'10%',border:'0px solid white', padding:'5px',margin:'5px'}}>
-                        <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
-                    </div>
-                            <Grid price = {dummyData.item1.price} foodCategory='Vegetables' card={<Card_MaterialUI click={()=>{}}  info= {dummyData.item1.info} header={dummyData.item1.header} extraInfo={dummyData.item1.extraInfo} timestamp={dummyData.item1.timestamp} img={require('../../assets/images/vegetables.jpg')}/>} />
-                            <Grid price = {dummyData.item2.price} foodCategory='Home Cooked Food' card={<Card img={require('../../assets/images/cookedFood.jpeg')}/>}/>
-                            <Grid price = {dummyData.item2.price} foodCategory='Fresh Fruits' card={<Card_MaterialUI click={()=>{}} info= {dummyData.item2.info} header={dummyData.item2.header} extraInfo={dummyData.item2.extraInfo} timestamp={dummyData.item2.timestamp} img={require('../../assets/images/fruits.jpg')}/>}/>
-
-                </div>
+                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
+                    <Grid category='Fruits' data={data} />
+                    <Grid category='Vegetables' data={data} />
+                    <Grid category='HomeCooked' data={data} />
+                </Aux>
             );
         }
         else if(this.state.guestLogin &&  this.state.guestLogin.newsFeed){
-            console.log('guestlogin-true, newsfeed-true')
             newsFeedSection= (
-                <div style={{backgroundColor:''}}>
+                <Aux>
                     <HeaderBar AppBar={<AppBar/>}/>
-                    <div style={{position:'absolute',left:'10%',border:'0px solid white', padding:'5px',margin:'5px'}}>
-                        <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
-                    </div>
+                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
                     <NewsFeed/>
-                </div>
+                </Aux>
             );
         }
         else if (! this.state.guestLogin.marketPlace && !this.state.guestLogin.newsFeed){
-            console.log('marketplace ,newsfeed both false')
              landingPageOutput= (
 
-                <div id='background' >
+                <Aux >
                     <video style={{height: 'auto', width:'100%', top: 0, padding: 0}}
                            className="videoTag"
                            muted
@@ -124,15 +202,15 @@ class landingPage extends Component {
                     </video>
 
                     <LoginModal guestLogin={this.guestLogin}/>
-                </div>
+                </Aux>
             );
         }
         return (
-            <div>
+            <Aux>
                 {landingPageOutput}
                 {marketPlacePageSection}
                 {newsFeedSection}
-            </div>
+            </Aux>
         );
 
     }
