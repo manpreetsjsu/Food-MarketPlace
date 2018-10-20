@@ -15,12 +15,14 @@ class LoginModal extends Component {
         };
 
     }
+    componentDidMount(){
 
+    }
     login(e) {
         e.preventDefault();
         fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u)=> {
                 console.log('logedin bruhh');
-                this.props.userLogin();
+                this.props.userLogin(this.state.email);
             }
         ).catch((error) => {
             console.log('cant login bruhh');
