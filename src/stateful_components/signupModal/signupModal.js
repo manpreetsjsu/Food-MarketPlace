@@ -1,25 +1,33 @@
 import React,{Component} from 'react'
 import {Header,Form,Segment,Button,Icon} from 'semantic-ui-react';
 import './signupModal.css';
+import fire from '../loginDisplay/fire';
 
 class SignupModal extends Component {
     constructor(props){
         super(props);
+        this.signupSubmit = this.signupSubmit.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state={
-            name:'',
-            dob:'',
             email:'',
             password:'',
         }
     }
 
-    signupSubmit=()=> {
-     // here goes firebase signup method
-    };
+    signupSubmit(e){
+        e.preventDefault();
+        fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((u)=> {
+                console.log(this.state.email);
+            }
+        ).catch((error) => {
+            console.log(this.state.email);
+                console.log(error);
+            })
+    }
 
-    onChange=(e)=>{
-        this.setState({[e.target.name]:e.target.value});
-    };
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
 
     render() {
         return(
@@ -29,29 +37,7 @@ class SignupModal extends Component {
                 </Header>
                 <Form size='large' style={{fontWeight:'bold'}}>
                     <Segment raised>
-                            <Icon
-                            name='window close'
-                            id='closeIcon'
-                            style={{float:"right"}}
-                            onClick={this.props.clearState}
-                            size='large'/>
 
-                        <Form.Input
-                            fluid
-                            icon='user'
-                            iconPosition='left'
-                            placeholder='Enter your name here'
-                            name='name'
-                            onChange={this.onChange}
-                        />
-                        <Form.Input
-                            fluid
-                            icon='birthday'
-                            iconPosition='left'
-                            placeholder='Enter your date of birth (MM/DD/YEAR)'
-                            name='dob'
-                            onChange={this.onChange}
-                        />
                         <Form.Input
                             fluid
                             icon='at'
@@ -76,7 +62,6 @@ class SignupModal extends Component {
                             size='large'>Signup</Button>
                         <br/>
                         <Button
-                            onClick={this.signupSubmit}
                             color='teal'
                             fluid
                             size='large'

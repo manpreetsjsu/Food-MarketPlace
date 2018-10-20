@@ -27,6 +27,14 @@ class landingPage extends Component {
             }
         }
     }
+
+    firebaseLogin = ()=> {
+        this.setState({
+            accountLogin: {
+                status: true
+            }
+        })
+    }
     componentWillMount(){
         console.log('[landing page] componentWillMount update]');
     }
@@ -34,7 +42,8 @@ class landingPage extends Component {
         console.log('[landing page] shouldComponent update]');
         console.log(nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace || nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed);
         return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status;
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status
+            || nextState.accountLogin.status !== this.state.accountLogin.status;
     }
 
     componentDidMount(){
@@ -176,7 +185,7 @@ class landingPage extends Component {
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
 
-        if(this.state.guestLogin.status && this.state.guestLogin.marketPlace ){
+        if(this.state.guestLogin.status && this.state.guestLogin.marketPlace || this.state.accountLogin.status ){
             marketPlacePageSection = (
                 <Aux>
                     <HeaderBar AppBar={<AppBar/>}/>
@@ -207,7 +216,7 @@ class landingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-                    {this.state.signUp.status ?  <SignUpModal /> : <LoginModal guestLogin={this.guestLogin} signUp={this.signUpClickHandler}/> }
+                    {this.state.signUp.status ?  <SignUpModal /> : <LoginModal guestLogin={this.guestLogin} signUp={this.signUpClickHandler} userLogin={this.firebaseLogin}/> }
                 </Aux>
             );
         }
