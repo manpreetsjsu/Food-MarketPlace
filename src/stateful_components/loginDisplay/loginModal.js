@@ -67,7 +67,6 @@ class LoginModal extends Component {
                             <br></br>
                             <Button
                                 name='signUp'
-                                onClick={this.login}
                                 color='blue'
                                 fluid
                                 size='large'
