@@ -5,7 +5,7 @@ import ItemCard from '../feed_post/Card_MaterialUI'
 const OpenModal = (props) => {
     return (
         <div>
-            <Modal trigger={<a>{props.children}</a>} centered={false}>
+            <Modal trigger={props.children} centered={false}>
                 <Modal.Header>{props.header}</Modal.Header>
                 <Modal.Content image>
                     <Image wrapped size='medium' src= {props.img} />
