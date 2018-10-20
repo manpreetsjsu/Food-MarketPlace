@@ -1,11 +1,14 @@
 import React,{Component} from 'react'
 import {Header,Form,Segment,Button} from 'semantic-ui-react';
+import fire from './fire';
 import './loginModal.css';
 
 
 class LoginModal extends Component {
     constructor(props){
         super(props);
+        this.login = this.login.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state={
             email:'',
             password:'',
@@ -13,9 +16,20 @@ class LoginModal extends Component {
         this.login= this.login.bind(this);
     }
 
-    login(){
-        // will connect this to api-backend here
+    login(e) {
+        e.preventDefault();
+        fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u)=> {
+                console.log('logedin bruhh');
+                this.props.userLogin();
+            }
+        ).catch((error) => {
+            console.log('cant login bruhh');
+        });
     }
+    handleChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
 
 
     onChange=(e)=>{
@@ -67,7 +81,6 @@ class LoginModal extends Component {
                             <br></br>
                             <Button
                                 name='signUp'
-                                onClick={this.login}
                                 color='blue'
                                 fluid
                                 size='large'
