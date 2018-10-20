@@ -20,7 +20,8 @@ class landingPage extends Component {
                 marketPlace: false
             },
             accountLogin: {
-                status: false
+                status: false,
+                email:''
             },
             signUp:{
                 status: false
@@ -28,10 +29,12 @@ class landingPage extends Component {
         }
     }
 
-    firebaseLogin = ()=> {
+    firebaseLogin = (email)=> {
+        console.log('printing in ' + email);
         this.setState({
             accountLogin: {
-                status: true
+                status: true,
+                email: email
             }
         })
     }
@@ -188,8 +191,8 @@ class landingPage extends Component {
         if(this.state.guestLogin.status && this.state.guestLogin.marketPlace || this.state.accountLogin.status ){
             marketPlacePageSection = (
                 <Aux>
-                    <HeaderBar AppBar={<AppBar/>}/>
-                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
+                    <HeaderBar AppBar={<AppBar loginStatus={this.state.accountLogin.status} userEmail={this.state.accountLogin.email} />}/>
+                    <SideBar loginStatus={this.state.accountLogin.status} newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
                     <Grid category='Fruits' data={data} />
                     <Grid category='Vegetables' data={data} />
                     <Grid category='HomeCooked' data={data} />
@@ -200,7 +203,7 @@ class landingPage extends Component {
             newsFeedSection= (
                 <Aux>
                     <HeaderBar AppBar={<AppBar/>}/>
-                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
+                    <SideBar loginStatus={this.state.accountLogin.status} newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
                     <NewsFeed/>
                 </Aux>
             );
