@@ -8,12 +8,12 @@ class LoginModal extends Component {
     constructor(props){
         super(props);
         this.login = this.login.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state={
             email:'',
             password:'',
         };
-        this.login= this.login.bind(this);
+
     }
 
     login(e) {
@@ -26,16 +26,11 @@ class LoginModal extends Component {
             console.log('cant login bruhh');
         });
     }
-    handleChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-    }
-
 
 
     onChange=(e)=>{
         this.setState({
-            [e.target.name]:e.target.value}
-            );
+            [e.target.name]:e.target.value});
     };
 
     render() {

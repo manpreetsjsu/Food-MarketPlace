@@ -7,7 +7,7 @@ class SignupModal extends Component {
     constructor(props){
         super(props);
         this.signupSubmit = this.signupSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state={
             email:'',
             password:'',
@@ -25,7 +25,7 @@ class SignupModal extends Component {
             })
     }
 
-    handleChange(e) {
+    onChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
@@ -37,12 +37,6 @@ class SignupModal extends Component {
                 </Header>
                 <Form size='large' style={{fontWeight:'bold'}}>
                     <Segment raised>
-                            <Icon
-                            name='window close'
-                            id='closeIcon'
-                            style={{float:"right"}}
-                            onClick={this.props.clearState}
-                            size='large'/>
 
                         <Form.Input
                             fluid
