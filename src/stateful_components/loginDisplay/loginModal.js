@@ -1,27 +1,36 @@
 import React,{Component} from 'react'
 import {Header,Form,Segment,Button} from 'semantic-ui-react';
+import fire from './fire';
 import './loginModal.css';
 
 
 class LoginModal extends Component {
     constructor(props){
         super(props);
+        this.login = this.login.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state={
             email:'',
             password:'',
         };
-        this.login= this.login.bind(this);
+
     }
 
-    login(){
-        // will connect this to api-backend here
+    login(e) {
+        e.preventDefault();
+        fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((u)=> {
+                console.log('logedin bruhh');
+                this.props.userLogin();
+            }
+        ).catch((error) => {
+            console.log('cant login bruhh');
+        });
     }
 
 
     onChange=(e)=>{
         this.setState({
-            [e.target.name]:e.target.value}
-            );
+            [e.target.name]:e.target.value});
     };
 
     render() {
