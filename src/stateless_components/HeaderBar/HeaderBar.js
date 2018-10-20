@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid} from 'semantic-ui-react';
-import AppBar from '../AppBar/AppBar';
+import AppBar from './AppBar';
 const HeaderBar = (props) => {
 
     return(

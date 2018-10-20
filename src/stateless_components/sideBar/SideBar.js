@@ -5,6 +5,8 @@ import SellModal from '../sellModal/sellModal';
 import GuestModal from '../sellModal/guestModal';
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
+
+
 const SideBar = (props) =>{
     const style={
         position:'absolute',
@@ -17,7 +19,7 @@ const SideBar = (props) =>{
     return (
         <LoggedInContext.Consumer>
             {loggedInMemberInfo => (
-                <div style={style}>
+                <div style={style} className='media-display'>
                     <List >
                         <List.Item as='a' className='spacingBetweenItems'>
                             <Label onClick={props.marketPlaceClickHandler} horizontal>
@@ -50,11 +52,11 @@ const SideBar = (props) =>{
                             </Label>
                         </List.Item>
 
+
                         <List.Item className='spacingBetweenItems'>
                             { loggedInMemberInfo.status ?
                                 <SellModal>
                                     <Button
-                                        onClick={props.click}
                                         name='sellItem'
                                         color='blue'>
                                         <Icon name='plus'/>
@@ -63,7 +65,6 @@ const SideBar = (props) =>{
                                 </SellModal> :
                                 <SellModal>
                                     <Button
-                                        onClick={props.click}
                                         name='sellItem'
                                         color='blue'>
                                         <Icon name='plus'/>

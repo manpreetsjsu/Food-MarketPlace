@@ -1,7 +1,6 @@
 import React,{Component} from 'react'
-import { Header, Image, Modal,Form } from 'semantic-ui-react'
+import { Image, Modal } from 'semantic-ui-react'
 import SellForm from './sellForm'
-import DropDown from '../DropDown/DropDown'
 
 class OpenModal extends Component {
 
@@ -12,10 +11,6 @@ class OpenModal extends Component {
         }
     }
 
-    storeItemLocation=(val)=>{
-        this.setState({postedItemLocation: val});
-        console.log(val);
-    }
 
     render() {
         return (
@@ -25,9 +20,7 @@ class OpenModal extends Component {
                     <Modal.Content image>
                         <Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>
                         <Modal.Description>
-                            {<DropDown/>}
-                        <br/>
-                            {<SellForm location={this.storeItemLocation}/>}
+                            {<SellForm />}
                         </Modal.Description>
                     </Modal.Content>
                 </Modal>

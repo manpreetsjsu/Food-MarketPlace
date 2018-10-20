@@ -76,8 +76,8 @@ class GridComponent extends Component {
                         name='seeAll'
                         onClick={this.seeAllClickHandler}
                     >
-                        See All</Button> : null}
-                <Grid columns={4} >
+                        { this.state.seeAllClicked ? 'See Less' : 'See All' }</Button> : null}
+                <Grid >
                     {this.state.seeAllClicked ? itemsInRow :itemsInRow.slice(0,1)}
                 </Grid>
             </div>
