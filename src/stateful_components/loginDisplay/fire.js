@@ -10,4 +10,7 @@ var config = {
     messagingSenderId: "554028624769"
 };
 const fire= firebase.initializeApp(config);
+// const firestore =firebase.firestore();
+// const docref=firestore.doc("users");
+
 export default fire;
