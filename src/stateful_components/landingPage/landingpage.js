@@ -45,8 +45,7 @@ class landingPage extends Component {
         console.log('[landing page] shouldComponent update]');
         console.log(nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace || nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed);
         return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status
-            || nextState.accountLogin.status !== this.state.accountLogin.status;
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status || nextState.accountLogin.status !== this.state.accountLogin.status;
     }
 
     componentDidMount(){

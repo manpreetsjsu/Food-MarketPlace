@@ -8,8 +8,14 @@ class GridComponent extends Component {
     constructor(props){
         super(props);
         this.state = {
-            seeAllClicked : true
+            seeAllClicked : false
         }
+    }
+
+    seeAllClickHandler=()=>{
+        this.setState((prevState, props) => {
+            return {seeAllClicked: !prevState.seeAllClicked }
+        });
     }
 
     render(){
@@ -24,7 +30,7 @@ class GridComponent extends Component {
             marginTop:'20px',
 
         };
-        const itemsInRow = this.props.data.slice(0,5).map((item)=>{
+        const itemsInRow = this.props.data.slice(0,5).map((item,index)=>{
             return  (
                 <Grid.Column>
                     <Segment raised>
@@ -37,6 +43,11 @@ class GridComponent extends Component {
             );
         });
 
+        if (!this.state.seeAllClicked){
+            const length = this.props.data.length ;
+            const remainder = length % 5 ;
+
+        }
         return(
             <div style={style}>
                 <p className='foodTextCategory'>{this.props.category}</p>
