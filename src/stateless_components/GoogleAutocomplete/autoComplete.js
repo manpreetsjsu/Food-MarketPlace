@@ -68,6 +68,21 @@ export default class GooglePlaceSearchInput extends React.Component {
 
     }
 
+    componentWillUpdate(){
+        console.log('[autoComplete.js] componentWillUpdate');
+    }
+
+    shouldComponentUpdate(){
+        console.log('[autoComplete.js] shouldComponentUpdate');
+        return true ;
+
+    }
+
+    componentDidUpdate(){
+        console.log('[autoComplete.js] componentDidUpdate');
+
+    }
+
     _getPlace = inputValue => {
         if (!inputValue) {
             return;
