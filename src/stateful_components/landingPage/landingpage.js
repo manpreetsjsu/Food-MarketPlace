@@ -180,7 +180,43 @@ class landingPage extends Component {
                 subHeader: '',
                 price:'$3',
                 foodCategory:'Vegetables'
-            }
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
         ];
 
         let landingPageOutput = null;
