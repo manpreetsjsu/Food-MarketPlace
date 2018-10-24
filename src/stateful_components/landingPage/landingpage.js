@@ -20,7 +20,10 @@ class landingPage extends Component {
                 marketPlace: false
             },
             accountLogin: {
-                status: false
+                status: false,
+                email:'',
+                newsFeed: false,
+                marketPlace: false
             },
             signUp:{
                 status: false
@@ -28,22 +31,14 @@ class landingPage extends Component {
         }
     }
 
-    firebaseLogin = ()=> {
-        this.setState({
-            accountLogin: {
-                status: true
-            }
-        })
-    }
     componentWillMount(){
         console.log('[landing page] componentWillMount update]');
     }
     shouldComponentUpdate(nextProps,nextState){
         console.log('[landing page] shouldComponent update]');
-        console.log(nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace || nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed);
         return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status
-            || nextState.accountLogin.status !== this.state.accountLogin.status;
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status || nextState.accountLogin.status !== this.state.accountLogin.status
+            || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace;
     }
 
     componentDidMount(){
@@ -64,40 +59,89 @@ class landingPage extends Component {
     componentWillReceiveProps(){
         console.log('[landing page ComponentWillReceiveProps update]');
     }
+
     guestLogin = () => {
         this.setState((prevState, props) => {
-            return {guestLogin: {status:true,newsFeed:false,marketPlace: true}}
-        })
-    };
-    newsFeedClickHandler= ()=>{
-        this.setState({
-            guestLogin:{
-                status: true,
-                newsFeed: true,
-                marketPlace: false
+            return { ...prevState,
+                guestLogin:
+                    {
+                        status:true,
+                        newsFeed:false,
+                        marketPlace: true
+                    }
             }
         })
+    };
+    guestNewsFeedClickHandler= ()=>{
+        this.setState((prevState, props) => {
+            return {...prevState,
+                    guestLogin :{
+                        status: true,
+                        newsFeed: true,
+                        marketPlace: false
+                    }
+            }
+        });
+
     };
 
-    marketPlaceClickHandler = () =>{
-        this.setState({
-            guestLogin:{
-                status: true,
-                newsFeed: false,
-                marketPlace: true
+    memberNewsFeedClickHandler=()=>{
+        this.setState((prevState, props) => {
+            return {...prevState,
+                accountLogin :{
+                    status: prevState.accountLogin.status,
+                    email:prevState.accountLogin.email,
+                    newsFeed: true,
+                    marketPlace: false
+                }
             }
-        })
-    };
-    signUpClickHandler = ()=> {
-        console.log("sign up clicked")
-        this.setState({
-            signUp: {
-                status: true
-            }
-        })
+        });
     }
 
-    ;
+    guestMarketPlaceClickHandler = () =>{
+        this.setState((prevState, props) => {
+            return {...prevState,
+                guestLogin:{
+                    status: true,
+                    newsFeed: false,
+                    marketPlace: true
+                }
+            }
+        });
+    };
+    memberMarketPlaceClickHandler = () =>{
+        this.setState((prevState, props) => {
+            return {...prevState,
+                accountLogin:{
+                    status: prevState.accountLogin.status,
+                    email: prevState.accountLogin.email,
+                    newsFeed: false,
+                    marketPlace: true
+                }
+            }
+        });
+    };
+    signUpClickHandler = ()=> {
+        this.setState((prevState, props) => {
+            return {...prevState,
+                signUp: {
+                    status: true
+                }
+            }
+        });
+    };
+    firebaseLogin = (email)=> {
+        this.setState((prevState, props) => {
+            return { ...prevState,
+                accountLogin: {
+                    status: true,
+                    email: email,
+                    newsFeed:false,
+                    marketPlace: true
+                }
+            }
+        });
+    };
 
     render() {
         console.log('render method of landing page');
@@ -178,34 +222,70 @@ class landingPage extends Component {
                 subHeader: '',
                 price:'$3',
                 foodCategory:'Vegetables'
-            }
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
+            {
+                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
+                extraInfo:'cucumber, keel',
+                timestamp: 'Oct 13, 9AM',
+                header: 'BackYard Fresh Vegetables',
+                subHeader: '',
+                price: '$5',
+                foodCategory:'Fruits'
+            },
         ];
 
         let landingPageOutput = null;
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
 
-        if(this.state.guestLogin.status && this.state.guestLogin.marketPlace || this.state.accountLogin.status ){
+        if( this.state.guestLogin.marketPlace ||  this.state.accountLogin.marketPlace ){
             marketPlacePageSection = (
                 <Aux>
-                    <HeaderBar AppBar={<AppBar/>}/>
-                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
+                    <HeaderBar AppBar={<AppBar loginStatus={this.state.accountLogin.status} userEmail={this.state.accountLogin.email} />}/>
+                    <SideBar loginStatus={this.state.accountLogin.status} newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler} marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
                     <Grid category='Fruits' data={data} />
                     <Grid category='Vegetables' data={data} />
                     <Grid category='HomeCooked' data={data} />
                 </Aux>
             );
         }
-        else if(this.state.guestLogin &&  this.state.guestLogin.newsFeed){
+        else if(this.state.guestLogin.newsFeed || this.state.accountLogin.newsFeed ){
             newsFeedSection= (
                 <Aux>
-                    <HeaderBar AppBar={<AppBar/>}/>
-                    <SideBar newsFeedClickHandler={this.newsFeedClickHandler} marketPlaceClickHandler={this.marketPlaceClickHandler}/>
+                    <HeaderBar AppBar={<AppBar loginStatus={this.state.accountLogin.status} userEmail={this.state.accountLogin.email} />}/>
+                    <SideBar loginStatus={this.state.accountLogin.status} newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler} marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
                     <NewsFeed/>
                 </Aux>
             );
         }
-        else if (!this.state.guestLogin.status){
+        else if (!this.state.guestLogin.status || !this.state.accountLogin.status){
              landingPageOutput= (
 
                 <Aux >

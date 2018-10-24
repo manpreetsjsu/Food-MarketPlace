@@ -31,9 +31,11 @@ function ButtonAppBar(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" color="inherit" className={classes.grow}>
-                        News
+                        {props.loginStatus ? props.userEmail : 'Logged In as Guest'}
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button color="inherit">
+                        {props.loginStatus ? 'Logout' : 'Login' }
+                    </Button>
                 </Toolbar>
             </AppBar>
         </div>
