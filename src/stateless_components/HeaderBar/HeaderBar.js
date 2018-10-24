@@ -1,6 +1,6 @@
-import React from 'react'
-import { Grid} from 'semantic-ui-react'
-
+import React from 'react';
+import { Grid} from 'semantic-ui-react';
+import AppBar from '../AppBar/AppBar';
 const HeaderBar = (props) => {
 
     return(
@@ -8,7 +8,7 @@ const HeaderBar = (props) => {
             <Grid.Row>
                 <div style={{ width:'100%'}}>
                     <Grid.Column>
-                        {props.AppBar}
+                        <AppBar/>
                     </Grid.Column>
                 </div>
             </Grid.Row>

@@ -72,10 +72,9 @@ export default class GooglePlaceSearchInput extends React.Component {
         console.log('[autoComplete.js] componentWillUpdate');
     }
 
-    shouldComponentUpdate(){
+    shouldComponentUpdate(nextProps,nextState){
         console.log('[autoComplete.js] shouldComponentUpdate');
-        return true ;
-
+        return true
     }
 
     componentDidUpdate(){

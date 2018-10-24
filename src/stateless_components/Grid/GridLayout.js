@@ -1,7 +1,6 @@
 import React,{Component} from 'react'
-import { Segment,Grid, Button,Label } from 'semantic-ui-react'
+import {Grid, Button } from 'semantic-ui-react'
 import  './Grid.css'
-import ItemCard from '../feed_post/Card_MaterialUI';
 import ItemGridRow from './itemGridRow';
 import ItemGridColumn from './itemGridColumn';
 
@@ -32,28 +31,24 @@ class GridComponent extends Component {
             marginTop: '20px',
 
         };
-        let itemsInRow = this.props.data.slice(0, 4).map((item, index) => {
-            return (
-                <ItemGridColumn item={item}/>
 
-            );
-        });
 
-        if (this.state.seeAllClicked) {
-            itemsInRow = [];
-            let columnsArray= null;
+        // let itemsInRow = this.props.data.slice(0, 4).map((item, index) => {
+        //     return (
+        //         <ItemGridColumn item={item}/>
+        //
+        //     );
+        // });
+        let itemsInRow = [];
+        if (true) {
 
             let numberofRows = !!(this.props.data.length/4) && !!(this.props.data.length %4) ? Math.floor(this.props.data.length/4)+1 : this.props.data.length / 4;
             let start_index = 0 ;
             let end_index =0 ;
-            console.log(numberofRows);
 
             for(let i=0 ; i<numberofRows ; i++) {
-                console.log('loop');
                 start_index = end_index ;// old initial end_index becomes new start_index at ith iteration
-                console.log('start index' ,start_index);
                 end_index+=4;
-                console.log('last index' ,end_index);
 
                 itemsInRow.push
                 (
@@ -69,9 +64,6 @@ class GridComponent extends Component {
                     </ItemGridRow>
                 )
             }
-            console.log(itemsInRow);
-
-
     }
 
         return(
@@ -86,7 +78,7 @@ class GridComponent extends Component {
                     >
                         See All</Button> : null}
                 <Grid columns={4} >
-                    {itemsInRow}
+                    {this.state.seeAllClicked ? itemsInRow :itemsInRow.slice(0,1)}
                 </Grid>
             </div>
         );
