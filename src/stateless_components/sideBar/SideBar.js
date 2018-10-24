@@ -1,7 +1,9 @@
 import React from 'react';
 import {List,Icon,Label,Button,Input} from 'semantic-ui-react';
 import './SideBar.css'
-import SellOpenModal from  '../sellModal/sell_modal';
+import SellModal from '../sellModal/sellModal';
+import GuestModal from '../sellModal/guestModal';
+
 
 const SideBar = (props) =>{
     const style={
@@ -47,15 +49,26 @@ const SideBar = (props) =>{
                 </List.Item>
 
                 <List.Item className='spacingBetweenItems'>
-                    <SellOpenModal>
-                    <Button
-                        onClick={props.click}
-                    name='sellItem'
-                    color='blue'>
-                        <Icon name='plus'/>
-                        Sell Something
-                    </Button>
-                    </SellOpenModal>
+
+                    { props.loginStatus ?
+                    <SellModal>
+                            <Button
+                                onClick={props.click}
+                                name='sellItem'
+                                color='blue'>
+                                <Icon name='plus'/>
+                                    Sell Something
+                            </Button>
+                    </SellModal> :
+                        <SellModal>
+                            <Button
+                                onClick={props.click}
+                                name='sellItem'
+                                color='blue'>
+                                <Icon name='plus'/>
+                                Sell Something
+                            </Button>
+                        </SellModal>}
                 </List.Item>
 
                 <List.Item className='spacingBetweenItems'>
