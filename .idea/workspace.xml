@@ -2,11 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="42afed6e-e214-4bdd-bcfc-23af7e8b5344" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" afterPath="$PROJECT_DIR$/package-lock.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/Context/LoggedInContext.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.css" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/stateless_components/HeaderBar/AppBar.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/stateless_components/sideBar/mobileSideBar.js" />
       <change beforePath="$PROJECT_DIR$/src/stateful_components/landingPage/landingpage.js" afterPath="$PROJECT_DIR$/src/stateful_components/landingPage/landingpage.js" />
-      <change beforePath="$PROJECT_DIR$/src/stateful_components/loginDisplay/fire.js" afterPath="$PROJECT_DIR$/src/stateful_components/loginDisplay/fire.js" />
-      <change beforePath="$PROJECT_DIR$/src/stateful_components/signupModal/signupModal.js" afterPath="$PROJECT_DIR$/src/stateful_components/signupModal/signupModal.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js" afterPath="$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/DropDown/DropDown.js" afterPath="$PROJECT_DIR$/src/stateless_components/DropDown/DropDown.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/GoogleAutocomplete/autoComplete.js" afterPath="$PROJECT_DIR$/src/stateless_components/GoogleAutocomplete/autoComplete.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/Grid/Grid.js" afterPath="$PROJECT_DIR$/src/stateless_components/Grid/GridLayout.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/Grid/itemGridColumn.js" afterPath="$PROJECT_DIR$/src/stateless_components/Grid/itemGridColumn.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/HeaderBar/HeaderBar.js" afterPath="$PROJECT_DIR$/src/stateless_components/HeaderBar/HeaderBar.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/sellModal/sellForm.js" afterPath="$PROJECT_DIR$/src/stateless_components/sellModal/sellForm.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/sellModal/sellModal.js" afterPath="$PROJECT_DIR$/src/stateless_components/sellModal/sellModal.js" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/sideBar/SideBar.css" afterPath="$PROJECT_DIR$/src/stateless_components/sideBar/SideBar.css" />
+      <change beforePath="$PROJECT_DIR$/src/stateless_components/sideBar/SideBar.js" afterPath="$PROJECT_DIR$/src/stateless_components/sideBar/SideBar.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -23,11 +33,21 @@
       <file leaf-file-name="landingpage.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/stateful_components/landingPage/landingpage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="185" column="10" lean-forward="false" selection-start-line="185" selection-start-column="10" selection-end-line="185" selection-end-column="10" />
+            <state relative-caret-position="-843">
+              <caret line="239" column="37" lean-forward="true" selection-start-line="239" selection-start-column="37" selection-end-line="239" selection-end-column="37" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AppBar.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="373">
+              <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -66,12 +86,12 @@
         <option value="$PROJECT_DIR$/src/stateful_components/loginDisplay/loginfire.js" />
         <option value="$PROJECT_DIR$/src/stateful_components/signupModal/signupfire.js" />
         <option value="$PROJECT_DIR$/src/stateful_components/loginDisplay/loginModal.js" />
-        <option value="$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js" />
         <option value="$PROJECT_DIR$/src/stateless_components/sideBar/SideBar.js" />
         <option value="$PROJECT_DIR$/src/firestore.js" />
         <option value="$PROJECT_DIR$/src/stateful_components/loginDisplay/fire.js" />
         <option value="$PROJECT_DIR$/src/stateful_components/signupModal/signupModal.js" />
         <option value="$PROJECT_DIR$/src/stateful_components/landingPage/landingpage.js" />
+        <option value="$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js" />
       </list>
     </option>
   </component>
@@ -158,6 +178,13 @@
               <item name="cmpe133project" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="stateless_components" type="462c0819:PsiDirectoryNode" />
+              <item name="AppBar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cmpe133project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cmpe133project" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="stateless_components" type="462c0819:PsiDirectoryNode" />
               <item name="sellModal" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -208,12 +235,12 @@
       <updated>1539991636863</updated>
       <workItem from="1539991639418" duration="11855000" />
       <workItem from="1540273624965" duration="8235000" />
-      <workItem from="1540583655659" duration="551000" />
+      <workItem from="1540583655659" duration="801000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20641000" />
+    <option name="totallyTimeSpent" value="20891000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="828" extended-state="0" />
@@ -304,7 +331,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -338,6 +365,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="35" column="50" lean-forward="false" selection-start-line="35" selection-start-column="50" selection-end-line="35" selection-end-column="50" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -377,13 +405,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="18" column="19" lean-forward="true" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -441,7 +462,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#26#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -454,10 +475,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/stateless_components/AppBar/AppBar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/stateful_components/landingPage/landingpage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="185" column="10" lean-forward="false" selection-start-line="185" selection-start-column="10" selection-end-line="185" selection-end-column="10" />
+        <state relative-caret-position="-843">
+          <caret line="239" column="37" lean-forward="true" selection-start-line="239" selection-start-column="37" selection-end-line="239" selection-end-column="37" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
           </folding>

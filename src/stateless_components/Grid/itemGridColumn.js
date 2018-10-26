@@ -6,7 +6,8 @@ import ItemCard from '../feed_post/Card_MaterialUI';
 const gridColumn = (props)=>{
 
     return(
-        <Grid.Column>
+        <Grid.Column mobile={16} tablet={8} computer={4}>
+
             <Segment raised>
                 <Label as='a' color='red' ribbon>
                     {props.item.price}
