@@ -6,6 +6,7 @@ import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
 import SignUpModal from '../signupModal/signupModal'
+import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
 class landingPage extends Component {
@@ -131,6 +132,7 @@ class landingPage extends Component {
         });
     };
     firebaseLogin = (email)=> {
+
         console.log(email);
 
         this.setState((prevState, props) => {
@@ -145,6 +147,21 @@ class landingPage extends Component {
         });
     };
 
+    getData = ()=> {
+        var db = firebase.firestore();
+        var docRef = db.collection("data").doc("fv");
+
+        docRef.get().then(function(doc) {
+            if (doc.exists) {
+                console.log("Document data:", doc.data());
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+        });
+    };
     render() {
         console.log('render method of landing page');
         // this will come from backend

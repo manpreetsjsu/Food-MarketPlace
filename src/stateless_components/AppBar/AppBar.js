@@ -27,6 +27,7 @@ const styles = {
 function ButtonAppBar(props) {
     const { classes } = props;
     return (
+
         <LoggedInContext.Consumer>
             {accountLogin => (
                 <div className={classes.root}>
@@ -48,6 +49,7 @@ function ButtonAppBar(props) {
 
         </LoggedInContext.Consumer>
             )
+
 }
 
 ButtonAppBar.propTypes = {
