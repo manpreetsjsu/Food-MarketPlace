@@ -10,6 +10,13 @@ var config = {
     messagingSenderId: "554028624769"
 };
 const fire= firebase.initializeApp(config);
+// Initialize Cloud Firestore through Firebase
+var db = firebase.firestore();
+
+// Disable deprecated features
+db.settings({
+    timestampsInSnapshots: true
+});
 // const firestore =firebase.firestore();
 // const docref=firestore.doc("users");
 

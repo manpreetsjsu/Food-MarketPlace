@@ -5,14 +5,16 @@ import {Header,Form,Segment,Button,Icon} from 'semantic-ui-react';
 import './signupModal.css';
 import fire from '../loginDisplay/fire';
 
+
 class SignupModal extends Component {
     constructor(props){
         super(props);
         this.signupSubmit = this.signupSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.userinfo = this.userinfo.bind(this);
         this.state={
-            firstname:'',
-            lastname:"",
+            first_name:'',
+            last_name:"",
             email:'',
             password:'',
             isSignedIn: false,
@@ -37,6 +39,7 @@ class SignupModal extends Component {
 
     signupSubmit(e){
         e.preventDefault();
+        this.userinfo(e);
         fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((u)=> {
                 console.log(this.state.email);
             }
@@ -50,6 +53,14 @@ class SignupModal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     }
 
+    userinfo(e){
+        var db = firebase.firestore();
+        var citiesRef = db.collection('users');
+        var setSf = citiesRef.doc(this.state.last_name).set({
+            email: this.state.email,
+            first_Name: this.state.first_name, last_Name: this.state.last_name,
+             });
+    }
 
 
     render() {
@@ -66,7 +77,7 @@ class SignupModal extends Component {
                             icon='at'
                             iconPosition='left'
                             placeholder='Enter the your first name address'
-                            name='firstname'
+                            name='first_name'
                             onChange={this.onChange}
                         />
                         <Form.Input
@@ -74,7 +85,7 @@ class SignupModal extends Component {
                             icon='at'
                             iconPosition='left'
                             placeholder='Enter the your last name address'
-                            name='lastname'
+                            name='last_name'
                             onChange={this.onChange}
                         />
                         <Form.Input
