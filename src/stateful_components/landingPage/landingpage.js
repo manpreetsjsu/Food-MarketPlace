@@ -6,7 +6,7 @@ import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
 import SignUpModal from '../signupModal/signupModal'
-
+import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
 class landingPage extends Component {
