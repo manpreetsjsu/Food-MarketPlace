@@ -7,7 +7,6 @@ import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
 import SignUpModal from '../signupModal/signupModal'
 import {LoggedInContext} from "../../Context/LoggedInContext";
-import MobileSideBar from '../../stateless_components/sideBar/mobileSideBar';
 
 class landingPage extends Component {
     constructor(props){
@@ -133,6 +132,7 @@ class landingPage extends Component {
     };
     firebaseLogin = (email)=> {
         console.log(email);
+
         this.setState((prevState, props) => {
             return { ...prevState,
                 accountLogin: {
@@ -257,7 +257,6 @@ class landingPage extends Component {
                         <GridContainer category='Vegetables' data={data} />
                         <GridContainer category='HomeCooked' data={data} />
                 </>
-
             );
         }
         else if(this.state.guestLogin.newsFeed || this.state.accountLogin.newsFeed ){

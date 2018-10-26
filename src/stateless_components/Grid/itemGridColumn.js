@@ -7,6 +7,7 @@ const gridColumn = (props)=>{
 
     return(
         <Grid.Column mobile={16} tablet={8} computer={4}>
+
             <Segment raised>
                 <Label as='a' color='red' ribbon>
                     {props.item.price}

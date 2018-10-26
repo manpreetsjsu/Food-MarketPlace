@@ -48,9 +48,6 @@ function ButtonAppBar(props) {
 
         </LoggedInContext.Consumer>
             )
-
-
-
 }
 
 ButtonAppBar.propTypes = {

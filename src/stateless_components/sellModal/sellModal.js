@@ -2,6 +2,7 @@ import React,{Component} from 'react'
 import { Image, Modal } from 'semantic-ui-react'
 import SellForm from './sellForm'
 
+
 class OpenModal extends Component {
 
     constructor(props){
@@ -21,6 +22,7 @@ class OpenModal extends Component {
                         <Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>
                         <Modal.Description>
                             {<SellForm />}
+
                         </Modal.Description>
                     </Modal.Content>
                 </Modal>

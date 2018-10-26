@@ -5,8 +5,6 @@ import SellModal from '../sellModal/sellModal';
 import GuestModal from '../sellModal/guestModal';
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
-
-
 const SideBar = (props) =>{
     const style={
         position:'absolute',
@@ -51,7 +49,6 @@ const SideBar = (props) =>{
                                 News Feed
                             </Label>
                         </List.Item>
-
 
                         <List.Item className='spacingBetweenItems'>
                             { loggedInMemberInfo.status ?
