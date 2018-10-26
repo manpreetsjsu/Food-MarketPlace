@@ -1,3 +1,30 @@
+Study materials:
+
+reactJS video Tutorial -
+https://www.youtube.com/watch?v=pgAvVxowaYU&list=PL55RiY5tL51qLY6Yriev2bO9AF0gdvpbb
+
+How to Start learning reactjs stepwise:-
+https://github.com/petehunt/react-howto
+
+Eslint
+https://eslint.org/docs/user-guide/getting-started
+
+thinking in react .. how to start design your app
+https://reactjs.org/docs/thinking-in-react.html
+
+bind() in javascript
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind
+
+Arrow functions Javascript:-
+
+https://codeburst.io/javascript-arrow-functions-for-beginners-926947fc0cdc
+
+This keyword in JavaScript:-
+
+https://codeburst.io/javascript-the-keyword-this-for-beginners-fb5238d99f85
+
+https://reactjs.org
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
