@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import {LoggedInContext} from '../../Context/LoggedInContext';
+import classNames from 'classnames';
+import './AppBar.css';
 
 const styles = {
     root: {
@@ -24,22 +27,27 @@ const styles = {
 function ButtonAppBar(props) {
     const { classes } = props;
     return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" color="inherit" className={classes.grow}>
-                        {props.loginStatus ? props.userEmail : 'Logged In as Guest'}
-                    </Typography>
-                    <Button color="inherit">
-                        {props.loginStatus ? 'Logout' : 'Login' }
-                    </Button>
-                </Toolbar>
-            </AppBar>
-        </div>
-    );
+        <LoggedInContext.Consumer>
+            {accountLogin => (
+                <div className={classes.root}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <IconButton onClick={()=> {}} className={classNames([classes.menuButton])} color="inherit" aria-label="Menu">
+                                <MenuIcon classes='custom-display'/>
+                            </IconButton>
+                            <Typography variant="h6" color="inherit" className={classes.grow}>
+                                {accountLogin.status ? accountLogin.email : 'Logged In as Guest'}
+                            </Typography>
+                            <Button color="inherit">
+                                {accountLogin.status ? 'Logout' : 'Login' }
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                </div>
+            )}
+
+        </LoggedInContext.Consumer>
+            )
 }
 
 ButtonAppBar.propTypes = {

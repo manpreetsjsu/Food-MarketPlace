@@ -20,8 +20,9 @@ class DropdownMenu extends Component {
     }
 
     onChangeHandler = (e)=>{
-      this.setState({categorySelected: e.target.value })
-      console.log(e.target); //////////////////////////////////////////////////////
+      this.setState({categorySelected: e.target.innerText });
+      console.log(e.target.innerText);
+      this.props.getCategoryValue(e.target.innerText);
     };
 
     render(){
