@@ -4,6 +4,8 @@ import './SideBar.css'
 import SellModal from '../sellModal/sellModal';
 import GuestModal from '../sellModal/guestModal';
 import {LoggedInContext} from "../../Context/LoggedInContext";
+import AutoComplete from '../GoogleAutocomplete/autoComplete';
+
 
 const SideBar = (props) =>{
     const style={
@@ -73,7 +75,9 @@ const SideBar = (props) =>{
                         <List.Item className='spacingBetweenItems'>
                             <div style={{border:'1px solid lightGrey'}}/>
                             <p style={{fontSize:'20px',margin:'0px'}}>Location</p>
-                            <Input size='mini' icon='location arrow' placeholder='Your Location'/>
+
+                            {/*<Input size='mini' icon='location arrow' placeholder='Your Location'/>*/}
+                            <AutoComplete onPlaceSelected={()=>{}}  inputClassName='locationInput'/>
                         </List.Item>
 
                         <List.Item className='spacingBetweenItems'>

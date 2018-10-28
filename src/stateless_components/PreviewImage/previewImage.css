@@ -1,0 +1,42 @@
+.imgPreviewParent{
+
+    display: inline;
+    position: relative;
+    width: auto;
+    height: auto;
+}
+
+.imgPreview{
+    text-align: center;
+    margin: 10px 5px;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-top: 5px solid white;
+    border-bottom: 5px solid white;
+
+}
+.closeIcon {
+    position: relative!important;
+    right: 20px!important;
+    top: -60px!important;
+}
+
+
+
+[class*='close-'] {
+    color: black;
+    font: 14px/100% arial, sans-serif;
+    position: absolute;
+    right: 0px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff;
+    top: 0px;
+}
+
+.close-classic:after {
+    content: 'X'; /* ANSI X letter */
+}
+
+.close-thik:after {
+    content: '✖'; /* UTF-8 symbol */
+}
