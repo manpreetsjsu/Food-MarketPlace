@@ -22,7 +22,7 @@ export default class GooglePlaceSearchInput extends React.Component {
         onChange: PropTypes.func,
         onPlaceSelected: PropTypes.func.isRequired,
         onRemove: PropTypes.func,
-        value: PropTypes.string.isRequired,
+        value: PropTypes.string,
         inputClassName: PropTypes.oneOfType([PropTypes.func, PropTypes.string, PropTypes.object]),
         containerClassName: PropTypes.oneOfType([PropTypes.func, PropTypes.string, PropTypes.object]),
         autoCompleteContainerClassName: PropTypes.oneOfType([PropTypes.func, PropTypes.string, PropTypes.object]),
@@ -74,7 +74,7 @@ export default class GooglePlaceSearchInput extends React.Component {
 
     shouldComponentUpdate(nextProps,nextState){
         console.log('[autoComplete.js] shouldComponentUpdate');
-        return true
+        return nextState.inputValue !== this.state.inputValue || nextState.placeResults !== this.state.placeResults ;
     }
 
     componentDidUpdate(){
@@ -153,6 +153,9 @@ export default class GooglePlaceSearchInput extends React.Component {
                 event.preventDefault(); // prevent the cursor from moving
                 this.handleUpKey();
                 break;
+            case 'Escape':
+                event.preventDefault();
+                this._removeLocation();
         }
     };
 

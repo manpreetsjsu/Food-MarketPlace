@@ -16,10 +16,10 @@ class OpenModal extends Component {
     render() {
         return (
             <div>
-                <Modal size='small' trigger={this.props.children} centered={false}>
+                <Modal closeIcon={true} closeOnEscape={false} size='small' trigger={this.props.children} centered={false}>
                     <Modal.Header>Item For Sale</Modal.Header>
                     <Modal.Content image>
-                        <Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>
+                        {/*<Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>*/}
                         <Modal.Description>
                             {<SellForm />}
 
