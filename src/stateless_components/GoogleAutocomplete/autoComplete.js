@@ -156,6 +156,8 @@ export default class GooglePlaceSearchInput extends React.Component {
             case 'Escape':
                 event.preventDefault();
                 this._removeLocation();
+                break;
+
         }
     };
 

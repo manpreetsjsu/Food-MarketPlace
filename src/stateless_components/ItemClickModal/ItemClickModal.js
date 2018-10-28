@@ -1,6 +1,5 @@
 import React from 'react'
 import { Header, Image, Modal } from 'semantic-ui-react'
-import ItemCard from '../feed_post/Card_MaterialUI'
 
 const OpenModal = (props) => {
     return (

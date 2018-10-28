@@ -20,10 +20,10 @@ const CardExampleCardProps = (props) => {
                     <Card.Description >{props.info}</Card.Description>
                 </Card.Content>
                 <Card.Content extra>
-                    <a href=''>
-                        <Icon name='user'/>
-                        22 Friends
-                    </a>
+                    {/*<a href="foo">*/}
+                        {/*<Icon name='user'/>*/}
+                        {/*22 Friends*/}
+                    {/*</a>*/}
                 </Card.Content>
             </Card>
         </Modal>

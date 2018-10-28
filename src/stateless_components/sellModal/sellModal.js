@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import { Image, Modal } from 'semantic-ui-react'
+import { Modal } from 'semantic-ui-react'
 import SellForm from './sellForm'
 
 

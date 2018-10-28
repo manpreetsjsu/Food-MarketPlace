@@ -50,13 +50,13 @@ class GridComponent extends Component {
                 start_index = end_index ;// old initial end_index becomes new start_index at ith iteration
                 end_index+=4;
 
-                itemsInRow.push
-                (
+                itemsInRow.push(
                     <ItemGridRow  >
                         {
                             this.props.data.slice(start_index,end_index).map((item, index) => {
                                 return (
                                     <ItemGridColumn
+                                        key={index}
                                         item={item}/>
                                 )
                             })

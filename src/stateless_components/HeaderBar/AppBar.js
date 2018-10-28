@@ -27,7 +27,7 @@ export default class AppBar extends Component {
 
                         <Menu.Item
                             name={userLoginInfo.status ? userLoginInfo.email : 'Welcome Guest'}
-                            active={activeItem ===  userLoginInfo.status ? userLoginInfo.email : 'Welcome Guest' }
+                            active={activeItem === ''}
                             onClick={this.handleItemClick} />
 
 

@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
 import firebase from "firebase"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
-import {Header,Form,Segment,Button,Icon} from 'semantic-ui-react';
+import {Header,Form,Segment,Button} from 'semantic-ui-react';
 import './signupModal.css';
 import fire from '../loginDisplay/fire';
 
@@ -54,9 +54,9 @@ class SignupModal extends Component {
     }
 
     userinfo(e){
-        var db = firebase.firestore();
-        var citiesRef = db.collection('users');
-        var setSf = citiesRef.doc(this.state.last_name).set({
+        let db = firebase.firestore();
+        let citiesRef = db.collection('users');
+        citiesRef.doc(this.state.last_name).set({
             email: this.state.email,
             first_Name: this.state.first_name, last_Name: this.state.last_name,
              });
