@@ -168,4 +168,4 @@ const NewsFeed = () =>
         </div>
     );
 
-export default NewsFeed;
+export default (NewsFeed);

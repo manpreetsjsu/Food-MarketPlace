@@ -1,16 +1,15 @@
 import React,{Component} from 'react'
 import { Button, Form} from 'semantic-ui-react'
 import AutoCompleteInput from '../GoogleAutocomplete/autoComplete';
-import DropDown from '../DropDown/DropDown';
+import DropDownMenu from '../DropDown/DropDown';
 import update from 'react-addons-update';
 import './sellForm.css';
 import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 
-class sellForm extends Component{
+class SellForm extends Component{
     constructor(props){
         super(props);
-        //this.imageUpload = React.createRef();
         this.state={
             postID: '',
             title: '',
@@ -72,7 +71,6 @@ class sellForm extends Component{
     }
 
     static getDerivedStateFromProps(props, state){
-        //when user uploads or deletes images, then props changes
         //this lifecycle executes when function gets new props before render()
         //only use when component's inner state depends upon props...
         console.log('[sellform.js] getDerivedStateFromProps')
@@ -95,7 +93,7 @@ class sellForm extends Component{
         return(
             <Form>
                 <Form.Field>
-                    {<DropDown getCategoryValue={this.getCategoryValue}/>}
+                    <DropDownMenu getCategoryValue={this.getCategoryValue}/>
                 </Form.Field>
 
                 <Form.Field>
@@ -143,4 +141,4 @@ class sellForm extends Component{
 
 
 
-export default sellForm
+export default SellForm

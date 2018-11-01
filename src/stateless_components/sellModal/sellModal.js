@@ -1,22 +1,13 @@
-import React,{Component} from 'react'
+import React from 'react'
 import { Modal } from 'semantic-ui-react'
 import SellForm from './sellForm'
 
 
-class OpenModal extends Component {
+const SellModal=(props)=> {
 
-    constructor(props){
-        super(props);
-        this.state={
-            postedItemLocation :  ''
-        }
-    }
-
-
-    render() {
-        return (
+    return (
             <div>
-                <Modal closeIcon={true} closeOnEscape={false} size='small' trigger={this.props.children} centered={false}>
+                <Modal closeIcon={true} closeOnEscape={false} size='small' trigger={props.children} centered={false}>
                     <Modal.Header>Item For Sale</Modal.Header>
                     <Modal.Content image>
                         {/*<Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>*/}
@@ -28,7 +19,7 @@ class OpenModal extends Component {
                 </Modal>
             </div>
         );
-    }
-}
 
-export default OpenModal;
+};
+
+export default React.memo(SellModal);

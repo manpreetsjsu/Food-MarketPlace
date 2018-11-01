@@ -9,7 +9,7 @@ import SignUpModal from '../signupModal/signupModal'
 import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
-class landingPage extends Component {
+class LandingPage extends Component {
     constructor(props){
         console.log('constructor of landing');
         super(props);
@@ -315,4 +315,4 @@ class landingPage extends Component {
     }
 }
 
-export default landingPage;
+export default LandingPage;

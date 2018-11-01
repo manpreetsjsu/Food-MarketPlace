@@ -17,4 +17,4 @@ const HeaderBar = (props) => {
 
 };
 
-export default HeaderBar
+export default React.memo(HeaderBar);

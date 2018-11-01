@@ -2,7 +2,6 @@ import React from 'react';
 import {List,Icon,Label,Button,Input} from 'semantic-ui-react';
 import './SideBar.css'
 import SellModal from '../sellModal/sellModal';
-import GuestModal from '../sellModal/guestModal';
 import {LoggedInContext} from "../../Context/LoggedInContext";
 import AutoComplete from '../GoogleAutocomplete/autoComplete';
 
@@ -20,7 +19,7 @@ const SideBar = (props) =>{
         <LoggedInContext.Consumer>
             {loggedInMemberInfo => (
                 <div style={style} className='media-display'>
-                    <List >
+                     <List >
                         <List.Item as='a' className='spacingBetweenItems'>
                             <Label onClick={props.marketPlaceClickHandler} horizontal>
                                 <Icon link size='huge' name='chess'/>
@@ -89,4 +88,4 @@ const SideBar = (props) =>{
             );
 }
 
-export default SideBar;
+export default React.memo(SideBar);
