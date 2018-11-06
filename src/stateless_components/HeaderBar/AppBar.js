@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import { Icon, Menu,Button } from 'semantic-ui-react'
 import {LoggedInContext} from '../../Context/LoggedInContext';
-
+import firebase from "firebase"
+import fire from '../../stateful_components/loginDisplay/fire';
 export default class AppBar extends Component {
     state = { activeItem: 'gamepad' }
+
+
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
