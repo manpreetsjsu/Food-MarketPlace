@@ -1,6 +1,5 @@
 import React,{Component} from 'react'
-import {Header,Form,Segment,Button} from 'semantic-ui-react';
-import fire from './fire';
+import {Header,Form,Segment,Button,Image} from 'semantic-ui-react';
 import './loginModal.css';
 import firebase from "firebase"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
@@ -49,6 +48,8 @@ class LoginModal extends Component {
                     </Header>
                     <Form size='large'>
                         <Segment raised>
+                            <Image centered src={require('../../assets/images/login_Icon.png')}  />
+
                             <StyledFirebaseAuth
                                 uiConfig={this.uiConfig}
                                 firebaseAuth={firebase.auth()}
@@ -56,8 +57,8 @@ class LoginModal extends Component {
                             <Button
                                 name='guestLogin'
                                 onClick={this.props.guestLogin}
-                                color='green'
-
+                                color='blue'
+                                fluid
                                 size='large'>Continue as guest</Button>
                             <br></br>
 
