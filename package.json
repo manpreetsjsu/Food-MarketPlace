@@ -9,6 +9,7 @@
     "faker": "^4.1.0",
     "firebase": "^5.5.5",
     "lodash": "^4.17.11",
+    "npm": "^6.4.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.0",
     "react-addons-update": "^15.6.2",

@@ -1,7 +1,7 @@
 import React , {Component} from 'react';
 import LoginModal from '../loginDisplay/loginModal';
 import GridContainer from '../../stateless_components/Grid/GridLayout'
-import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
+ import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
@@ -267,19 +267,19 @@ class LandingPage extends Component {
             marketPlacePageSection = (
 
                 <>
-                        <HeaderBar/>
-                        <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
-                             marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
-                        <GridContainer category='Fruits' data={data} />
-                        <GridContainer category='Vegetables' data={data} />
-                        <GridContainer category='HomeCooked' data={data} />
+                <HeaderBar/>
+                            <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
+                                     marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
+                <GridContainer category='Fruits' data={data} />
+                <GridContainer category='Vegetables' data={data} />
+                <GridContainer category='HomeCooked' data={data} />
                 </>
             );
         }
         else if(this.state.guestLogin.newsFeed || this.state.accountLogin.newsFeed ){
             newsFeedSection= (
                 <>
-                    <HeaderBar />
+                <HeaderBar />
                     <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
                              marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
                     <NewsFeed/>
