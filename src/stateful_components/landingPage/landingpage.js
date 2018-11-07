@@ -5,7 +5,6 @@ import GridContainer from '../../stateless_components/Grid/GridLayout'
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
-import SignUpModal from '../signupModal/signupModal'
 import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
 
@@ -297,7 +296,7 @@ class LandingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-                    {this.state.signUp.status ?  <SignUpModal /> : <LoginModal guestLogin={this.guestLogin} signUp={this.signUpClickHandler} userLogin={this.firebaseLogin}/> }
+                    { <LoginModal guestLogin={this.guestLogin} userLogin={this.firebaseLogin}/> }
                 </>
             );
         }
