@@ -39,7 +39,7 @@ class SellForm extends Component{
     };
 
     postButtonClickHandler=()=>{
-        console.log(this.state)
+        console.log(this.state);
         // send this info to firebase database
     };
 
