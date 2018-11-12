@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Icon, Menu,Button } from 'semantic-ui-react'
 import {LoggedInContext} from '../../Context/LoggedInContext';
-import firebase from "firebase"
+import firebase from "firebase";
 import fire from '../../stateful_components/loginDisplay/fire';
 export default class AppBar extends Component {
 
@@ -30,7 +30,7 @@ export default class AppBar extends Component {
                             </Menu.Item>
 
                             <Menu.Item
-                                name={userLoginInfo.status ? userLoginInfo.email : 'Welcome Guest'}
+                                name={userLoginInfo.status ? userLoginInfo.userInfo.displayName : 'Welcome Guest'}
                                 active={activeItem === ''}
                                 onClick={this.handleItemClick} />
 

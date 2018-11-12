@@ -9,9 +9,7 @@ const style = {
     border: '1px solid lightGrey',
     borderRadius: '5px',
     padding: '0px 5px 20px 35px',
-    marginTop: '20px',
-    // overflowY:'scroll',
-    // height:'500px'
+    marginTop: '20px'
 
 };
 
@@ -19,7 +17,7 @@ const GridLayout=(props)=>{
 
         return(
             <div style={style} >
-                <RenderGridElements category={props.category} data={props.data} />
+                <RenderGridElements {...props} />
             </div>
         );
 

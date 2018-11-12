@@ -1,10 +1,10 @@
 import React from 'react';
-import {List,Icon,Label,Button,Input} from 'semantic-ui-react';
+import {List,Icon,Label,Button,Input,Checkbox} from 'semantic-ui-react';
 import './SideBar.css'
 import SellModal from '../sellModal/sellModal';
 import {LoggedInContext} from "../../Context/LoggedInContext";
 import AutoComplete from '../GoogleAutocomplete/autoComplete';
-
+import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 
 const SideBar = (props) =>{
     const style={
@@ -21,7 +21,7 @@ const SideBar = (props) =>{
                 <div style={style} className='media-display'>
                      <List >
                         <List.Item as='a' className='spacingBetweenItems'>
-                            <Label onClick={props.marketPlaceClickHandler} horizontal>
+                            <Label onClick={props.marketPlaceClickHandler}  horizontal>
                                 <Icon link size='huge' name='chess'/>
                                 <p style={{fontSize:'20px'}}>Marketplace</p>
                             </Label>
@@ -71,12 +71,18 @@ const SideBar = (props) =>{
                                 </SellModal>}
                         </List.Item>
 
+                         <List.Item className='spacingBetweenItems'>
+                             <div style={{border:'1px solid lightGrey'}}/>
+                             <p style={{fontSize:'20px',margin:'0px'}}>Filter By</p>
+                             <CheckBoxFilter filterState={props.filterState} resetFilters={props.resetFilters}/>
+                         </List.Item>
+
                         <List.Item className='spacingBetweenItems'>
                             <div style={{border:'1px solid lightGrey'}}/>
                             <p style={{fontSize:'20px',margin:'0px'}}>Location</p>
 
                             {/*<Input size='mini' icon='location arrow' placeholder='Your Location'/>*/}
-                            <AutoComplete onPlaceSelected={()=>{}}  inputClassName='locationInput'/>
+                            <AutoComplete onPlaceSelected={props.getItemLocation}  inputClassName='locationInput'/>
                         </List.Item>
 
                         <List.Item className='spacingBetweenItems'>

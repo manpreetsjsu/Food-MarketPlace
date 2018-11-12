@@ -1,11 +1,13 @@
 import React,{Component} from 'react'
-import { Button, Form} from 'semantic-ui-react'
+import { Input,Button, Form,Label} from 'semantic-ui-react'
 import AutoCompleteInput from '../GoogleAutocomplete/autoComplete';
 import DropDownMenu from '../DropDown/DropDown';
 import update from 'react-addons-update';
 import './sellForm.css';
 import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
+import FreshnessRating from '../FreshnessRating/freshnessRating';
+import axios from 'axios';
 
 class SellForm extends Component{
     constructor(props){
@@ -33,13 +35,22 @@ class SellForm extends Component{
         this.setState({location: locationObject})
     };
 
+    getFreshnessRating=(rating)=>{
+        this.setState({freshness:rating});
+    };
     saveInfo=(e)=>{
         this.setState({
             [e.target.name]:e.target.value});
     };
 
+    postItem=()=>{
+      axios.post('http://localhost:3001/posts/',{...this.state})
+          .then()
+          .catch()
+    };
     postButtonClickHandler=()=>{
         console.log(this.state);
+        this.postItem();
         // send this info to firebase database
     };
 
@@ -86,8 +97,6 @@ class SellForm extends Component{
 
     render(){
         console.log('render of sellForm');
-        console.log(this.state.images);
-
         let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>)
 
         return(
@@ -110,10 +119,21 @@ class SellForm extends Component{
                 </Form.Field>
 
                 <Form.Field>
-                    <input
-                        placeholder='Price'
-                        name="price"
-                        onChange={this.saveInfo} />
+                    <Input labelPosition='right'
+                           type='text'
+                           placeholder='Amount'
+                           >
+                            <input name="price" onChange={this.saveInfo}/>
+                        <Label basic>$</Label>
+                    </Input>
+                </Form.Field>
+
+                <Form.Field>
+                    <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                </Form.Field>
+
+                <Form.Field>
+                    <FreshnessRating freshnessRating={this.getFreshnessRating}/>
                 </Form.Field>
 
                 <Form.Field>

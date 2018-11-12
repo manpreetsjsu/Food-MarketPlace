@@ -21,44 +21,55 @@ class LandingPage extends Component {
             },
             accountLogin: {
                 status: false,
+                userInfo:'',
                 email:'',
                 newsFeed: false,
                 marketPlace: false
             },
-            signUp:{
-                status: false
+            marketPlace:{
+                location:'',
+                filters:{
+                    Fruits: true,
+                    Vegetables: true,
+                    HomeCooked: true,
+                    GreenWaste: true,
+                    Other: true,
+
+                }
             }
         }
     }
 
-    componentWillMount(){
-        console.log('[landing page] componentWillMount update]');
-    }
+    // componentWillMount(){
+    //     console.log('[landing page] componentWillMount update]');
+    // }
     shouldComponentUpdate(nextProps,nextState){
         console.log('[landing page] shouldComponent update]');
         return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.signUp.status !== this.state.signUp.status || nextState.accountLogin.status !== this.state.accountLogin.status
-            || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace;
+            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.accountLogin.status !== this.state.accountLogin.status
+            || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace
+            || nextState.marketPlace.location !== this.state.marketPlace.location || nextState.marketPlace.filters !== this.state.marketPlace.filters
+            || nextState.resetFilters !== this.state.resetFilters ;
     }
-
-    componentDidMount(){
-        console.log('[landing page] componentDidMount update]');
-    }
-
-    componentWillUpdate(){
-        console.log('[landing page] willComponent update]');
-    }
-
-    componentWillUnmount(){
-        console.log('[landing page] componentWillUnmount update]');
-    }
-
-    componentDidUpdate(){
-        console.log('[landing page componentDidUpdate update]');
-    }
-    componentWillReceiveProps(){
-        console.log('[landing page ComponentWillReceiveProps update]');
-    }
+    //
+    // componentDidMount(){
+    //     console.log('[landing page] componentDidMount update]');
+    // }
+    //
+    // componentWillUpdate(){
+    //     console.log('[landing page] willComponent update]');
+    // }
+    //
+    // componentWillUnmount(){
+    //     console.log('[landing page] componentWillUnmount update]');
+    // }
+    //
+    // componentDidUpdate(){
+    //     console.log('[landing page componentDidUpdate update]');
+    // }
+    // componentWillReceiveProps(){
+    //     console.log('[landing page ComponentWillReceiveProps update]');
+    // }
 
     guestLogin = () => {
         this.setState((prevState, props) => {
@@ -90,13 +101,14 @@ class LandingPage extends Component {
             return {...prevState,
                 accountLogin :{
                     status: prevState.accountLogin.status,
+                    userInfo: prevState.accountLogin.userInfo,
                     email:prevState.accountLogin.email,
                     newsFeed: true,
                     marketPlace: false
                 }
             }
         });
-    }
+    };
 
     guestMarketPlaceClickHandler = () =>{
         this.setState((prevState, props) => {
@@ -105,6 +117,18 @@ class LandingPage extends Component {
                     status: true,
                     newsFeed: false,
                     marketPlace: true
+                },
+                resetFilters: true,
+                marketPlace:{
+                    location:'',
+                    filters:{
+                        Fruits: true,
+                        Vegetables: true,
+                        HomeCooked: true,
+                        GreenWaste: true,
+                        Other: true,
+
+                    }
                 }
             }
         });
@@ -114,31 +138,34 @@ class LandingPage extends Component {
             return {...prevState,
                 accountLogin:{
                     status: prevState.accountLogin.status,
+                    userInfo: prevState.accountLogin.userInfo,
                     email: prevState.accountLogin.email,
                     newsFeed: false,
                     marketPlace: true
+                },
+                resetFilters:true,
+                marketPlace:{
+                    location:'',
+                    filters:{
+                        Fruits: true,
+                        Vegetables: true,
+                        HomeCooked: true,
+                        GreenWaste: true,
+                        Other: true,
+
+                    }
                 }
             }
         });
     };
-    signUpClickHandler = ()=> {
-        this.setState((prevState, props) => {
-            return {...prevState,
-                signUp: {
-                    status: true
-                }
-            }
-        });
-    };
-    firebaseLogin = (email)=> {
 
-        console.log(email);
-
+    firebaseLogin = (userObject)=> {
         this.setState((prevState, props) => {
             return { ...prevState,
                 accountLogin: {
                     status: true,
-                    email: email,
+                    userInfo: userObject,
+                    email: userObject.email,
                     newsFeed:false,
                     marketPlace: true
                 }
@@ -161,101 +188,119 @@ class LandingPage extends Component {
             console.log("Error getting document:", error);
         });
     };
+
+    filterByLocation=(location)=>{
+        this.setState((updatedState)=> {
+                return {...updatedState,marketPlace: {location: location,filters:updatedState.marketPlace.filters}}
+            });
+        console.log('this is sidebar locatiin' +location);
+    };
+
+    filterState=(state)=>{
+        this.setState((updatedState)=>{
+            return {...updatedState,resetFilters:false,marketPlace:{filters:state,location: updatedState.marketPlace.location}}
+        });
+    };
     render() {
         console.log('render method of landing page');
         // this will come from backend
         const  data = [
-
             {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
-                extraInfo:'cucumber, keel',
-                timestamp: 'Oct 13, 9AM',
-                header: 'BackYard Fresh Vegetables',
-                subHeader: '',
-                price: '$5',
-                foodCategory:'Fruits'
-            },
-             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits.',
-                extraInfo:'strawberries, rasberries, kiwis...',
-                timestamp: 'Oct 13, 9AM',
-                header: 'Organic Fruits ',
-                subHeader: '',
-                price:'$3',
-                 foodCategory:'Vegetables'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
-                extraInfo:'strawberries, rasberries, kiwis...',
-                timestamp: 'Oct 13, 9AM',
-                header: 'Organic Fruits ',
-                subHeader: '',
-                price:'$3',
-                foodCategory:'Vegetables'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
-                extraInfo:'strawberries, rasberries, kiwis...',
-                timestamp: 'Oct 13, 9AM',
-                header: 'Organic Fruits ',
-                subHeader: '',
-                price:'$3',
-                foodCategory:'Vegetables'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
-                extraInfo:'strawberries, rasberries, kiwis...',
-                timestamp: 'Oct 13, 9AM',
-                header: 'Organic Fruits ',
-                subHeader: '',
-                price:'$3',
-                foodCategory:'Vegetables'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced Fruits. We do backyard farming in order to produce fresh homemade fruits. ',
-                extraInfo:'strawberries, rasberries, kiwis...',
-                timestamp: 'Oct 13, 9AM',
-                header: 'Organic Fruits ',
-                subHeader: '',
-                price:'$3',
-                foodCategory:'Vegetables'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
-                extraInfo:'cucumber, keel',
-                timestamp: 'Oct 13, 9AM',
-                header: 'BackYard Fresh Vegetables',
-                subHeader: '',
-                price: '$5',
-                foodCategory:'Fruits'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
-                extraInfo:'cucumber, keel',
-                timestamp: 'Oct 13, 9AM',
-                header: 'BackYard Fresh Vegetables',
-                subHeader: '',
-                price: '$5',
-                foodCategory:'Fruits'
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
             },
             {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
-                extraInfo:'cucumber, keel',
-                timestamp: 'Oct 13, 9AM',
-                header: 'BackYard Fresh Vegetables',
-                subHeader: '',
-                price: '$5',
-                foodCategory:'Fruits'
-            },
-            {
-                info: 'These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy! ',
-                extraInfo:'cucumber, keel',
-                timestamp: 'Oct 13, 9AM',
-                header: 'BackYard Fresh Vegetables',
-                subHeader: '',
-                price: '$5',
-                foodCategory:'Fruits'
-            },
+                "title": "Fresh Avacados",
+                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
+                "category":"home-cooked",
+                "price": "3",
+                "amount":"6",
+                "freshness": "5",
+                "contact": "5103614640",
+                "location": "San Jose",
+                "timestamp": "2 Hours ago",
+                "image": ""
+            }
         ];
 
         let landingPageOutput = null;
@@ -268,10 +313,15 @@ class LandingPage extends Component {
                 <>
                 <HeaderBar/>
                             <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
-                                     marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
-                <GridContainer category='Fruits' data={data} />
-                <GridContainer category='Vegetables' data={data} />
-                <GridContainer category='HomeCooked' data={data} />
+                                     marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}
+                                     getItemLocation={this.filterByLocation}
+                                     filterState={this.filterState}
+                                     resetFilters={this.state.resetFilters}/>
+                <GridContainer location={this.state.marketPlace.location}
+                               filterState={this.state.marketPlace.filters}
+                               category='Recent'
+                               data={data}
+                />
                 </>
             );
         }
