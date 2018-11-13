@@ -10,3 +10,5 @@ export const LoggedInContext = React.createContext({
     }
 });
 
+export const FoodItemContext = React.createContext();
+
