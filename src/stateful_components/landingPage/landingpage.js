@@ -27,6 +27,7 @@ class LandingPage extends Component {
                 marketPlace: false
             },
             marketPlace:{
+                reset:false,
                 location:'',
                 filters:{
                     Fruits: true,
@@ -49,7 +50,7 @@ class LandingPage extends Component {
             nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.accountLogin.status !== this.state.accountLogin.status
             || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace
             || nextState.marketPlace.location !== this.state.marketPlace.location || nextState.marketPlace.filters !== this.state.marketPlace.filters
-            || nextState.resetFilters !== this.state.resetFilters ;
+            ||  nextState.marketPlace.reset !== this.state.marketPlace.reset   ;
     }
     //
     // componentDidMount(){
@@ -120,6 +121,7 @@ class LandingPage extends Component {
                 },
                 resetFilters: true,
                 marketPlace:{
+                    reset: true,
                     location:'',
                     filters:{
                         Fruits: true,
@@ -145,6 +147,7 @@ class LandingPage extends Component {
                 },
                 resetFilters:true,
                 marketPlace:{
+                    reset: true,
                     location:'',
                     filters:{
                         Fruits: true,
@@ -191,14 +194,14 @@ class LandingPage extends Component {
 
     filterByLocation=(location)=>{
         this.setState((updatedState)=> {
-                return {...updatedState,marketPlace: {location: location,filters:updatedState.marketPlace.filters}}
+                return {...updatedState,marketPlace: {reset:false,location: location,filters:updatedState.marketPlace.filters}}
             });
         console.log('this is sidebar locatiin' +location);
     };
 
     filterState=(state)=>{
         this.setState((updatedState)=>{
-            return {...updatedState,resetFilters:false,marketPlace:{filters:state,location: updatedState.marketPlace.location}}
+            return {...updatedState,resetFilters:false,marketPlace:{ reset: false,filters:state,location: updatedState.marketPlace.location}}
         });
     };
     render() {
@@ -316,8 +319,9 @@ class LandingPage extends Component {
                                      marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}
                                      getItemLocation={this.filterByLocation}
                                      filterState={this.filterState}
-                                     resetFilters={this.state.resetFilters}/>
+                                     resetFilters={this.state.marketPlace.reset}/>
                 <GridContainer location={this.state.marketPlace.location}
+                               reset={this.state.marketPlace.reset}
                                filterState={this.state.marketPlace.filters}
                                category='Recent'
                                data={data}

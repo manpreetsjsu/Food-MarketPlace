@@ -3,7 +3,6 @@ import  './Grid.css'
 import axios from 'axios';
 import Multimap from 'multimap';
 import DisplayItems from './displayItems';
-import update from "react-addons-update";
 
 const categories =   {
     "_id": "5be7f9d768e6065f38baf1b4",
@@ -45,27 +44,35 @@ class RenderGridElements extends Component {
 
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log(this.state);
-        if(prevProps.location !== this.props.location){
-            console.log('location props not same');
+        if(prevProps.reset !== this.props.reset && this.props.location === ''){
+            console.log('reset');
+            //reset the marketplace
             axios.get('http://localhost:3001/posts/').
             then(res=>{
-                //whenever location is changed, fetch categories result also - not implemented
-
-                if(this.props.location === ''){
-                    this.setState({data:res.data,categories:categories,location:false});
-                }
-                else{
-                    this.setState({data:res.data,categories:categories,location:true},()=>this.sortByLocation());
-                }
-            })
-                .catch();
-
-
+                //need to fetch catgories result here also
+                console.log(res);
+                this.setState({data:res.data,categories:categories,location:false})
+                }).catch();
+            return;
         }
-        if(prevProps.filterState !== this.props.filterState){
+        if(prevProps.location !== this.props.location){
+            console.log('location props are not same');
+            axios.get('http://localhost:3001/posts/').
+            then(res=>{
+                //whenever location is changed, fetch categories result also - not implemented - need endpoint here
+                console.log(res);
+                // if(this.props.location === ''){ //if location props has been reset by clicking on marketplace click handler
+                //     console.log('location empty');
+                //     this.setState({data:res.data,categories:categories,location:false});
+                // }
+                //location is selected by user, hence need to sort the posts by sortByLocation()
+                    this.setState({data:res.data,categories:categories,location:true},()=>this.sortByLocation());
+
+            }).catch((err)=>console.log(err));
+        }
+        if(prevProps.filterState !== this.props.filterState){ // if filters are changed by user, initially all categories post are shown to user
             console.log('filters applied');
-            let prevFilters = prevProps;
-            this.applyFilters(prevFilters);
+            this.applyFilters(prevProps);
         }
     }
 
@@ -82,182 +89,141 @@ class RenderGridElements extends Component {
         let delete_entries = []; // need ids of posts not be rendered
         keys.map((key)=>{
             console.log('inside map');
-            if(this.props.filterState[key] && !prevProps.filterState[key]){ // check if any category 's flag is set true && check not same as on old state
-                // add to grid data
-                if(this.props.location !== ''){
+            if(this.props.filterState[key] && !prevProps.filterState[key]){ // check if any category 's flag is set true && check it is not same as it was in old state
+                // hence we need to add to grid data
+                if(this.props.location !== ''){ //check if location has been turned on by user
                     console.log('location turned on , filters on - adding entries');
                     console.log(key);
-                    let location_post_entris = this.state.sortedByLocationCollection.get(this.props.location.id);
-                    console.log(location_post_entris);
-                    this.state.categories[key].map((post_id)=>{
-                            let post_entry=location_post_entris.find((each_entry)=>{
-                            return each_entry._id === post_id ; // will return post or undefined////
-                             });
-
-                        if(post_entry){
-                            // append the post_entry and post_id to result...
-                            new_entries.set(post_id,post_entry);
-                        }
-                    })
+                    new_entries = this.filterOffLocation(key,new_entries);
                 }
                 else{
                     console.log('location turned off, filters turned on - adding entries');
                     console.log(key);
-                    console.log(this.state.sortedByIdCollection);
                     this.state.categories[key].map((post_id)=>{
+                        // since this.state.sortedByIdCollection is changed in setState when user apply filters
+                        //in order to add back the categories entries to display, we need to access the previous posts which were deleted from display or this.sortedByIdCollection
+                        // hence this.state.safe_sorted... saves all the posts globally , hence we can access any post using postID
                         let post_entry = this.state.safe_sortByIdCollection.get(post_id);
-                        if(post_entry === undefined){console.log('undefined value')}
-                            new_entries.set(post_id,post_entry);
-
-                    })
-                }
-            }
-            else if(!this.props.filterState[key] && prevProps.filterState[key]){ // if any category is set false  && check not same as on old state
-                //delete the categories from result
-                {
-                    console.log('deleteing entries');
-                    console.log(key);
-                    this.state.categories[key].map((post_id)=>{
-                        let post_entry = this.state.sortedByIdCollection.get(post_id); // return entry value or undefined
                         if(post_entry){
-                            // append the post_id to result in delete entries...
-                            delete_entries.push(post_id);
+                            new_entries.set(post_id,post_entry);
                         }
                     })
                 }
-
             }
+            else if(!this.props.filterState[key] && prevProps.filterState[key]){ // if any category is set false  && check it is not same as it was in old state
+                //delete the categories from result
+                console.log('deleteing entries');
+                    console.log(key);
+                   this.applyCategoryFilter(key,delete_entries);
+                }
         });
-        console.log('final');
+        console.log('applying filters');
         console.log(new_entries);
         console.log(delete_entries);
-        if(new_entries.size>0){ // new entries need to be added to render screen
-            let new_sortedIdByCollection = this.pushNewEntries(new_entries);
-            let new_data = this.getArrayFromMap(new_entries);
-            console.log('new data');
-            console.log(new_data);
-            let result_data=[];
-            // new_data.map((arr)=>{
-            //     result_data.push(arr[0]);
-            // });
-            if(new_data.length>0){
-                new_data.map((arr)=>{
-                    if(Array.isArray(arr)){
-                        result_data.push(arr[0]);
-                    }
-                    else{
-                        result_data.push(arr);
-                    }
+        this.stateChangeByFiltersOff(new_entries);
+        this.stateChangeByFiltersOn(delete_entries);
+    };
+
+    filterOffLocation=(key,new_entries)=>{
+        // if location is turned on, filter is turned off i.e a category needs to be result, hence push new_entries to result
+
+        let location_post_entries = this.state.sortedByLocationCollection.get(this.props.location.id); // return array of posts or undefined
+        if(location_post_entries){ // if location has posts...
+            this.state.categories[key].map((post_id)=>{
+                let post_entry=location_post_entries.find((each_entry)=>{
+                    return each_entry._id === post_id ; // will return matching post or undefined////
                 });
 
-            }
-            result_data.push(...this.state.data);
-            console.log(result_data);
-            this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
-        });
+                if(post_entry){
+                    // append the post_entry and post_id to result...
+                    new_entries.set(post_id,post_entry);
+                }
+            })
         }
-        else if(delete_entries.length > 0){
-            let new_sortedByIdCollection = this.deleteEntries(delete_entries);
+        return new_entries;
+    };
+
+    applyFilterOnLocation=()=> {
+        //checks if any filter is on i.e. if any category needs to be removed from the result
+        // applies filters on location if user has turned off any category i.e remove entries
+        let keys = Object.keys(this.props.filterState); // return arrays of keys
+        let delete_entries = []; // need ids of posts not be rendered
+        keys.map((key)=>{
+            if(!this.props.filterState[key] ){ // if any category is set false , apply that filter on location
+                //delete the categories from result
+                {
+                    console.log(' applying filters on location by deleteing entries');
+                    console.log(key);
+                    this.applyCategoryFilter(key,delete_entries);
+                }
+
+            }
+        });
+        console.log('applying fiters on location');
+        console.log(delete_entries);
+        this.stateChangeByFiltersOn(delete_entries);
+
+    };
+
+    stateChangeByFiltersOn=(delete_entries)=>{
+        //if filters are applied, then apply those changes on the state to re-render the posts on screen as per filters
+        if(delete_entries.length > 0){
+            let new_sortedByIdCollection = this.deleteEntriesFromSortedByIdCollection(delete_entries);
             let new_data = this.getArrayFromMap(new_sortedByIdCollection);
             console.log('new deleted data');
             console.log(new_data);
-            let result_data =[];
-            if(new_data.length>0){
-                    new_data.map((arr)=>{
-                        if(Array.isArray(arr)){
-                            result_data.push(arr[0]);
-                        }
-                        else{
-                            result_data.push(arr);
-                        }
-                    });
-
-            }
+            let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
-            console.log(this.state.sortedByIdCollection);
             this.setState((updatedState)=>{
                 return{...updatedState,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
             });
         }
     };
 
-    genericFilter=()=> {
-        let keys = Object.keys(this.props.filterState); // return arrays of keys
-        console.log(keys);
-        let new_entries = new Map();
-        let delete_entries = []; // need ids of posts not be rendered
-
-        keys.map((key)=>{
-            // if(this.props.filterState[key] ){ // check if any category 's flag is set true
-            //     // add to grid data
-            //     if(this.props.location !== ''){
-            //         console.log('location turned on , filters on - adding entries');
-            //         console.log(key);
-            //         this.state.categories[key].map((post_id)=>{
-            //             let post_entry = this.state.sortedByLocationCollection.get(this.props.location.id).find((each_entry)=>{
-            //                 return each_entry._id === post_id ; // will return post or undefined////
-            //             });
-            //             if(post_entry){
-            //                 // append the post_entry and post_id to result...
-            //                 new_entries.set(post_id,post_entry);
-            //             }
-            //         })
-            //     }
-            // }
-            if(!this.props.filterState[key] ){ // if any category is set false
-                //delete the categories from result
-                {
-                    console.log('deleteing entries');
-                    console.log(key);
-                    this.state.categories[key].map((post_id)=>{
-                        let post_entry = this.state.sortedByIdCollection.get(post_id); // return entry value or undefined
-                        if(post_entry){
-                            // append the post_id to result in delete entries...
-                            delete_entries.push(post_id);
-                        }
-                    })
-                }
-
-            }
-        })
-
-        console.log('generic final');
-        console.log(new_entries);
-        console.log(delete_entries);
-        // if(new_entries.size>0){ // new entries need to be added to render screen
-        //     let new_sortedIdByCollection = this.pushNewEntries(new_entries);
-        //     let new_data = this.getArrayFromMap(new_entries);
-        //     console.log('new data');
-        //     console.log(new_data);
-        //     let result_data=[];
-        //     new_data.map((arr)=>{
-        //         result_data.push(arr[0]);
-        //     });
-        //     result_data.push(...this.state.data);
-        //     console.log(new_data);
-        //     this.setState((updatedState)=>{
-        //         return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
-        //     });
-        // }
-        if(delete_entries.length > 0){
-            let new_sortedByIdCollection = this.deleteEntries(delete_entries);
-            let new_data = this.getArrayFromMap(new_sortedByIdCollection);
-            console.log('new deleted data');
+    stateChangeByFiltersOff=(new_entries)=>{
+        if(new_entries.size>0){ // new entries need to be added to render screen
+            let new_sortedIdByCollection = this.pushNewEntries(new_entries);
+            let new_data = this.getArrayFromMap(new_entries);
+            console.log('new data');
             console.log(new_data);
-            let result_data =[];
-            if(new_data.length>0){
-                if(Array.isArray(new_data[0])){
-                    new_data.map((arr)=>{
-                        result_data.push(arr[0]);
-                    });
-                }
-            }
+            let result_data= this.convert2DArrayto1D(new_data);
+            result_data.push(...this.state.data);
             console.log(result_data);
-            console.log(this.state.sortedByIdCollection);
             this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
+                return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
             });
+        }
+    };
+
+    convert2DArrayto1D=(new_data)=>{
+        //somehow multimap saves values in the array/bucket, when we save those values in array in this.state.data which is consumed by displayItems component
+        //it becomes 2D array .this function converts  [[{..}],[{..}],[{..}]] ---> [{},{},{},{}]
+        // i am not able to figure out exactly why this is happening... this can slightly hit performance while rendering
+        let result_data=[];
+        if(new_data.length>0){
+            new_data.map((arr)=>{
+                if(Array.isArray(arr)){
+                    result_data.push(arr[0]);
+                }
+                else{
+                    result_data.push(arr);
+                }
+            });
+        }
+        return result_data;
+    };
+
+    applyCategoryFilter=(key,delete_entries)=>{
+        //if filter is turned on i.e. category is turned off, then delete those categories posts
+        // remember applied filter means user has turned off a category, otherwise filters are off or at initial state.
+        if(this.state.sortedByIdCollection){
+            this.state.categories[key].map((post_id)=>{
+                let post_entry = this.state.sortedByIdCollection.get(post_id); // return entry value or undefined
+                if(post_entry){
+                    // append the post_id to result in delete entries...
+                    delete_entries.push(post_id);
+                }
+            })
         }
     };
 
@@ -286,17 +252,16 @@ class RenderGridElements extends Component {
         return result;
     }
 
-    deleteEntries=(ids)=>{
-        let copy_sortedByIdCollection = this.deepClone(this.state.sortedByIdCollection);
+    deleteEntriesFromSortedByIdCollection=(ids)=>{
+        let copy_sortedByIdCollection = this.deepClone(this.state.sortedByIdCollection); // not optimal for performance - need to rethink the logic to avoid deep copy
             ids.map((id)=>{
             copy_sortedByIdCollection.delete(id);
         });
-            console.log(this.state.sortedByIdCollection);
         return copy_sortedByIdCollection;
     };
 
     pushNewEntries=(map)=>{
-        let copy_sortedByIdCollection = this.deepClone(this.state.sortedByIdCollection);
+        let copy_sortedByIdCollection = this.deepClone(this.state.sortedByIdCollection); //not optimal for performance - need to rethink the logic to avoid deep copy
         map.forEach(function (value,key) {
            copy_sortedByIdCollection.set(key,value);
         });
@@ -305,6 +270,7 @@ class RenderGridElements extends Component {
 
     multiMapCollection=(data)=>{
         //saving multimap of posts using _id as key and multimap of same posts using location id as key
+        //immutable_sortById is same as sortedById, but it will be safe to use as it will never be mutated or changed in any setState call..
         let sortedById = new Multimap();
         let sortByLocation = new Multimap();
         let immutable_sortById = new Multimap();
@@ -320,7 +286,7 @@ class RenderGridElements extends Component {
         return temp_arr;
     };
 
-    convertToMultimap=(data)=>{
+    ArrayToMultimap=(data)=>{
         let multimap = new Multimap();
         data.map((item)=>{
             multimap.set(item._id,item);
@@ -330,20 +296,23 @@ class RenderGridElements extends Component {
 
     sortByLocation=()=>{
         console.log("sorting by location");
-        let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.location.id); //return array
-        let new_sortedByIDCollection = this.convertToMultimap(itemsCollectionByLocation);
-        if(itemsCollectionByLocation !== undefined){ // returns undefined if no key in map...
-            this.setState({data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.genericFilter());
+        let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.location.id); //return array or undefined
+        if(itemsCollectionByLocation){ // if items are posted at specific location
+            let new_sortedByIDCollection = this.ArrayToMultimap(itemsCollectionByLocation);
+            this.setState({data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
         }
-        else{
-            this.setState({data:[],gridData:[]});
-        }
+        else { // there are no items posted in the searched location, hence display nothing
+            this.setState((updatedState)=> {
 
+                return({data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+                //sortedByIdCollection will be undefined since there are no posts in the selected location
+            });//end setstate
+
+        }
     };
 
     render() {
-        console.log('render of Grid layout');
-
+        console.log('[RenderGridElements.js render method]');
         return(
             <>
                 { <p  className='foodTextCategory'>{this.props.category}</p>}
@@ -351,8 +320,6 @@ class RenderGridElements extends Component {
             </>
         );
     }
-
-
 }
 
 export default RenderGridElements;
