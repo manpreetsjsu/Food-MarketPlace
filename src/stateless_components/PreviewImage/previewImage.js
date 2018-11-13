@@ -1,8 +1,5 @@
 import React,{Component} from 'react';
-import {Icon} from 'semantic-ui-react';
-import withClassHoc from '../../HOC/classfulHOC';
 import './previewImage.css';
-import update from 'react-addons-update';
 
 class ImageWithCloseIcon extends Component{
 
@@ -79,7 +76,7 @@ class ImageWithCloseIcon extends Component{
                return(
                    <div className='imgPreviewParent'>
                    <img className='imgPreview' onMouseOver={this.handleMouseOver} id={index} key={index} src={img.imagePreviewUrl} width="150px" height="150px" alt=""/>
-                   <a onMouseOver={this.handleMouseOver} id={index} onClick={this.clickCloseIconHandler} href="#" className="close-thik closeIcon"/>
+                   <a onMouseOver={this.handleMouseOver} id={index} onClick={this.clickCloseIconHandler} href="foo" className="close-thik closeIcon"/>
                    </div>
                )
             })

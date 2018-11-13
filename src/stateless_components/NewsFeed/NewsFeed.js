@@ -33,7 +33,7 @@ const NewsFeed = () =>
                     <Feed.Content>
                         <Feed.Date>Today</Feed.Date>
                         <Feed.Summary>
-                            You posted on your friend <a>Stevie Feliciano's</a> wall.
+                            You posted on your friend <a href="foo">Stevie Feliciano's</a> wall.
                         </Feed.Summary>
                     </Feed.Content>
                 </Feed.Event>
@@ -44,7 +44,7 @@ const NewsFeed = () =>
                     </Feed.Label>
                     <Feed.Content>
                         <Feed.Summary>
-                            You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+                            You added <a href="foo">Jenny Hess</a> to your <a href="foo">coworker</a> group.
                             <Feed.Date>3 days ago</Feed.Date>
                         </Feed.Summary>
                     </Feed.Content>
@@ -55,13 +55,13 @@ const NewsFeed = () =>
                     <Feed.Content>
                         <Feed.Date>3 days ago</Feed.Date>
                         <Feed.Summary>
-                            <a>Helen Troy</a> added 2 photos
+                            <a href="foo">Helen Troy</a> added 2 photos
                         </Feed.Summary>
                         <Feed.Extra images>
-                            <a>
+                            <a href="foo">
                                 <img alt='' src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
-                            <a>
+                            <a href="foo">
                                 <img alt='' src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                         </Feed.Extra>
@@ -73,7 +73,7 @@ const NewsFeed = () =>
                     <Feed.Content>
                         <Feed.Date>3 days ago</Feed.Date>
                         <Feed.Summary>
-                            <a>Laura Faucet</a> created a post
+                            <a href="foo">Laura Faucet</a> created a post
                         </Feed.Summary>
                         <Feed.Extra text>Have you seen what's going on in Israel? Can you believe it.</Feed.Extra>
                     </Feed.Content>
@@ -84,7 +84,7 @@ const NewsFeed = () =>
                 <Feed.Event>
                     <Feed.Content>
                         <Feed.Summary>
-                            <a>Elliot Fu</a> added <a>Jenny Hess</a> as a friend
+                            <a href="foo">Elliot Fu</a> added <a href="foo">Jenny Hess</a> as a friend
                         </Feed.Summary>
                     </Feed.Content>
                 </Feed.Event>
@@ -92,7 +92,7 @@ const NewsFeed = () =>
                 <Feed.Event>
                     <Feed.Content>
                         <Feed.Summary>
-                            <a>Stevie Feliciano</a> added <a>Elliot Fu</a> as a friend
+                            <a href="foo">Stevie Feliciano</a> added <a href="foo">Elliot Fu</a> as a friend
                         </Feed.Summary>
                     </Feed.Content>
                 </Feed.Event>
@@ -100,7 +100,7 @@ const NewsFeed = () =>
                 <Feed.Event>
                     <Feed.Content>
                         <Feed.Summary>
-                            <a>Helen Troy</a> added <a>Christian Rocha</a> as a friend
+                            <a href="foo">Helen Troy</a> added <a href="foo">Christian Rocha</a> as a friend
                         </Feed.Summary>
                     </Feed.Content>
                 </Feed.Event>
@@ -108,7 +108,7 @@ const NewsFeed = () =>
                 <Feed.Event>
                     <Feed.Content>
                         <Feed.Summary>
-                            <a>Christian Rocha</a> signed up for the site.
+                            <a href="foo">Christian Rocha</a> signed up for the site.
                         </Feed.Summary>
                     </Feed.Content>
                 </Feed.Event>
@@ -148,14 +148,14 @@ const NewsFeed = () =>
                     <Feed.Content>
                         <Feed.Date>4 days ago</Feed.Date>
                         <Feed.Summary>
-                            <a>Helen Troy</a> added <a>2 new illustrations</a>
+                            <a href="foo">Helen Troy</a> added <a href="foo">2 new illustrations</a>
                         </Feed.Summary>
 
                         <Feed.Extra images>
-                            <a>
+                            <a href="foo">
                                 <img alt="" src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
-                            <a>
+                            <a href="foo">
                                 <img alt="" src='https://react.semantic-ui.com/images/wireframe/image.png' />
                             </a>
                         </Feed.Extra>
@@ -168,4 +168,4 @@ const NewsFeed = () =>
         </div>
     );
 
-export default NewsFeed;
+export default (NewsFeed);
