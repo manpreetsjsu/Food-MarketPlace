@@ -38,41 +38,48 @@ class RenderGridElements extends Component {
             console.log(res);
             let result = this.multiMapCollection(res.data);
             this.setState({data:res.data, categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-        }).catch();
+        }).catch(err=>console.log(err));
         console.log('[gridLayout.js ComponentDidMount]');
     }
 
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log(this.state);
-        if(prevProps.reset !== this.props.reset && this.props.location === ''){
+        if(prevProps.reset !==this.props.reset ){
             console.log('reset');
             //reset the marketplace
-            axios.get('http://localhost:3001/posts/').
-            then(res=>{
-                //need to fetch catgories result here also
-                console.log(res);
-                this.setState({data:res.data,categories:categories,location:false})
-                }).catch();
+            this.setState({isLoading:true},
+                ()=>{
+                    axios.get('http://localhost:3001/posts/').
+                    then(res=>{
+                        //need to fetch catgories result here also
+                        console.log(res);
+                        let result = this.multiMapCollection(res.data);
+                        this.setState({data:res.data,isLoading:false, categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
+                    }).catch();
+                });
+
             return;
         }
         if(prevProps.location !== this.props.location){
             console.log('location props are not same');
-            axios.get('http://localhost:3001/posts/').
-            then(res=>{
-                //whenever location is changed, fetch categories result also - not implemented - need endpoint here
-                console.log(res);
-                // if(this.props.location === ''){ //if location props has been reset by clicking on marketplace click handler
-                //     console.log('location empty');
-                //     this.setState({data:res.data,categories:categories,location:false});
-                // }
-                //location is selected by user, hence need to sort the posts by sortByLocation()
-                    this.setState({data:res.data,categories:categories,location:true},()=>this.sortByLocation());
+            this.setState((updatedState)=>{
+                return({...updatedState,isLoading:true})
+            },
+                //callback
+                ()=> axios.get('http://localhost:3001/posts/').
+                then(res=>{
+                    //whenever location is changed, fetch categories result also - not implemented - need endpoint here
+                    console.log(res);
+                    this.setState({data:res.data, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
 
-            }).catch((err)=>console.log(err));
+                }).catch((err)=>console.log(err))
+                );//end setState
+
         }
         if(prevProps.filterState !== this.props.filterState){ // if filters are changed by user, initially all categories post are shown to user
             console.log('filters applied');
-            this.applyFilters(prevProps);
+            this.setState({isLoading:true},()=>this.applyFilters(prevProps));
+
         }
     }
 
@@ -167,7 +174,7 @@ class RenderGridElements extends Component {
 
     stateChangeByFiltersOn=(delete_entries)=>{
         //if filters are applied, then apply those changes on the state to re-render the posts on screen as per filters
-        if(delete_entries.length > 0){
+        if(delete_entries.length >0){
             let new_sortedByIdCollection = this.deleteEntriesFromSortedByIdCollection(delete_entries);
             let new_data = this.getArrayFromMap(new_sortedByIdCollection);
             console.log('new deleted data');
@@ -175,8 +182,11 @@ class RenderGridElements extends Component {
             let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
             });
+        }
+        else{
+            this.setState({isLoading:false});
         }
     };
 
@@ -190,8 +200,11 @@ class RenderGridElements extends Component {
             result_data.push(...this.state.data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
             });
+        }
+        else{
+            this.setState({isLoading:false});
         }
     };
 
@@ -299,12 +312,12 @@ class RenderGridElements extends Component {
         let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.location.id); //return array or undefined
         if(itemsCollectionByLocation){ // if items are posted at specific location
             let new_sortedByIDCollection = this.ArrayToMultimap(itemsCollectionByLocation);
-            this.setState({data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
+            this.setState({isLoading:true,data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
         }
         else { // there are no items posted in the searched location, hence display nothing
             this.setState((updatedState)=> {
 
-                return({data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+                return({isLoading:false,data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
             });//end setstate
 
@@ -316,7 +329,7 @@ class RenderGridElements extends Component {
         return(
             <>
                 { <p  className='foodTextCategory'>{this.props.category}</p>}
-                    { <DisplayItems data={this.state.data}/>}
+                    { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
             </>
         );
     }

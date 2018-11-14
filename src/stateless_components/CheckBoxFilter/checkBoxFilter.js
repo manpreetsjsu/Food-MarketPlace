@@ -27,9 +27,8 @@ export default class CheckboxExampleRemoteControl extends Component {
     componentDidUpdate(prevProps,prevState,prevSnapshot){
         if(prevProps.resetFilters !== this.props.resetFilters){
             console.log('[checkBoxFilter.js componentDidUpdate]');
-            if(this.props.resetFilters){
                 this.resetState();
-            }
+
         }
     }
 

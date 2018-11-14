@@ -1,5 +1,5 @@
 import React from 'react'
-import {Grid } from 'semantic-ui-react'
+import {Grid,Loader } from 'semantic-ui-react'
 import  './Grid.css'
 import ItemGridRow from './itemGridRow';
 import ItemGridColumn from './itemGridColumn';
@@ -45,7 +45,8 @@ const DisplayItems=(props)=>{
 
     return(
         <Grid container>
-            { gridData }
+            { !props.isLoading && gridData }
+            {props.isLoading && <Loader active/>}
         </Grid>
     )
 };

@@ -119,9 +119,8 @@ class LandingPage extends Component {
                     newsFeed: false,
                     marketPlace: true
                 },
-                resetFilters: true,
                 marketPlace:{
-                    reset: true,
+                    reset: !prevState.marketPlace.reset,
                     location:'',
                     filters:{
                         Fruits: true,
@@ -145,9 +144,8 @@ class LandingPage extends Component {
                     newsFeed: false,
                     marketPlace: true
                 },
-                resetFilters:true,
                 marketPlace:{
-                    reset: true,
+                    reset: !prevState.marketPlace.reset,
                     location:'',
                     filters:{
                         Fruits: true,
@@ -194,14 +192,14 @@ class LandingPage extends Component {
 
     filterByLocation=(location)=>{
         this.setState((updatedState)=> {
-                return {...updatedState,marketPlace: {reset:false,location: location,filters:updatedState.marketPlace.filters}}
+                return {...updatedState,marketPlace: {...updatedState.marketPlace,location: location}}
             });
         console.log('this is sidebar locatiin' +location);
     };
 
     filterState=(state)=>{
         this.setState((updatedState)=>{
-            return {...updatedState,resetFilters:false,marketPlace:{ reset: false,filters:state,location: updatedState.marketPlace.location}}
+            return {...updatedState,marketPlace:{ ...updatedState.marketPlace,filters:state}}
         });
     };
     render() {
@@ -319,7 +317,8 @@ class LandingPage extends Component {
                                      marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}
                                      getItemLocation={this.filterByLocation}
                                      filterState={this.filterState}
-                                     resetFilters={this.state.marketPlace.reset}/>
+                                     resetFilters={this.state.marketPlace.reset}
+                                />
                 <GridContainer location={this.state.marketPlace.location}
                                reset={this.state.marketPlace.reset}
                                filterState={this.state.marketPlace.filters}
