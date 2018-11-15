@@ -27,6 +27,7 @@ class SellForm extends Component{
             timestamp: '',
             images: [],
             photo:[],
+            isValidated: false
         }
     }
 
@@ -95,7 +96,31 @@ class SellForm extends Component{
           .catch()
     };
 
-    postButtonClickHandler=()=>{
+    validate = () => {
+
+        if(this.state.description.length < 10) {
+            return false;
+        }
+
+        if(this.state.title.length() < 5) {
+            return false;
+        }
+
+        if(!(this.state.images.length >= 0)) {
+            return false;
+        }
+
+
+    };
+
+    postButtonClickHandler = () => {
+
+        if(this.validate()) {
+            this.submitHandler()
+        }
+    };
+
+    submitHandler = () =>{
         console.log(this.state);
        // this.postItem();
         // send this info to firebase database
