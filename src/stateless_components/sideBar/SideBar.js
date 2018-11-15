@@ -82,7 +82,9 @@ const SideBar = (props) =>{
                             <p style={{fontSize:'20px',margin:'0px'}}>Location</p>
 
                             {/*<Input size='mini' icon='location arrow' placeholder='Your Location'/>*/}
-                            <AutoComplete onPlaceSelected={props.getItemLocation}  inputClassName='locationInput'/>
+                            <AutoComplete onPlaceSelected={props.getItemLocation}
+                                          inputClassName='locationInput'
+                                           reset={props.resetFilters}/>
                         </List.Item>
 
                         <List.Item className='spacingBetweenItems'>
