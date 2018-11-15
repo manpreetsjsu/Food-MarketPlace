@@ -9,6 +9,8 @@ import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
 import axios from 'axios';
 import firebase from "firebase"
+import App from '../../App';
+import ReactDOM from 'react-dom';
 
 class SellForm extends Component{
     constructor(props){
@@ -27,7 +29,9 @@ class SellForm extends Component{
             timestamp: '',
             images: [],
             photo:[],
-            isValidated: false
+            isValidated: false,
+            submitted: false,
+            opened: true
         }
     }
 
@@ -49,8 +53,8 @@ class SellForm extends Component{
 
 //     uploadImage=()=>{
 //
-//         var storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-//         var uploadTask = storageRef.put(this.state.images[0].file);
+//         let storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
+//         let uploadTask = storageRef.put(this.state.images[0].file);
 //
 // // Register three observers:
 // // 1. 'state_changed' observer, called any time the state changes
@@ -59,7 +63,7 @@ class SellForm extends Component{
 //         uploadTask.on('state_changed', function(snapshot){
 //             // Observe state change events such as progress, pause, and resume
 //             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-//             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+//             let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 //             console.log('Upload is ' + progress + '% done');
 //             switch (snapshot.state) {
 //                 case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -102,15 +106,15 @@ class SellForm extends Component{
             return false;
         }
 
-        if(this.state.title.length() < 5) {
+        if(this.state.title.length < 5) {
             return false;
         }
 
-        if(!(this.state.images.length >= 0)) {
+        if(!this.state.images.length || this.state.images === undefined) {
             return false;
         }
 
-
+        return true;
     };
 
     postButtonClickHandler = () => {
@@ -120,13 +124,17 @@ class SellForm extends Component{
         }
     };
 
+    close = () => {
+        this.setState({opened: false})
+    };
+
     submitHandler = () =>{
         console.log(this.state);
        // this.postItem();
         // send this info to firebase database
        // this.uploadImage();
-        var storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-        var uploadTask = storageRef.put(this.state.images[0].file);
+        let storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
+        let uploadTask = storageRef.put(this.state.images[0].file);
 
 // Register three observers:
 // 1. 'state_changed' observer, called any time the state changes
@@ -135,7 +143,7 @@ class SellForm extends Component{
         uploadTask.on('state_changed', function(snapshot){
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
                 case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -157,8 +165,8 @@ class SellForm extends Component{
                 // localStorage.setItem('myData', downloadURL);
                 // console.log("local: " + localStorage);
                 //console.log('File available at', downloadURL);
-                var category = this.state.category;
-                var db = firebase.firestore();
+                let category = this.state.category;
+                let db = firebase.firestore();
                 db.collection("data").doc(this.state.category).collection("posts").add({
                     category: this.state.category,
                     location: this.state.location,
@@ -166,16 +174,16 @@ class SellForm extends Component{
                     price: this.state.price,
                     images: downloadURL,
                 }).then((docRef) => {
-                    var post_location ="/data" + "/"+ category + "/posts" + "/" + docRef.id;
+                    let post_location ="/data" + "/"+ category + "/posts" + "/" + docRef.id;
                    // this.setState({post_location: post_location})
                    // console.log(this.state.post_location);
-                    var user = firebase.auth().currentUser;
+                    let user = firebase.auth().currentUser;
 
                     if (user) {
                         // User is signed in.
-                        var  uid = user.uid;
+                        let  uid = user.uid;
                         console.log("uid: "  + uid);
-                        db.collection("userData").doc(uid).set({
+                        db.collection("userData").doc(uid).S({
                             post_location: post_location
                         });
                     } else {
@@ -193,7 +201,7 @@ class SellForm extends Component{
             });
         });
 
-    // var  docData = {
+    // let  docData = {
     //         category: this.state.category,
     //         location: this.state.location,
     //         title: this.state.title,
@@ -202,16 +210,19 @@ class SellForm extends Component{
     //     };
       //  console.log(this.state.photo);
 
+        this.setState({
+            submitted: true
+        });
 
-       this.downloadPostData();
+        this.downloadPostData();
     };
 
 
     downloadPostData=()=>{
-        var abc=[];
-        var db = firebase.firestore();
-        var postsRef = db.collection('data').doc('fruits').collection('posts');
-        var allPosts = postsRef.get()
+        let abc=[];
+        let db = firebase.firestore();
+        let postsRef = db.collection('data').doc('fruits').collection('posts');
+        let allPosts = postsRef.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
                     //console.log(doc.id, '=>', doc.data());
@@ -253,7 +264,7 @@ class SellForm extends Component{
     static getDerivedStateFromProps(props, state){
         //this lifecycle executes when function gets new props before render()
         //only use when component's inner state depends upon props...
-        console.log('[sellform.js] getDerivedStateFromProps')
+        console.log('[sellform.js] getDerivedStateFromProps');
         return null;
     }
     componentDidUpdate(prevProps){
@@ -266,65 +277,83 @@ class SellForm extends Component{
 
     render(){
         console.log('render of sellForm');
-        let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>)
+        let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>);
 
-        return(
-            <Form>
-                <Form.Field>
-                    <DropDownMenu getCategoryValue={this.getCategoryValue}/>
-                </Form.Field>
-
-                <Form.Field>
-                    {<AutoCompleteInput
-                        onChange={()=>{}}
-                        onPlaceSelected={this.getItemLocation}/>}
-                </Form.Field>
-
-                <Form.Field>
-                    <input
-                        placeholder='What are you selling ?'
-                        name="title"
-                        onChange={this.saveInfo}/>
-                </Form.Field>
-
-                <Form.Field>
-                    <Input labelPosition='right'
-                           type='text'
-                           placeholder='Amount'
-                           >
-                            <input name="price" onChange={this.saveInfo}/>
-                        <Label basic>$</Label>
-                    </Input>
-                </Form.Field>
-
-                <Form.Field>
-                    <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
-                </Form.Field>
-
-                <Form.Field>
-                    <FreshnessRating freshnessRating={this.getFreshnessRating}/>
-                </Form.Field>
-
-                <Form.Field>
-                        <FileInput appendImageToArray={this.handleImageUpload}/>
-                </Form.Field>
-
-                <Form.Field>
+        if(!this.state.opened) {
+            ReactDOM.render(<App />, document.getElementById('root'));
+        }
+        if(this.state.submitted) {
+            return (
+                <Form>
+                    <h4>Your item was submitted successfully!</h4>
                     <Button
                         type='submit'
-                        onClick={this.postButtonClickHandler}>Post
+                        onClick={this.close}>Close
                     </Button>
+                </Form>
+            )
+        }
 
-                </Form.Field>
+        else {
+            return (
+                <Form>
+                    <Form.Field>
+                        <DropDownMenu getCategoryValue={this.getCategoryValue}/>
+                    </Form.Field>
 
-                <Form.Field>
-                    <div className='previewImageContainer'>
-                        {previewImages}
-                    </div>
-                </Form.Field>
+                    <Form.Field>
+                        {<AutoCompleteInput
+                            onChange={() => {
+                            }}
+                            onPlaceSelected={this.getItemLocation}/>}
+                    </Form.Field>
 
-            </Form>
-        )
+                    <Form.Field>
+                        <input
+                            placeholder='What are you selling ?'
+                            name="title"
+                            onChange={this.saveInfo}/>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <Input labelPosition='right'
+                               type='text'
+                               placeholder='Amount'
+                        >
+                            <input name="price" onChange={this.saveInfo}/>
+                            <Label basic>$</Label>
+                        </Input>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <FreshnessRating freshnessRating={this.getFreshnessRating}/>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <FileInput appendImageToArray={this.handleImageUpload}/>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <Button
+                            type='submit'
+                            onClick={this.postButtonClickHandler}>Post
+                        </Button>
+
+                    </Form.Field>
+
+                    <Form.Field>
+                        <div className='previewImageContainer'>
+                            {previewImages}
+                        </div>
+                    </Form.Field>
+
+                </Form>
+            )
+        }
     }
 }
 
