@@ -46,158 +46,14 @@ class SellForm extends Component{
             [e.target.name]:e.target.value});
     };
 
-//     uploadImage=()=>{
-//
-//         var storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-//         var uploadTask = storageRef.put(this.state.images[0].file);
-//
-// // Register three observers:
-// // 1. 'state_changed' observer, called any time the state changes
-// // 2. Error observer, called on failure
-// // 3. Completion observer, called on successful completion
-//         uploadTask.on('state_changed', function(snapshot){
-//             // Observe state change events such as progress, pause, and resume
-//             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-//             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-//             console.log('Upload is ' + progress + '% done');
-//             switch (snapshot.state) {
-//                 case firebase.storage.TaskState.PAUSED: // or 'paused'
-//                     console.log('Upload is paused');
-//                     break;
-//                 case firebase.storage.TaskState.RUNNING: // or 'running'
-//                     console.log('Upload is running');
-//                     break;
-//             }
-//         }, function(error) {
-//             // Handle unsuccessful uploads
-//         }, () => {
-//             // Handle successful uploads on complete
-//             // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-//             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-//                 // localStorage.clear();
-//                 this.setState({photo: downloadURL})
-//                 console.log(this.state.photo);
-//                 // localStorage.setItem('myData', downloadURL);
-//                 // console.log("local: " + localStorage);
-//                 //console.log('File available at', downloadURL);
-//
-//             });
-//         });
-//
-//
-//     };
-
-
-
     postItem=()=>{
       axios.post('http://localhost:3001/posts/',{...this.state})
           .then()
           .catch()
     };
 
-    postButtonClickHandler=()=>{
-        console.log(this.state);
-       // this.postItem();
-        // send this info to firebase database
-       // this.uploadImage();
-        var storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-        var uploadTask = storageRef.put(this.state.images[0].file);
-
-// Register three observers:
-// 1. 'state_changed' observer, called any time the state changes
-// 2. Error observer, called on failure
-// 3. Completion observer, called on successful completion
-        uploadTask.on('state_changed', function(snapshot){
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                    console.log('Upload is paused');
-                    break;
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                    console.log('Upload is running');
-                    break;
-            }
-        }, function(error) {
-            // Handle unsuccessful uploads
-        }, () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                // localStorage.clear();
-               // this.setState({photo: downloadURL})
-               // console.log(this.state.photo);
-                // localStorage.setItem('myData', downloadURL);
-                // console.log("local: " + localStorage);
-                //console.log('File available at', downloadURL);
-                var category = this.state.category;
-                var db = firebase.firestore();
-                db.collection("data").doc(this.state.category).collection("posts").add({
-                    category: this.state.category,
-                    location: this.state.location,
-                    title: this.state.title,
-                    price: this.state.price,
-                    images: downloadURL,
-                }).then((docRef) => {
-                    var post_location ="/data" + "/"+ category + "/posts" + "/" + docRef.id;
-                   // this.setState({post_location: post_location})
-                   // console.log(this.state.post_location);
-                    var user = firebase.auth().currentUser;
-
-                    if (user) {
-                        // User is signed in.
-                        var  uid = user.uid;
-                        console.log("uid: "  + uid);
-                        db.collection("userData").doc(uid).set({
-                            post_location: post_location
-                        });
-                    } else {
-                        // No user is signed in.
-
-                        console.log("No user is signed in.");
-                    }
-                    // localStorage.setItem('location', location)
-                    // console.log("Document written with ID: ", docRef.id);
-                })
-                    .catch(function(error) {
-                        console.error("Error adding document: ", error);
-                    });
-
-            });
-        });
-
-    // var  docData = {
-    //         category: this.state.category,
-    //         location: this.state.location,
-    //         title: this.state.title,
-    //         price: this.state.price,
-    //         images: [localStorage.getItem('myData')],
-    //     };
-      //  console.log(this.state.photo);
 
 
-       this.downloadPostData();
-    };
-
-
-    downloadPostData=()=>{
-        var abc=[];
-        var db = firebase.firestore();
-        var postsRef = db.collection('data').doc('fruits').collection('posts');
-        var allPosts = postsRef.get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    //console.log(doc.id, '=>', doc.data());
-                    abc.push(doc.data());
-                });
-            })
-            .catch(err => {
-                console.log('Error getting documents', err);
-            });
-        console.log(abc);
-    };
 
      handleImageUpload= (file)=>{
          console.log('handle image Upload in sell form');
@@ -222,7 +78,10 @@ class SellForm extends Component{
     }
 
     componentDidMount(){
-        console.log('[sellform.js] componentDidMount');
+        this.download_all_Post_Data();
+        this.download_My_Post_Data();
+        this.download_category();
+       // console.log('[sellform.js] componentDidMount');
     }
 
     static getDerivedStateFromProps(props, state){
