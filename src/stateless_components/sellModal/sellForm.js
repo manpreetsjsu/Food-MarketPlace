@@ -8,6 +8,7 @@ import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
 import axios from 'axios';
+import firebase from "firebase"
 
 class SellForm extends Component{
     constructor(props){
@@ -22,8 +23,10 @@ class SellForm extends Component{
             freshness: '',
             contact: '',
             location: '',
+            post_location:'',
             timestamp: '',
-            images: []
+            images: [],
+            photo:[],
         }
     }
 
@@ -48,18 +51,15 @@ class SellForm extends Component{
           .then()
           .catch()
     };
-    postButtonClickHandler=()=>{
-        console.log(this.state);
-        this.postItem();
-        // send this info to firebase database
-    };
+
+
+
 
      handleImageUpload= (file)=>{
          console.log('handle image Upload in sell form');
          this.setState({
              images: update(this.state.images, {$push: [file]})
          })
-
      };
 
      handleImageDeletion=(indexOfImage)=>{
@@ -78,7 +78,10 @@ class SellForm extends Component{
     }
 
     componentDidMount(){
-        console.log('[sellform.js] componentDidMount');
+        this.download_all_Post_Data();
+        this.download_My_Post_Data();
+        this.download_category();
+       // console.log('[sellform.js] componentDidMount');
     }
 
     static getDerivedStateFromProps(props, state){
