@@ -5,6 +5,7 @@ import ItemGridRow from './itemGridRow';
 import ItemGridColumn from './itemGridColumn';
 import {FoodItemContext} from "../../Context/LoggedInContext";
 
+
 const DisplayItems=(props)=>{
 
     function computeRowsNeeded(data){
@@ -27,9 +28,10 @@ const DisplayItems=(props)=>{
                     {
                         data.slice(start_index, end_index).map((item) => {
                             return (
-                                <FoodItemContext.Provider key={item._id} value={item}>
+                                <FoodItemContext.Provider key={item.post_id} value={item}>
                                     <ItemGridColumn
-                                        key={item._id}
+                                        isLoading={props.isLoading}
+                                        key={item.post_id}
                                         item={item}/>
                                 </FoodItemContext.Provider>
                             )

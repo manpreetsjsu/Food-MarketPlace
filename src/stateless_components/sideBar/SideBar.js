@@ -8,7 +8,14 @@ import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 import {connect} from "react-redux";
 import { memeberNewsfeed,memberMarketPlaceSwitch} from "../../Redux/actions/accountLoginAction";
 import {guestLoginMarketPlace, guestLoginNewsfeed} from "../../Redux/actions/guestLoginAction";
-import {marketPlace_RESET,change_filters_state, set_location} from "../../Redux/actions/marketPlaceAction";
+import {
+    marketPlace_RESET,
+    change_filters_state,
+    set_location,
+    set_filters_status
+} from "../../Redux/actions/marketPlaceAction";
+import {download_My_Post_Data} from "../../firebase/firebase_backend";
+
 
 const SideBar = (props) =>{
     const style={
@@ -36,7 +43,7 @@ const SideBar = (props) =>{
                         </List.Item>
 
                         <List.Item as='a' className='spacingBetweenItems'>
-                            <Label size='huge' horizontal>
+                            <Label onClick={()=>download_My_Post_Data()} size='huge' horizontal>
                                 My Posts
                             </Label>
                         </List.Item>
@@ -58,7 +65,7 @@ const SideBar = (props) =>{
                                         Sell Something
                                     </Button>
                                 </SellModal> :
-                                <SellModal>
+                                <SellModal >
                                     <Button
                                         name='sellItem'
                                         color='blue'>
@@ -107,12 +114,17 @@ function marketPlaceClickMarketPlace() {
     };
 };
 
-// function memberOnClickMarketPlace(dispatch) {
+// function newsFeedClicHandler() {
 //     console.log('clicked');
-//     return function() {
-//         dispatch(memberMarketPlaceSwitch());
+//     return function(dispatch,getState) {
+//         if(getState().guestLogin.status && getState().guestLogin.newsFeed){
+//             dispatch(guestLoginMarketPlace());
+//         }
+//         else if(getState().accountLogin.status && getState().accountLogin.newsFeed){
+//             dispatch(memberMarketPlaceSwitch());
+//         }
 //         dispatch(marketPlace_RESET());
-//     }();
+//     };
 // };
 
 const mapStateToProps = (state) => {
@@ -135,7 +147,8 @@ const mapDispatchToProps = dispatch => {
         memberMarketPlaceClickHandler:()=>{dispatch(marketPlaceClickMarketPlace())},
         memberNewsFeedClickHandler:()=>{dispatch(memeberNewsfeed())},
         filterState:(filters)=>{dispatch(change_filters_state(filters));},
-        filterByLocation:(location)=>{dispatch(set_location(location));}
+        filterByLocation:(location)=>{dispatch(set_location(location));},
+        set_filters_status:(flag)=>{dispatch(set_filters_status(flag));},
     }
 };
 

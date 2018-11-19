@@ -8,7 +8,7 @@ const OpenModal = (props) => {
             {foodItemInfo =>
                 (
                     <>
-                        <Modal trigger={props.children} centered={false}>
+                        <Modal open={props.isModalOpen} trigger={props.children} centered={false}>
                             <Modal.Header>{props.title}</Modal.Header>
                             <Modal.Content image>
                                 <Image wrapped size='medium' src= {require('../../assets/images/food1.jpg')} />

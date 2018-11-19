@@ -17,7 +17,7 @@ const FoodItemCard = (props) => {
                         {/*size='medium'*/}
                         {/*src={require('../../assets/images/food1.jpg')}*/}
                         {/*label={{ color: 'blue', content:'$'+foodItemInfo.price, icon: 'spoon', ribbon: true }}/>*/}
-                    <img alt='' src={require('../../assets/images/food1.jpg')} height='250px' width='auto' />
+                    <img alt='' src={foodItemInfo.images} height='250px' width='auto' />
                     <Card.Content>
                         <Card.Header>{foodItemInfo.title}</Card.Header>
                         <Card.Meta>

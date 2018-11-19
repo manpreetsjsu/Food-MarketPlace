@@ -5,11 +5,14 @@ import GridContainer from '../../stateless_components/Grid/GridLayout'
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
-import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
 import {connect} from "react-redux";
 import { memberLoginMarketPlace} from "../../Redux/actions/accountLoginAction";
 import {guestLoginMarketPlace} from "../../Redux/actions/guestLoginAction";
+import {Loader} from 'semantic-ui-react';
+import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
+import RenderGridElements from "../../stateless_components/Grid/RenderGridElements";
+import firebase from "firebase";
 
 class LandingPage extends Component {
 
@@ -45,7 +48,15 @@ class LandingPage extends Component {
     // componentWillReceiveProps(){
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
-
+    checkUserAlreadyLoggedIn=()=>{
+        let user = firebase.auth().currentUser;
+        if(user){
+            this.props.firebaseLogin(user);
+        }
+        else{
+            this.props.guestLoginClickHandler();
+        }
+    };
     render() {
         console.log('render method of landing page');
         console.log(this.props);
@@ -53,17 +64,20 @@ class LandingPage extends Component {
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
 
+
         if( this.props.guestLogin.marketPlace ||  this.props.accountLogin.marketPlace ){
             marketPlacePageSection = (
 
                 <>
                 <HeaderBar/>
                     <SideBar/>
-                <GridContainer location={this.props.marketPlace.location}
-                               reset={this.props.marketPlace.reset}
-                               filterState={this.props.marketPlace.filters}
-                               category='Recent'
-                />
+                <GridContainer >
+                    <RenderGridElements location={this.props.marketPlace.location}
+                                        reset={this.props.marketPlace.reset}
+                                        filterState={this.props.marketPlace.filters}
+                                        category='Recent'
+                                        set_loading_status={this.props.set_loading_status}/>
+                </GridContainer>
                 </>
             );
         }
@@ -87,7 +101,7 @@ class LandingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-                    { <LoginModal guestLogin={this.props.guestLoginClickHandler} userLogin={this.props.firebaseLogin}/> }
+                    { <LoginModal guestLogin={this.checkUserAlreadyLoggedIn} userLogin={this.props.firebaseLogin}/> }
                 </>
             );
         }
@@ -98,6 +112,7 @@ class LandingPage extends Component {
                 {landingPageOutput}
                 {marketPlacePageSection}
                 {newsFeedSection}
+                {this.props.marketPlace.isLoading && <Loader size='large' active/>}
                 </LoggedInContext.Provider>
             </Aux>
         );
@@ -119,6 +134,7 @@ const mapStateToProps = (state) => {
             userInfo: state.accountLogin.userInfo
         },
         marketPlace:{
+            isLoading:state.marketPlace.isLoading,
             reset:state.marketPlace.reset,
             location:state.marketPlace.location,
             filters:state.marketPlace.filters
@@ -131,6 +147,7 @@ const mapDispatchToProps = dispatch => {
     return {
         guestLoginClickHandler: ()=> {dispatch(guestLoginMarketPlace());},
         firebaseLogin:(userInfo)=>{console.log(userInfo);dispatch(memberLoginMarketPlace(userInfo));},
+        set_loading_status:(flag)=>{dispatch(set_loading_status(flag))}
     }
 };
 
