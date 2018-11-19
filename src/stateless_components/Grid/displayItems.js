@@ -1,9 +1,10 @@
 import React from 'react'
-import {Grid } from 'semantic-ui-react'
+import {Grid,Loader } from 'semantic-ui-react'
 import  './Grid.css'
 import ItemGridRow from './itemGridRow';
 import ItemGridColumn from './itemGridColumn';
 import {FoodItemContext} from "../../Context/LoggedInContext";
+
 
 const DisplayItems=(props)=>{
 
@@ -27,9 +28,10 @@ const DisplayItems=(props)=>{
                     {
                         data.slice(start_index, end_index).map((item) => {
                             return (
-                                <FoodItemContext.Provider key={item._id} value={item}>
+                                <FoodItemContext.Provider key={item.post_id} value={item}>
                                     <ItemGridColumn
-                                        key={item._id}
+                                        isLoading={props.isLoading}
+                                        key={item.post_id}
                                         item={item}/>
                                 </FoodItemContext.Provider>
                             )
@@ -45,7 +47,8 @@ const DisplayItems=(props)=>{
 
     return(
         <Grid container>
-            { gridData }
+            { !props.isLoading && gridData }
+            {props.isLoading && <Loader active/>}
         </Grid>
     )
 };

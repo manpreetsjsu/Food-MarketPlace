@@ -1,6 +1,4 @@
 import React from 'react'
-import RenderGridElements from './RenderGridElements';
-
 
 const style = {
     position: 'relative',
@@ -17,7 +15,7 @@ const GridLayout=(props)=>{
 
         return(
             <div style={style} >
-                <RenderGridElements {...props} />
+                {props.children}
             </div>
         );
 
