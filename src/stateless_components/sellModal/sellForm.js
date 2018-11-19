@@ -7,8 +7,29 @@ import './sellForm.css';
 import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
-import axios from 'axios';
-import firebase from "firebase"
+import {
+    uploadFile,
+    postDataToFirebase,
+    appendIDToPost,
+    querySaveCategories,
+    savePostInUserData,
+} from "../../firebase/firebase_backend";
+
+const PostSubmissionForm=(props)=>{
+    return(
+        <>
+            <Form.Field>
+            <h2>Your item has been posted successfully on marketplace </h2>
+            </Form.Field>
+             <Form.Field>
+            <Button
+                type='submit'>Close
+            </Button>
+             </Form.Field>
+        </>
+    )
+};
+
 
 class SellForm extends Component{
     constructor(props){
@@ -27,6 +48,9 @@ class SellForm extends Component{
             timestamp: '',
             images: [],
             photo:[],
+            submissionComplete:false,
+            clickedPostButton:false,
+            errorInSubmission:false
         }
     }
 
@@ -46,12 +70,26 @@ class SellForm extends Component{
             [e.target.name]:e.target.value});
     };
 
-    postItem=()=>{
-      axios.post('http://localhost:3001/posts/',{...this.state})
-          .then()
-          .catch()
-    };
+    postButtonClickHandler=()=> {
+        // this.setState({isPostSubmitted:true},()=>{
+        //     postButtonClickHandler(this.state);
+        // });
+        this.setState({clickedPostButton: true},
+            () => {
+                uploadFile(this.state).then((url) => url)
+                    .then((url) => postDataToFirebase(this.state, url))
+                    .then((docRef) => {console.log(docRef);appendIDToPost(docRef);return docRef})
+                    .then((docRef) => {querySaveCategories(this.state.category, docRef);return docRef})
+                    .then((docRef) => savePostInUserData(docRef))
+                    .then(() => {
+                        this.setState({submissionComplete: true})
+                    })
+                    .catch(err =>{
+                        this.setState({errorInSubmission:true})
+                    });
+            });
 
+    };
 
 
 
@@ -78,18 +116,9 @@ class SellForm extends Component{
     }
 
     componentDidMount(){
-        this.download_all_Post_Data();
-        this.download_My_Post_Data();
-        this.download_category();
        // console.log('[sellform.js] componentDidMount');
     }
 
-    static getDerivedStateFromProps(props, state){
-        //this lifecycle executes when function gets new props before render()
-        //only use when component's inner state depends upon props...
-        console.log('[sellform.js] getDerivedStateFromProps')
-        return null;
-    }
     componentDidUpdate(prevProps){
         console.log('[sellform.js] componentDidUpdate')
     }
@@ -101,63 +130,83 @@ class SellForm extends Component{
     render(){
         console.log('render of sellForm');
         let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>)
+        let form = null;
+        if(!this.state.clickedPostButton){
+            form = (
+                <>
+                    <Form.Field>
+                        <DropDownMenu getCategoryValue={this.getCategoryValue}/>
+                    </Form.Field>
 
-        return(
-            <Form>
-                <Form.Field>
-                    <DropDownMenu getCategoryValue={this.getCategoryValue}/>
-                </Form.Field>
+                    <Form.Field>
+                        {<AutoCompleteInput
+                            onChange={() => {
+                            }}
+                            onPlaceSelected={this.getItemLocation}/>}
+                    </Form.Field>
 
-                <Form.Field>
-                    {<AutoCompleteInput
-                        onChange={()=>{}}
-                        onPlaceSelected={this.getItemLocation}/>}
-                </Form.Field>
+                    <Form.Field>
+                        <input
+                            placeholder='What are you selling ?'
+                            name="title"
+                            onChange={this.saveInfo}/>
+                    </Form.Field>
 
-                <Form.Field>
-                    <input
-                        placeholder='What are you selling ?'
-                        name="title"
-                        onChange={this.saveInfo}/>
-                </Form.Field>
-
-                <Form.Field>
-                    <Input labelPosition='right'
-                           type='text'
-                           placeholder='Amount'
-                           >
+                    <Form.Field>
+                        <Input labelPosition='right'
+                               type='text'
+                               placeholder='Amount'
+                        >
                             <input name="price" onChange={this.saveInfo}/>
-                        <Label basic>$</Label>
-                    </Input>
-                </Form.Field>
+                            <Label basic>$</Label>
+                        </Input>
+                    </Form.Field>
 
-                <Form.Field>
-                    <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
-                </Form.Field>
+                    <Form.Field>
+                        <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                    </Form.Field>
 
-                <Form.Field>
-                    <FreshnessRating freshnessRating={this.getFreshnessRating}/>
-                </Form.Field>
+                    <Form.Field>
+                        <FreshnessRating freshnessRating={this.getFreshnessRating}/>
+                    </Form.Field>
 
-                <Form.Field>
+                    <Form.Field>
                         <FileInput appendImageToArray={this.handleImageUpload}/>
-                </Form.Field>
+                    </Form.Field>
 
-                <Form.Field>
-                    <Button
-                        type='submit'
-                        onClick={this.postButtonClickHandler}>Post
-                    </Button>
+                    <Form.Field>
+                        <Button
+                            type='submit'
+                            onClick={this.postButtonClickHandler}>Post
+                        </Button>
 
-                </Form.Field>
+                    </Form.Field>
 
-                <Form.Field>
-                    <div className='previewImageContainer'>
-                        {previewImages}
-                    </div>
-                </Form.Field>
+                    <Form.Field>
+                        <div className='previewImageContainer'>
+                            {previewImages}
+                        </div>
+                    </Form.Field>
+                </>
+            )
+        }
+        else if(this.state.clickedPostButton && !this.state.submissionComplete){
+            form=(
+                <>
+                    <Form.Field>
+                        <h3>Submitting Your Request ! Please Wait ...</h3>
+                    </Form.Field>
+                </>
+            )
+        }
+        else if(this.state.submissionComplete){
+            form= (<PostSubmissionForm/>)
+        }
+        return(
+                <Form>
+                    {form}
+                </Form>
 
-            </Form>
         )
     }
 }

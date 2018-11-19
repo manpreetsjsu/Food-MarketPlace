@@ -1,20 +1,9 @@
 import React,{Component} from 'react'
 import  './Grid.css'
-import axios from 'axios';
 import Multimap from 'multimap';
 import DisplayItems from './displayItems';
+import {download_all_Post_Data,download_category} from "../../firebase/firebase_backend";
 
-const categories =   {
-    "_id": "5be7f9d768e6065f38baf1b4",
-    "Fruits": ["5be7f9d768e6065f38baf1b3","5be73b1c07141e5dd090aba9","5be7427c07141e5dd090abad","5be7426807141e5dd090abac","5be7428707141e5dd090abae","5be7428e07141e5dd090abaf",
-    "5be7429b07141e5dd090abb0","5be742a807141e5dd090abb1"],
-    "Vegetables": ["5be768f707141e5dd090abb5","5be7416107141e5dd090abab"],
-    "HomeCooked": [],
-    "GreenWaste": ["5be7fcb5041a938e746e75ba"],
-    "Other": ["5be76e9507141e5dd090abb6","5be74a3907141e5dd090abb2","5be7687707141e5dd090abb3","5be768ac07141e5dd090abb4","5be76e9507141e5dd090abb6",
-    ],
-    "__v": 0
-};
 
 class RenderGridElements extends Component {
 
@@ -31,48 +20,62 @@ class RenderGridElements extends Component {
     };
 
     componentDidMount(){
-        // fetching remote posts from backend
-        axios.get('http://localhost:3001/posts/').
-        then(res=>{
-            //whenever location is changed, fetch catgories result also - not imp,emented yet
-            console.log(res);
-            let result = this.multiMapCollection(res.data);
-            this.setState({data:res.data, categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-        }).catch();
         console.log('[gridLayout.js ComponentDidMount]');
+        this.props.set_loading_status(true);
+        this.setState({isLoading:true},()=>{
+            download_all_Post_Data()
+                .then((res)=> download_category()
+                    .then((categories)=>{
+                        let result = this.multiMapCollection(res);
+                        this.props.set_loading_status(false);
+                        this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
+                    })
+                )
+        });
+
+
     }
 
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log(this.state);
-        if(prevProps.reset !== this.props.reset && this.props.location === ''){
+        if(prevProps.reset !==this.props.reset ){
             console.log('reset');
             //reset the marketplace
-            axios.get('http://localhost:3001/posts/').
-            then(res=>{
-                //need to fetch catgories result here also
-                console.log(res);
-                this.setState({data:res.data,categories:categories,location:false})
-                }).catch();
+            this.props.set_loading_status(true);
+            this.setState({isLoading:true},()=>{
+                download_all_Post_Data()
+                    .then((res)=> download_category()
+                        .then((categories)=>{
+                            let result = this.multiMapCollection(res);
+                            this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
+                            this.props.set_loading_status(false);
+
+                        })
+                    )
+            });
             return;
         }
         if(prevProps.location !== this.props.location){
             console.log('location props are not same');
-            axios.get('http://localhost:3001/posts/').
-            then(res=>{
-                //whenever location is changed, fetch categories result also - not implemented - need endpoint here
-                console.log(res);
-                // if(this.props.location === ''){ //if location props has been reset by clicking on marketplace click handler
-                //     console.log('location empty');
-                //     this.setState({data:res.data,categories:categories,location:false});
-                // }
-                //location is selected by user, hence need to sort the posts by sortByLocation()
-                    this.setState({data:res.data,categories:categories,location:true},()=>this.sortByLocation());
+            this.props.set_loading_status(true);
+            this.setState((updatedState)=>{
+                return({...updatedState,isLoading:true})
+            },
+                //callback
+                ()=> {
+                    download_all_Post_Data()
+                        .then((res)=> download_category()
+                            .then((categories)=>{
+                                this.setState({data:res, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
+                            })
+                        );
+                });//end setState
 
-            }).catch((err)=>console.log(err));
         }
         if(prevProps.filterState !== this.props.filterState){ // if filters are changed by user, initially all categories post are shown to user
             console.log('filters applied');
-            this.applyFilters(prevProps);
+            this.setState({isLoading:true},()=>this.applyFilters(prevProps));
+
         }
     }
 
@@ -131,7 +134,7 @@ class RenderGridElements extends Component {
         if(location_post_entries){ // if location has posts...
             this.state.categories[key].map((post_id)=>{
                 let post_entry=location_post_entries.find((each_entry)=>{
-                    return each_entry._id === post_id ; // will return matching post or undefined////
+                    return each_entry.post_id === post_id ; // will return matching post or undefined////
                 });
 
                 if(post_entry){
@@ -162,12 +165,12 @@ class RenderGridElements extends Component {
         console.log('applying fiters on location');
         console.log(delete_entries);
         this.stateChangeByFiltersOn(delete_entries);
-
+        this.props.set_loading_status(false);
     };
 
     stateChangeByFiltersOn=(delete_entries)=>{
         //if filters are applied, then apply those changes on the state to re-render the posts on screen as per filters
-        if(delete_entries.length > 0){
+        if(delete_entries.length >0){
             let new_sortedByIdCollection = this.deleteEntriesFromSortedByIdCollection(delete_entries);
             let new_data = this.getArrayFromMap(new_sortedByIdCollection);
             console.log('new deleted data');
@@ -175,8 +178,11 @@ class RenderGridElements extends Component {
             let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
             });
+        }
+        else{
+            this.setState({isLoading:false});
         }
     };
 
@@ -190,8 +196,11 @@ class RenderGridElements extends Component {
             result_data.push(...this.state.data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
             });
+        }
+        else{
+            this.setState({isLoading:false});
         }
     };
 
@@ -275,9 +284,9 @@ class RenderGridElements extends Component {
         let sortByLocation = new Multimap();
         let immutable_sortById = new Multimap();
         data.map((item)=>{
-            sortedById.set(item._id,item);
+            sortedById.set(item.post_id,item);
             sortByLocation.set(item.location.id,item);
-            immutable_sortById.set(item._id,item);
+            immutable_sortById.set(item.post_id,item);
         }) ;
         let temp_arr = [];
         temp_arr.push(sortedById);
@@ -289,7 +298,7 @@ class RenderGridElements extends Component {
     ArrayToMultimap=(data)=>{
         let multimap = new Multimap();
         data.map((item)=>{
-            multimap.set(item._id,item);
+            multimap.set(item.post_id,item);
         }) ;
         return multimap;
     };
@@ -299,14 +308,15 @@ class RenderGridElements extends Component {
         let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.location.id); //return array or undefined
         if(itemsCollectionByLocation){ // if items are posted at specific location
             let new_sortedByIDCollection = this.ArrayToMultimap(itemsCollectionByLocation);
-            this.setState({data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
+            this.setState({isLoading:true,data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
         }
         else { // there are no items posted in the searched location, hence display nothing
             this.setState((updatedState)=> {
 
-                return({data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+                return({isLoading:false,data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
             });//end setstate
+            this.props.set_loading_status(false);
 
         }
     };
@@ -316,7 +326,7 @@ class RenderGridElements extends Component {
         return(
             <>
                 { <p  className='foodTextCategory'>{this.props.category}</p>}
-                    { <DisplayItems data={this.state.data}/>}
+                    { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
             </>
         );
     }

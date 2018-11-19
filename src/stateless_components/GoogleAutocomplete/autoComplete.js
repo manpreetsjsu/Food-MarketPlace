@@ -19,6 +19,7 @@ function debounce(fn, delay) {
 export default class GooglePlaceSearchInput extends React.Component {
 
     static propTypes = {
+        reset:PropTypes.bool,
         onChange: PropTypes.func,
         onPlaceSelected: PropTypes.func.isRequired,
         onRemove: PropTypes.func,
@@ -72,12 +73,15 @@ export default class GooglePlaceSearchInput extends React.Component {
         console.log('[autoComplete.js] componentWillUpdate');
     }
 
-    shouldComponentUpdate(nextProps,nextState){
+    shouldComponentUpdate(nextProps,nextState,nextContext){
         console.log('[autoComplete.js] shouldComponentUpdate');
-        return nextState.inputValue !== this.state.inputValue || nextState.placeResults !== this.state.placeResults ;
+        return nextState.inputValue !== this.state.inputValue || nextState.placeResults !== this.state.placeResults || this.props.reset !== nextProps.reset ;
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps,prevState,snapShot){
+        if(this.props.reset !== prevProps.reset){
+            this.setState({inputValue: '', placeResults: []})
+        }
         console.log('[autoComplete.js] componentDidUpdate');
 
     }

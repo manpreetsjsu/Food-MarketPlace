@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal } from 'semantic-ui-react'
+import { Modal,Loader } from 'semantic-ui-react'
 import SellForm from './sellForm'
 
 
@@ -12,7 +12,7 @@ const SellModal=(props)=> {
                     <Modal.Content image>
                         {/*<Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>*/}
                         <Modal.Description>
-                            {<SellForm />}
+                            {<SellForm {...props}/>}
 
                         </Modal.Description>
                     </Modal.Content>

@@ -25,22 +25,22 @@ export default class CheckboxExampleRemoteControl extends Component {
         })
     };
     componentDidUpdate(prevProps,prevState,prevSnapshot){
+        console.log('[checkBoxFilter.js componentDidUpdate]');
         if(prevProps.resetFilters !== this.props.resetFilters){
-            console.log('[checkBoxFilter.js componentDidUpdate]');
-            if(this.props.resetFilters){
+            console.log('[checkBoxFilter.js componentDidUpdate] resetting filters');
                 this.resetState();
-            }
+
         }
     }
 
     render() {
         return (
             <>
-                <Checkbox name='Fruits' label='Fruits' onChange={this.toggle} checked={this.state.Fruits} toggle />
-                <Checkbox name='Vegetables' label='Vegetables' onChange={this.toggle} checked={this.state.Vegetables} toggle />
-                <Checkbox name='HomeCooked' label='HomeCooked' onChange={this.toggle} checked={this.state.HomeCooked} toggle />
-                <Checkbox name='GreenWaste' label='GreenWaste' onChange={this.toggle} checked={this.state.GreenWaste} toggle />
-                <Checkbox name='Other' label='Other' onChange={this.toggle} checked={this.state.Other} toggle />
+                <Checkbox  disabled={this.props.set_filters_status}  name='Fruits' label='Fruits' onChange={this.toggle} checked={this.state.Fruits} toggle />
+                <Checkbox  disabled={this.props.set_filters_status} name='Vegetables' label='Vegetables' onChange={this.toggle} checked={this.state.Vegetables} toggle />
+                <Checkbox disabled={this.props.set_filters_status}  name='HomeCooked' label='HomeCooked' onChange={this.toggle} checked={this.state.HomeCooked} toggle />
+                <Checkbox  disabled={this.props.set_filters_status} name='GreenWaste' label='GreenWaste' onChange={this.toggle} checked={this.state.GreenWaste} toggle />
+                <Checkbox  disabled={this.props.set_filters_status} name='Other' label='Other' onChange={this.toggle} checked={this.state.Other} toggle />
             </>
         )
     }

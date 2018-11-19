@@ -13,11 +13,10 @@ const CustomLoader = ()=>{
         </>
 };
 const gridColumn = (props)=>{
-
     return(
         <Grid.Column mobile={16} tablet={8} computer={4}>
             <Suspense fallback={<CustomLoader/>}>
-                {<ItemCard click={()=>{}}/>}
+                { !props.isLoading && <ItemCard click={()=>{}}/>}
             </Suspense>
         </Grid.Column>
     )
