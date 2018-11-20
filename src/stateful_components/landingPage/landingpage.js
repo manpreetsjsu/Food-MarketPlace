@@ -1,21 +1,18 @@
 import React , {Component} from 'react';
 import LoginModal from '../loginDisplay/loginModal';
 import GridContainer from '../../stateless_components/Grid/GridLayout'
-import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
+ import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
 import {LoggedInContext} from "../../Context/LoggedInContext";
 import {connect} from "react-redux";
-import { memberLoginMarketPlace,memberLogOut} from "../../Redux/actions/accountLoginAction";
-import {guestLoginMarketPlace,guestLogIn} from "../../Redux/actions/guestLoginAction";
-
+import { memberLoginMarketPlace} from "../../Redux/actions/accountLoginAction";
+import {guestLoginMarketPlace} from "../../Redux/actions/guestLoginAction";
 import {Loader} from 'semantic-ui-react';
 import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
 import RenderGridElements from "../../stateless_components/Grid/RenderGridElements";
 import firebase from "firebase";
-import UserProfilePosts from '../../stateless_components/UserProfile/userProfile';
-
 
 class LandingPage extends Component {
 
@@ -33,9 +30,9 @@ class LandingPage extends Component {
     }
 
     //
-    componentDidMount(){
-        console.log('[landing page] componentDidMount update]');
-    }
+    // componentDidMount(){
+    //     console.log('[landing page] componentDidMount update]');
+    // }
     //
     // componentWillUpdate(){
     //     console.log('[landing page] willComponent update]');
@@ -45,9 +42,9 @@ class LandingPage extends Component {
     //     console.log('[landing page] componentWillUnmount update]');
     // }
     //
-    componentDidUpdate(){
-        console.log('[landing page componentDidUpdate update]');
-    }
+    // componentDidUpdate(){
+    //     console.log('[landing page componentDidUpdate update]');
+    // }
     // componentWillReceiveProps(){
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
@@ -66,7 +63,6 @@ class LandingPage extends Component {
         let landingPageOutput = null;
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
-        let userPostsSection = null ;
 
 
         if( this.props.guestLogin.marketPlace ||  this.props.accountLogin.marketPlace ){
@@ -79,7 +75,7 @@ class LandingPage extends Component {
                     <RenderGridElements location={this.props.marketPlace.location}
                                         reset={this.props.marketPlace.reset}
                                         filterState={this.props.marketPlace.filters}
-
+                                        category='Recent'
                                         set_loading_status={this.props.set_loading_status}/>
                 </GridContainer>
                 </>
@@ -88,26 +84,12 @@ class LandingPage extends Component {
         else if(this.props.guestLogin.newsFeed || this.props.accountLogin.newsFeed ){
             newsFeedSection= (
                 <>
-                <HeaderBar memberLogOut={()=>this.props.memberLogOut}
-                           guestLogIn={this.props.guestLogIn}/>
-
+                <HeaderBar />
                     <SideBar/>
                     <NewsFeed/>
                 </>
             );
         }
-        else if(this.props.accountLogin.status && this.props.accountLogin.showMemberPosts){
-            userPostsSection = (
-                <>
-                    <HeaderBar/>
-                    <SideBar/>
-                    <GridContainer >
-                        <UserProfilePosts set_loading_status={this.props.set_loading_status}/>
-                    </GridContainer>
-                </>
-            )
-        }
-
         else if (!this.props.guestLogin.status || !this.props.accountLogin.status){
              landingPageOutput= (
 
@@ -130,8 +112,6 @@ class LandingPage extends Component {
                 {landingPageOutput}
                 {marketPlacePageSection}
                 {newsFeedSection}
-                {userPostsSection}
-
                 {this.props.marketPlace.isLoading && <Loader size='large' active/>}
                 </LoggedInContext.Provider>
             </Aux>
@@ -151,9 +131,7 @@ const mapStateToProps = (state) => {
             status: state.accountLogin.status,
             newsFeed: state.accountLogin.newsFeed,
             marketPlace: state.accountLogin.marketPlace,
-            userInfo: state.accountLogin.userInfo,
-            showMemberPosts:state.accountLogin.showMemberPosts
-
+            userInfo: state.accountLogin.userInfo
         },
         marketPlace:{
             isLoading:state.marketPlace.isLoading,
@@ -169,10 +147,7 @@ const mapDispatchToProps = dispatch => {
     return {
         guestLoginClickHandler: ()=> {dispatch(guestLoginMarketPlace());},
         firebaseLogin:(userInfo)=>{console.log(userInfo);dispatch(memberLoginMarketPlace(userInfo));},
-        set_loading_status:(flag)=>{dispatch(set_loading_status(flag))},
-        memberLogOut:()=>{dispatch(memberLogOut())},
-        guestLogIn:()=>{dispatch(guestLogIn())}
-
+        set_loading_status:(flag)=>{dispatch(set_loading_status(flag))}
     }
 };
 
