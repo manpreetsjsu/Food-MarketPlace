@@ -178,7 +178,9 @@ class RenderGridElements extends Component {
             let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : 'There are currently no items matching your search criteria.'
+                    ,sortedByIdCollection:new_sortedByIdCollection}
+
             });
         }
         else{
@@ -193,7 +195,9 @@ class RenderGridElements extends Component {
             console.log('new data');
             console.log(new_data);
             let result_data= this.convert2DArrayto1D(new_data);
-            result_data.push(...this.state.data);
+            if(typeof(this.state.data) === "object"){
+                result_data.push(...this.state.data);
+            }
             console.log(result_data);
             this.setState((updatedState)=>{
                 return{...updatedState,isLoading:false,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
@@ -313,7 +317,9 @@ class RenderGridElements extends Component {
         else { // there are no items posted in the searched location, hence display nothing
             this.setState((updatedState)=> {
 
-                return({isLoading:false,data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+                return({isLoading:false,data:'There are currently no items posted in this area. Please check back later.'
+                    ,sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
             });//end setstate
             this.props.set_loading_status(false);
@@ -325,7 +331,8 @@ class RenderGridElements extends Component {
         console.log('[RenderGridElements.js render method]');
         return(
             <>
-                { <p  className='foodTextCategory'>{this.props.category}</p>}
+                {/*{ <p  className='foodTextCategory'></p>}*/}
+
                     { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
             </>
         );

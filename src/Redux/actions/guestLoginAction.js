@@ -12,3 +12,10 @@ export function guestLoginNewsfeed() {
         type: "GUEST_NEWSFEED"
     }
 }
+
+export function guestLogIn() {
+    return{
+        type:"GUEST_SIGNIN_HANDLER"
+    }
+
+}

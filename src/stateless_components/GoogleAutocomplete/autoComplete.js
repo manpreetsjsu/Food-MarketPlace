@@ -237,12 +237,12 @@ export default class GooglePlaceSearchInput extends React.Component {
             <div className={'searchInputContainer'}>
 
                 <input
-
+                    disabled={this.props.filters_status}
                     value={this.state.inputValue}
                     onChange={this._onChange}
                     className={classNames(['searchInput', this.props.inputClassName])}
                     onKeyDown={this._handleInputKeyDown}
-                    placeholder='Location'
+                    placeholder="Location"
                 />
             </div>
             {/*<div className={classNames(['poweredByGoogle', this.props.resultClassName])}><img src={this.poweredImage} /></div>*/}

@@ -6,7 +6,7 @@ import {LoggedInContext} from "../../Context/LoggedInContext";
 import AutoComplete from '../GoogleAutocomplete/autoComplete';
 import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 import {connect} from "react-redux";
-import { memeberNewsfeed,memberMarketPlaceSwitch} from "../../Redux/actions/accountLoginAction";
+import {memeberNewsfeed, memberMarketPlaceSwitch, showMemberPosts} from "../../Redux/actions/accountLoginAction";
 import {guestLoginMarketPlace, guestLoginNewsfeed} from "../../Redux/actions/guestLoginAction";
 import {
     marketPlace_RESET,
@@ -14,7 +14,6 @@ import {
     set_location,
     set_filters_status
 } from "../../Redux/actions/marketPlaceAction";
-import {download_My_Post_Data} from "../../firebase/firebase_backend";
 
 
 const SideBar = (props) =>{
@@ -26,8 +25,23 @@ const SideBar = (props) =>{
         padding:'5px',
         margin:'5px',
     };
-    console.log('props');
+    console.log('props in sidebar');
     console.log(props);
+
+    let marketPlace_highlight=false;
+    let myPost_hightlight = false;
+    let newsfeed_highlight = false;
+
+        if( props.guestLogin.marketPlace || props.accountLogin.marketPlace){
+            marketPlace_highlight=true;
+        }
+        else if(props.guestLogin.newsFeed || props.accountLogin.newsFeed){
+            newsfeed_highlight=true;
+        }
+        else if(props.accountLogin.showMemberPosts){
+            myPost_hightlight=true;
+        }
+
 
 
     return (
@@ -35,29 +49,32 @@ const SideBar = (props) =>{
             {loggedInMemberInfo => (
                 <div style={style} className='media-display'>
                      <List >
-                        <List.Item as='a' className='spacingBetweenItems'>
+                        <List.Item as='a' className='spacingBetwems'>
+
                             <Label onClick={ props.guestLogin.status ? props.guestMarketPlaceClickHandler : props.memberMarketPlaceClickHandler}  horizontal>
                                 <Icon link size='huge' name='chess'/>
-                                <p style={{fontSize:'20px'}}>Marketplace</p>
+                                <p style={{fontSize:"20px"}} className={marketPlace_highlight ? "marketPlaceHighLight": ""}>Marketplace</p>
                             </Label>
                         </List.Item>
 
                         <List.Item as='a' className='spacingBetweenItems'>
-                            <Label onClick={()=>download_My_Post_Data()} size='huge' horizontal>
+                            <Label className={ myPost_hightlight ? "labelHighLight": ""} onClick={props.myPostsClickHandler} size='huge' horizontal>
+
                                 My Posts
                             </Label>
                         </List.Item>
 
 
                         <List.Item  as='a' className='spacingBetweenItems'>
-                            <Label onClick={props.guestLogin.status ? props.guestNewsFeedClickHandler : props.memberNewsFeedClickHandler} size='huge' horizontal>
+                            <Label className={newsfeed_highlight ? "labelHighLight" : ""} onClick={props.guestLogin.status ? props.guestNewsFeedClickHandler : props.memberNewsFeedClickHandler} size='huge' horizontal>
+
                                 News Feed
                             </Label>
                         </List.Item>
 
                         <List.Item className='spacingBetweenItems'>
-                            { loggedInMemberInfo.status ?
-                                <SellModal>
+                            { !props.guestLogin.status ?
+                                <SellModal redirectToMyPosts={props.myPostsClickHandler}>
                                     <Button
                                         name='sellItem'
                                         color='blue'>
@@ -65,8 +82,10 @@ const SideBar = (props) =>{
                                         Sell Something
                                     </Button>
                                 </SellModal> :
-                                <SellModal >
+                                <SellModal redirectToMyPosts={props.myPostsClickHandler}>
+
                                     <Button
+                                        disabled
                                         name='sellItem'
                                         color='blue'>
                                         <Icon name='plus'/>
@@ -78,7 +97,10 @@ const SideBar = (props) =>{
                          <List.Item className='spacingBetweenItems'>
                              <div style={{border:'1px solid lightGrey'}}/>
                              <p style={{fontSize:'20px',margin:'0px'}}>Filter By</p>
-                             <CheckBoxFilter filterState={props.filterState} resetFilters={props.marketPlace.reset}/>
+                             <CheckBoxFilter filterState={props.filterState}
+                                             resetFilters={props.marketPlace.reset}
+                                             filters_status={props.marketPlace.disableFilters}   />
+
                          </List.Item>
 
                         <List.Item className='spacingBetweenItems'>
@@ -88,7 +110,9 @@ const SideBar = (props) =>{
                             {/*<Input size='mini' icon='location arrow' placeholder='Your Location'/>*/}
                             <AutoComplete onPlaceSelected={props.filterByLocation}
                                           inputClassName='locationInput'
-                                           reset={props.marketPlace.reset}/>
+                                           reset={props.marketPlace.reset}
+                                          filters_status={props.marketPlace.disableFilters}/>
+
                         </List.Item>
 
                      </List>
@@ -101,40 +125,77 @@ const SideBar = (props) =>{
 // take this action on cikcing marketplace icon when user is logged as guest
 //take this action on clicking when user is logged in as member
 
-function marketPlaceClickMarketPlace() {
-    console.log('clicked');
+function marketPlaceCLickHandlerDispatcher() {
+    console.log('clicked marketPlace Dispatcher');
     return function(dispatch,getState) {
-        if(getState().guestLogin.status && getState().guestLogin.newsFeed){
+        if(getState().guestLogin.status && getState().guestLogin.newsFeed ){ // this if condition avoid extra re-rendering - optimization
             dispatch(guestLoginMarketPlace());
         }
-        else if(getState().accountLogin.status && getState().accountLogin.newsFeed){
+        else if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.showMemberPosts)){ // avoid extra-re-rendering - optimization
             dispatch(memberMarketPlaceSwitch());
         }
+        if(getState().marketPlace.disableFilters){ //avoid extra-re-rendering - optimization
+            //if marketplace filters were disabled,then enable
+            //@marketplace enable filters
+            dispatch(set_filters_status(false));
+        }
+        //always reset the market place for fetching posts and resetting everything back
         dispatch(marketPlace_RESET());
+
+
     };
 };
 
-// function newsFeedClicHandler() {
-//     console.log('clicked');
-//     return function(dispatch,getState) {
-//         if(getState().guestLogin.status && getState().guestLogin.newsFeed){
-//             dispatch(guestLoginMarketPlace());
-//         }
-//         else if(getState().accountLogin.status && getState().accountLogin.newsFeed){
-//             dispatch(memberMarketPlaceSwitch());
-//         }
-//         dispatch(marketPlace_RESET());
-//     };
-// };
+function newsFeedClickHandlerDispatcher() {
+    console.log('clicked newsFeed Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().guestLogin.status && getState().guestLogin.marketPlace){
+            dispatch(guestLoginNewsfeed());
+        }
+        else if( getState().accountLogin.marketPlace || getState().accountLogin.showMemberPosts){
+            dispatch(memeberNewsfeed())
+        }
+        if(!getState().marketPlace.disableFilters){
+            // @news feed filters should be disabled = true
+            dispatch(set_filters_status(true));
+        }
+
+    };
+};
+
+function myPostsClickHandlerDispatcher() {
+    console.log('clicked myPosts Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.marketPlace)){
+            dispatch(showMemberPosts());
+        }
+        if(!getState().marketPlace.disableFilters && getState().accountLogin.status){
+            // @my posts section - filters should be disabled i.disabled=true
+            dispatch(set_filters_status(true));
+        }
+
+    };
+};
+
 
 const mapStateToProps = (state) => {
     return {
         guestLogin:{
             status : state.guestLogin.status,
-            marketPlace:state.guestLogin.marketPlace
+            marketPlace:state.guestLogin.marketPlace,
+            newsFeed:state.guestLogin.newsFeed
+        },
+        accountLogin:{
+            showMemberPosts:state.accountLogin.showMemberPosts,
+            newsFeed: state.accountLogin.newsFeed,
+            marketPlace:state.accountLogin.marketPlace
         },
         marketPlace:{
             reset:state.marketPlace.reset,
+            disableFilters:state.marketPlace.disableFilters,
+            filters:state.marketPlace.filters,
+
+
         }
 
     };
@@ -142,13 +203,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        guestMarketPlaceClickHandler :()=>{dispatch(marketPlaceClickMarketPlace())},
-        guestNewsFeedClickHandler:()=>{dispatch(guestLoginNewsfeed())},
-        memberMarketPlaceClickHandler:()=>{dispatch(marketPlaceClickMarketPlace())},
-        memberNewsFeedClickHandler:()=>{dispatch(memeberNewsfeed())},
+        guestMarketPlaceClickHandler :()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
+        guestNewsFeedClickHandler:()=>{dispatch(newsFeedClickHandlerDispatcher())},
+        memberMarketPlaceClickHandler:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
+        memberNewsFeedClickHandler:()=>{dispatch(newsFeedClickHandlerDispatcher())},
         filterState:(filters)=>{dispatch(change_filters_state(filters));},
         filterByLocation:(location)=>{dispatch(set_location(location));},
-        set_filters_status:(flag)=>{dispatch(set_filters_status(flag));},
+        myPostsClickHandler:()=>{dispatch(myPostsClickHandlerDispatcher());}
+
     }
 };
 
