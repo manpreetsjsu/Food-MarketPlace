@@ -4,7 +4,7 @@ const initialState =  {
     email:'',
     newsFeed: false,
     marketPlace: false,
-    filters_disabled:false
+    showMemberPosts:false
 };
 
 const accountLoginReducer = (state = initialState, action) => {
@@ -22,14 +22,34 @@ const accountLoginReducer = (state = initialState, action) => {
             state = {
                 ...state,
                 marketPlace:false,
-                newsFeed:true
+                newsFeed:true,
+                showMemberPosts:false
             };
             break;
         case "MEMBER_MARKETPLACE_SWITCH":
             state={
                 ...state,
                 marketPlace:true,
-                newsFeed:false
+                newsFeed:false,
+                showMemberPosts:false
+            };
+            break;
+        case "SHOW_MEMBER_POSTS":
+            state={
+                ...state,
+                newsFeed:false,
+                marketPlace:false,
+                showMemberPosts:true
+            };
+            break;
+        case "MEMBER_LOGOUT_HANDLER":
+            state={
+                status: false,
+                userInfo:'',
+                email:'',
+                newsFeed: false,
+                marketPlace: false,
+                showMemberPosts:false
             };
             break;
         default:

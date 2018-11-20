@@ -18,3 +18,15 @@ export function memeberNewsfeed() {
         type:'MEMBER_NEWSFEED'
     }
 }
+
+export function showMemberPosts() {
+    return{
+        type:'SHOW_MEMBER_POSTS'
+    }
+}
+
+export function memberLogOut(){
+    return{
+        type:"MEMBER_LOGOUT_HANDLER"
+    }
+}
