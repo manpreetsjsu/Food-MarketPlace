@@ -180,8 +180,7 @@ import firebase from "firebase";
 
     export const appendIDToPost=(docRef)=>{
         let db = firebase.firestore();
-        return db.collection("posts").doc(docRef.id).update({
-
+        db.collection("posts").doc(docRef.id).update({
             post_id: docRef.id
         }).catch(err => console.log('unable to update post id in posted item', err));
     };
@@ -284,37 +283,32 @@ import firebase from "firebase";
 
     };
 
-    export const download_My_Post_Data=(uid,success_callback,fail_callback)=>{
-        let db = firebase.firestore();
-        let all_myposts=[];
-        let post_id=[];
-
+    export const download_My_Post_Data=()=>{
+        var db = firebase.firestore();
+        var user = firebase.auth().currentUser;
+        var all_myposts=[];
+        var post_id=[];
+        console.log(user);
+        if (user) {
+            var  uid = user.uid;
             db.collection("userData").doc(uid).get().then(function(doc) {
                 if (doc.exists) {
                     //console.log("Document data:", doc.data());
                     all_myposts.push(doc.data());
                     post_id=all_myposts[0].post_location;
                     // console.log("My posts: " +post_id);
-                    let all_my_prev_posts=[];
-                    for(let i= 0; i<post_id.length; i++){
-                         db.collection("posts").doc(post_id[i]).get().then(function(doc) {
+                    var all_my_prev_posts=[];
+                    for(var i= 0; i<post_id.length; i++){
+                        db.collection("posts").doc(post_id[i]).get().then(function(doc) {
                             if (doc.exists) {
                                 //  console.log("posts data:", doc.data());
                                 all_my_prev_posts.push(doc.data());
-                                if(i === post_id.length-1){
-                                    //only want to setState with updated result when the loop is going to exit..
-                                    success_callback(all_my_prev_posts);
-                                }
                             } else {
                                 // doc.data() will be undefined in this case
-                                success_callback(all_my_prev_posts);
                                 console.log("No such document!");
                             }
-
                         }).catch(function(error) {
                             console.log("Error getting document:", error);
-                            fail_callback();
-
                         });
                     }
                     console.log("here are all posts form me signed in user!! below");
@@ -322,13 +316,15 @@ import firebase from "firebase";
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
-                    return [];
                 }
             }).catch(function(error) {
                 console.log("Error getting document:", error);
-                fail_callback();
             });
-
+        } else {
+            // No user is signed in.
+            console.log("No user is signed in.");
+        }
+        return all_myposts;
 
     };
 
