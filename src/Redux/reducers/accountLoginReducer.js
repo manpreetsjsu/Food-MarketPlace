@@ -5,6 +5,7 @@ const initialState =  {
     newsFeed: false,
     marketPlace: false,
     showMemberPosts:false
+
 };
 
 const accountLoginReducer = (state = initialState, action) => {
@@ -24,6 +25,7 @@ const accountLoginReducer = (state = initialState, action) => {
                 marketPlace:false,
                 newsFeed:true,
                 showMemberPosts:false
+
             };
             break;
         case "MEMBER_MARKETPLACE_SWITCH":
@@ -50,6 +52,7 @@ const accountLoginReducer = (state = initialState, action) => {
                 newsFeed: false,
                 marketPlace: false,
                 showMemberPosts:false
+
             };
             break;
         default:

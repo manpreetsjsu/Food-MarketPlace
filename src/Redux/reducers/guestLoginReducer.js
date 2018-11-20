@@ -31,6 +31,7 @@ const guestLoginReducer = (state = initialState, action) => {
                 filters_disabled:false
             };
             break;
+
         default:
             return state;
     }

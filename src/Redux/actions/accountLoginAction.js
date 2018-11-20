@@ -29,4 +29,5 @@ export function memberLogOut(){
     return{
         type:"MEMBER_LOGOUT_HANDLER"
     }
+
 }

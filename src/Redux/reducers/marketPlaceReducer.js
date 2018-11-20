@@ -2,6 +2,7 @@ const initialState =  {
     isLoading:false,
     reset:false,
     disableFilters:false,
+
     location:'',
     filters:{
         Fruits: true,
@@ -51,6 +52,7 @@ const marketPlaceReducer = (state = initialState, action) => {
             state={
                 ...state,
                 disableFilters:action.payload
+
             };
             break;
         default:

@@ -8,6 +8,7 @@ import store from './Redux/ReduxStore';
 import {Provider} from 'react-redux';
 import fire from './firebase/fire'; // this is required to initialize firbase app
 
+
 ReactDOM.render(<Provider store={store}>
         <App /></Provider>,
     document.getElementById('root'));

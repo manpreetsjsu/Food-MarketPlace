@@ -41,6 +41,7 @@ const DisplayItems=(props)=>{
                     </ItemGridRow>
                 );
 
+
             }
             return itemsInRow;
         }

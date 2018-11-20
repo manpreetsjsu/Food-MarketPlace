@@ -9,11 +9,13 @@ import {LoggedInContext} from "../../Context/LoggedInContext";
 import {connect} from "react-redux";
 import { memberLoginMarketPlace,memberLogOut} from "../../Redux/actions/accountLoginAction";
 import {guestLoginMarketPlace,guestLogIn} from "../../Redux/actions/guestLoginAction";
+
 import {Loader} from 'semantic-ui-react';
 import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
 import RenderGridElements from "../../stateless_components/Grid/RenderGridElements";
 import firebase from "firebase";
 import UserProfilePosts from '../../stateless_components/UserProfile/userProfile';
+
 
 class LandingPage extends Component {
 
@@ -66,6 +68,7 @@ class LandingPage extends Component {
         let marketPlacePageSection= null ;
         let userPostsSection = null ;
 
+
         if( this.props.guestLogin.marketPlace ||  this.props.accountLogin.marketPlace ){
             marketPlacePageSection = (
 
@@ -76,6 +79,7 @@ class LandingPage extends Component {
                     <RenderGridElements location={this.props.marketPlace.location}
                                         reset={this.props.marketPlace.reset}
                                         filterState={this.props.marketPlace.filters}
+
                                         set_loading_status={this.props.set_loading_status}/>
                 </GridContainer>
                 </>
@@ -86,6 +90,7 @@ class LandingPage extends Component {
                 <>
                 <HeaderBar memberLogOut={()=>this.props.memberLogOut}
                            guestLogIn={this.props.guestLogIn}/>
+
                     <SideBar/>
                     <NewsFeed/>
                 </>
@@ -102,6 +107,7 @@ class LandingPage extends Component {
                 </>
             )
         }
+
         else if (!this.props.guestLogin.status || !this.props.accountLogin.status){
              landingPageOutput= (
 
@@ -125,6 +131,7 @@ class LandingPage extends Component {
                 {marketPlacePageSection}
                 {newsFeedSection}
                 {userPostsSection}
+
                 {this.props.marketPlace.isLoading && <Loader size='large' active/>}
                 </LoggedInContext.Provider>
             </Aux>
@@ -146,6 +153,7 @@ const mapStateToProps = (state) => {
             marketPlace: state.accountLogin.marketPlace,
             userInfo: state.accountLogin.userInfo,
             showMemberPosts:state.accountLogin.showMemberPosts
+
         },
         marketPlace:{
             isLoading:state.marketPlace.isLoading,
@@ -164,6 +172,7 @@ const mapDispatchToProps = dispatch => {
         set_loading_status:(flag)=>{dispatch(set_loading_status(flag))},
         memberLogOut:()=>{dispatch(memberLogOut())},
         guestLogIn:()=>{dispatch(guestLogIn())}
+
     }
 };
 

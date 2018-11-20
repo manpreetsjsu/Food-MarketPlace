@@ -41,6 +41,7 @@ export default class CheckboxExampleRemoteControl extends Component {
                 <Checkbox disabled={this.props.filters_status}  name='HomeCooked' label='HomeCooked' onChange={this.toggle} checked={this.state.HomeCooked} toggle />
                 <Checkbox  disabled={this.props.filters_status} name='GreenWaste' label='GreenWaste' onChange={this.toggle} checked={this.state.GreenWaste} toggle />
                 <Checkbox  disabled={this.props.filters_status} name='Other' label='Other' onChange={this.toggle} checked={this.state.Other} toggle />
+
             </>
         )
     }

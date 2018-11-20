@@ -180,6 +180,7 @@ class RenderGridElements extends Component {
             this.setState((updatedState)=>{
                 return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : 'There are currently no items matching your search criteria.'
                     ,sortedByIdCollection:new_sortedByIdCollection}
+
             });
         }
         else{
@@ -318,6 +319,7 @@ class RenderGridElements extends Component {
 
                 return({isLoading:false,data:'There are currently no items posted in this area. Please check back later.'
                     ,sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
             });//end setstate
             this.props.set_loading_status(false);
@@ -330,6 +332,7 @@ class RenderGridElements extends Component {
         return(
             <>
                 {/*{ <p  className='foodTextCategory'></p>}*/}
+
                     { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
             </>
         );

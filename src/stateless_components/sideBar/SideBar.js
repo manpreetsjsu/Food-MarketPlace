@@ -15,6 +15,7 @@ import {
     set_filters_status
 } from "../../Redux/actions/marketPlaceAction";
 
+
 const SideBar = (props) =>{
     const style={
         position:'absolute',
@@ -42,12 +43,14 @@ const SideBar = (props) =>{
         }
 
 
+
     return (
         <LoggedInContext.Consumer>
             {loggedInMemberInfo => (
                 <div style={style} className='media-display'>
                      <List >
                         <List.Item as='a' className='spacingBetwems'>
+
                             <Label onClick={ props.guestLogin.status ? props.guestMarketPlaceClickHandler : props.memberMarketPlaceClickHandler}  horizontal>
                                 <Icon link size='huge' name='chess'/>
                                 <p style={{fontSize:"20px"}} className={marketPlace_highlight ? "marketPlaceHighLight": ""}>Marketplace</p>
@@ -56,6 +59,7 @@ const SideBar = (props) =>{
 
                         <List.Item as='a' className='spacingBetweenItems'>
                             <Label className={ myPost_hightlight ? "labelHighLight": ""} onClick={props.myPostsClickHandler} size='huge' horizontal>
+
                                 My Posts
                             </Label>
                         </List.Item>
@@ -63,6 +67,7 @@ const SideBar = (props) =>{
 
                         <List.Item  as='a' className='spacingBetweenItems'>
                             <Label className={newsfeed_highlight ? "labelHighLight" : ""} onClick={props.guestLogin.status ? props.guestNewsFeedClickHandler : props.memberNewsFeedClickHandler} size='huge' horizontal>
+
                                 News Feed
                             </Label>
                         </List.Item>
@@ -78,6 +83,7 @@ const SideBar = (props) =>{
                                     </Button>
                                 </SellModal> :
                                 <SellModal redirectToMyPosts={props.myPostsClickHandler}>
+
                                     <Button
                                         disabled
                                         name='sellItem'
@@ -94,6 +100,7 @@ const SideBar = (props) =>{
                              <CheckBoxFilter filterState={props.filterState}
                                              resetFilters={props.marketPlace.reset}
                                              filters_status={props.marketPlace.disableFilters}   />
+
                          </List.Item>
 
                         <List.Item className='spacingBetweenItems'>
@@ -105,6 +112,7 @@ const SideBar = (props) =>{
                                           inputClassName='locationInput'
                                            reset={props.marketPlace.reset}
                                           filters_status={props.marketPlace.disableFilters}/>
+
                         </List.Item>
 
                      </List>
@@ -169,6 +177,7 @@ function myPostsClickHandlerDispatcher() {
     };
 };
 
+
 const mapStateToProps = (state) => {
     return {
         guestLogin:{
@@ -186,6 +195,7 @@ const mapStateToProps = (state) => {
             disableFilters:state.marketPlace.disableFilters,
             filters:state.marketPlace.filters,
 
+
         }
 
     };
@@ -200,6 +210,7 @@ const mapDispatchToProps = dispatch => {
         filterState:(filters)=>{dispatch(change_filters_state(filters));},
         filterByLocation:(location)=>{dispatch(set_location(location));},
         myPostsClickHandler:()=>{dispatch(myPostsClickHandlerDispatcher());}
+
     }
 };
 

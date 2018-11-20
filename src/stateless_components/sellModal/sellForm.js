@@ -123,6 +123,7 @@ class SellForm extends Component{
         }
 
 
+
     };
 
 
@@ -216,6 +217,7 @@ class SellForm extends Component{
                     </Form.Field>
 
                     <Form.Field>
+
                         <FileInput appendImageToArray={this.handleImageUpload}/>
                     </Form.Field>
 
@@ -255,6 +257,7 @@ class SellForm extends Component{
                 </Form.Field>
             )
         }
+
         return(
                 <Form>
                     {form}

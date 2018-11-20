@@ -181,6 +181,7 @@ import firebase from "firebase";
     export const appendIDToPost=(docRef)=>{
         let db = firebase.firestore();
         return db.collection("posts").doc(docRef.id).update({
+
             post_id: docRef.id
         }).catch(err => console.log('unable to update post id in posted item', err));
     };
@@ -287,6 +288,7 @@ import firebase from "firebase";
         let db = firebase.firestore();
         let all_myposts=[];
         let post_id=[];
+
             db.collection("userData").doc(uid).get().then(function(doc) {
                 if (doc.exists) {
                     //console.log("Document data:", doc.data());
@@ -312,6 +314,7 @@ import firebase from "firebase";
                         }).catch(function(error) {
                             console.log("Error getting document:", error);
                             fail_callback();
+
                         });
                     }
                     console.log("here are all posts form me signed in user!! below");
@@ -325,6 +328,7 @@ import firebase from "firebase";
                 console.log("Error getting document:", error);
                 fail_callback();
             });
+
 
     };
 
