@@ -175,6 +175,9 @@ import firebase from "firebase";
             description: state.description,
             freshness: state.freshness,
             images: downloadURL,
+            contact:state.contact,
+            amount:state.amount,
+            timestamp:Date.now()
         })
 };
 

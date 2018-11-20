@@ -52,16 +52,8 @@ class LandingPage extends Component {
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
 
-    checkUserAlreadyLoggedIn=()=>{
-        let user = firebase.auth().currentUser;
-        if(user){
-            this.props.firebaseLogin(user);
-        }
-        else{
-            this.props.guestLoginClickHandler();
-        }
+   
 
-    };
     render() {
         console.log('render method of landing page');
         console.log(this.props);
@@ -121,7 +113,7 @@ class LandingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-                    { <LoginModal guestLogin={this.checkUserAlreadyLoggedIn} userLogin={this.props.firebaseLogin}/> }
+                    { <LoginModal guestLogin={ this.props.guestLoginClickHandler} userLogin={this.props.firebaseLogin}/> }
                 </>
             );
         }

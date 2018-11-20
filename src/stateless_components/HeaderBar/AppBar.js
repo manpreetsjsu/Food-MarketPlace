@@ -16,18 +16,21 @@ class AppBar extends Component {
     handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
     logout=()=>{
-        let user= firebase.auth().currentUser;
+
         let that = this ;
-        if(user){
-            firebase.auth().signOut().then(function() {
-                // Sign-out successful.
-                console.log("sign out success");
-                that.props.memberLogOut();
-            }).catch(function(error) {
-                // An error happened.
-                console.log("sign out fail");
-                console.log(error);
-            });
+        if(this.props.accountLogin.status){
+            let user= firebase.auth().currentUser;
+            if(user){
+                firebase.auth().signOut().then(function() {
+                    // Sign-out successful.
+                    console.log("sign out success");
+                    that.props.memberLogOut();
+                }).catch(function(error) {
+                    // An error happened.
+                    console.log("sign out fail");
+                    console.log(error);
+                });
+            }
         }
         else{
             console.log("redirect user to login");
@@ -72,6 +75,13 @@ class AppBar extends Component {
     }
 }
 
+const mapPropsToState=(state)=>{
+    return{
+        accountLogin: {
+            status: state.accountLogin.status
+        }
+    }
+};
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -80,4 +90,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect( '', mapDispatchToProps)(AppBar);
+export default connect( mapPropsToState, mapDispatchToProps)(AppBar);

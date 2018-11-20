@@ -22,18 +22,9 @@ class LoginModal extends Component {
         }
     };
 
-    checkUserAlreadyLoggedIn=()=>{
-        console.log("checking if user is already signed in");
-        let user = firebase.auth().currentUser;
-        console.log(user);
-        if(user){
-            this.props.firebaseLogin(user);
-        }
 
-    };
 
     render() {
-        this.checkUserAlreadyLoggedIn();
         return(
                 <div id='form'>
                     <Header as='h2' style={{color: "white"}} textAlign='center'>
