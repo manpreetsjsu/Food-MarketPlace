@@ -2,15 +2,38 @@ import React, { Component } from 'react'
 import { Icon, Menu,Button } from 'semantic-ui-react'
 import {LoggedInContext} from '../../Context/LoggedInContext';
 import firebase from "firebase";
-import fire from '../../firebase/fire';
-export default class AppBar extends Component {
-
-    state = { activeItem: 'gamepad' }
-
+import {guestLogIn} from "../../Redux/actions/guestLoginAction";
+import {memberLogOut} from "../../Redux/actions/accountLoginAction";
+import connect from "react-redux/es/connect/connect";
 
 
-    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+class AppBar extends Component {
 
+    state = { activeItem: 'gamepad' };
+
+
+
+    handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
+    logout=()=>{
+        let user= firebase.auth().currentUser;
+        let that = this ;
+        if(user){
+            firebase.auth().signOut().then(function() {
+                // Sign-out successful.
+                console.log("sign out success");
+                that.props.memberLogOut();
+            }).catch(function(error) {
+                // An error happened.
+                console.log("sign out fail");
+                console.log(error);
+            });
+        }
+        else{
+            console.log("redirect user to login");
+            this.props.guestLogIn();
+        }
+    };
     render() {
         const { activeItem } = this.state;
         console.log('render of appbar');
@@ -30,14 +53,14 @@ export default class AppBar extends Component {
                             </Menu.Item>
 
                             <Menu.Item
-                                name={userLoginInfo.status ? userLoginInfo.userInfo.displayName : 'Welcome Guest'}
+                                name={userLoginInfo.status ? userLoginInfo.userInfo.displayName : 'Welcome As Guest'}
                                 active={activeItem === ''}
                                 onClick={this.handleItemClick} />
 
 
                             <Menu.Menu position='right'>
                                 <Menu.Item>
-                                    <Button primary> {userLoginInfo.status ? 'Logout' : 'Sign In'} </Button>
+                                    <Button onClick={this.logout} primary> {userLoginInfo.status ? 'Logout' : 'Sign In'} </Button>
                                 </Menu.Item>
                             </Menu.Menu>
 
@@ -48,3 +71,13 @@ export default class AppBar extends Component {
         )
     }
 }
+
+
+const mapDispatchToProps = dispatch => {
+    return {
+        memberLogOut:()=>{dispatch(memberLogOut())},
+        guestLogIn:()=>{dispatch(guestLogIn())}
+    }
+};
+
+export default connect( '', mapDispatchToProps)(AppBar);

@@ -23,6 +23,15 @@ const guestLoginReducer = (state = initialState, action) => {
                 filters_disabled:true
             };
             break;
+        case "GUEST_SIGNIN_HANDLER":
+            state={
+                status : false,
+                newsFeed: false,
+                marketPlace: false,
+                filters_disabled:false
+            };
+            break;
+
         default:
             return state;
     }

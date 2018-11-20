@@ -37,7 +37,6 @@ class SellForm extends Component{
     constructor(props){
         super(props);
         this.state={
-            postID: '',
             title: '',
             description:'',
             category:'',
@@ -46,10 +45,8 @@ class SellForm extends Component{
             freshness: '',
             contact: '',
             location: '',
-            post_location:'',
             timestamp: '',
             images: [],
-            photo:[],
 
             submissionComplete:false,
             clickedPostButton:false,
@@ -75,24 +72,63 @@ class SellForm extends Component{
     };
 
 
+    validateForm=()=>{
+        if(this.state.images.length === 0 ){
+            return false;
+        }
+        if(this.state.location === ""){
+            return false;
+        }
+        if(this.state.title.length < 7){
+            return false;
+        }
+        if(this.state.category === ""){
+            return false;
+        }
+        if(this.state.price === "" ){
+            return false;
+        }
+        if(this.state.contact === ""){
+            return false;
+        }
+        return true;
+    };
+
+
     postButtonClickHandler=()=> {
         // this.setState({isPostSubmitted:true},()=>{
         //     postButtonClickHandler(this.state);
         // });
-        this.setState({clickedPostButton: true},
-            () => {
-                uploadFile(this.state).then((url) => url)
-                    .then((url) => postDataToFirebase(this.state, url))
-                    .then((docRef) => {console.log(docRef);appendIDToPost(docRef);return docRef})
-                    .then((docRef) => {querySaveCategories(this.state.category, docRef);return docRef})
-                    .then((docRef) => savePostInUserData(docRef))
-                    .then(() => {
-                        this.setState({submissionComplete: true})
-                    })
-                    .catch(err =>{
-                        this.setState({errorInSubmission:true})
-                    });
-            });
+
+        if(this.validateForm()){
+            this.setState({clickedPostButton: true},
+                () => {
+                    // uploadFile(this.state).then((url) => url)
+                    //     .then((url) => postDataToFirebase(this.state, url))
+                    //     .then((docRef) => {console.log(docRef);appendIDToPost(docRef);return docRef})
+                    //     .then((docRef) => {querySaveCategories(this.state.category, docRef);return docRef})
+                    //     .then((docRef) => savePostInUserData(docRef))
+                    //     .then(() => {
+                    //         this.setState({submissionComplete: true})
+                    //     })
+                    //     .catch(err =>{
+                    //         this.setState({errorInSubmission:true,clickedPostButton:false})
+                    //     });
+
+                    uploadFile(this.state).then(url=>url)
+                        .then(url=>postDataToFirebase(this.state,url))
+                        .then(docRef=>{
+                            return Promise.all([
+                                appendIDToPost(docRef),
+                                querySaveCategories(this.state.category,docRef),
+                                savePostInUserData(docRef)
+                            ])
+                        }).then(()=>this.setState({submissionComplete: true}))
+                        .catch(()=>this.setState({errorInSubmission:true,clickedPostButton:false}))
+                });
+        }
+
+
 
     };
 
@@ -127,7 +163,11 @@ class SellForm extends Component{
     }
 
     componentDidUpdate(prevProps){
-        console.log('[sellform.js] componentDidUpdate')
+        console.log('[sellform.js] componentDidUpdate');
+        if(this.state.submissionComplete){
+            //redirect user to @ my Posts Section
+            this.props.redirectToMyPosts();
+        }
     }
 
     componentWillUnmount(){
@@ -170,7 +210,14 @@ class SellForm extends Component{
                     </Form.Field>
 
                     <Form.Field>
-                        <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                        <input
+                            placeholder='Contact Me Here'
+                            name="contact"
+                            onChange={this.saveInfo}/>
+                    </Form.Field>
+
+                    <Form.Field>
+                        <textarea rows="4" cols="50" name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
                     </Form.Field>
 
                     <Form.Field>
@@ -178,6 +225,7 @@ class SellForm extends Component{
                     </Form.Field>
 
                     <Form.Field>
+
                         <FileInput appendImageToArray={this.handleImageUpload}/>
                     </Form.Field>
 
@@ -209,6 +257,15 @@ class SellForm extends Component{
         else if(this.state.submissionComplete){
             form= (<PostSubmissionForm/>)
         }
+
+        else if(this.state.errorInSubmission){
+            form=(
+                <Form.Field>
+                    <h3>There was error while submitting your request. Please try again!</h3>
+                </Form.Field>
+            )
+        }
+
         return(
                 <Form>
                     {form}
