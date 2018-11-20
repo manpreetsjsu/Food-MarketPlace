@@ -16,7 +16,7 @@ const gridColumn = (props)=>{
     return(
         <Grid.Column mobile={16} tablet={8} computer={4}>
             <Suspense fallback={<CustomLoader/>}>
-                { !props.isLoading && <ItemCard click={()=>{}}/>}
+                { !props.isLoading && <ItemCard showEditDeleteButton={props.showEditDeleteButton}/>}
             </Suspense>
         </Grid.Column>
     )

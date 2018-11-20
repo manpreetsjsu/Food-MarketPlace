@@ -1,0 +1,10 @@
+.positionEdit{
+    position: absolute;
+    left: 65%;
+    z-index: 100;
+}
+.positionDelete{
+    position: absolute;
+    left:80%;
+    z-index: 100;
+}

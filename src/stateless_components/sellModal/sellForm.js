@@ -168,6 +168,7 @@ class SellForm extends Component{
 
     render(){
         console.log('render of sellForm');
+        console.log(this.state);
         let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>)
         let form = null;
         if(!this.state.clickedPostButton){
@@ -192,7 +193,7 @@ class SellForm extends Component{
                     </Form.Field>
 
                     <Form.Field>
-                        <Input labelPosition='right'
+                        <Input labelPosition='left'
                                type='text'
                                placeholder='Amount'
                         >

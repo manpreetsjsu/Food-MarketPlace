@@ -33,7 +33,8 @@ const DisplayItems=(props)=>{
                                         <ItemGridColumn
                                             isLoading={props.isLoading}
                                             key={item.post_id}
-                                            item={item}/>
+                                            item={item}
+                                             showEditDeleteButton={props.showEditDeleteButton}/>
                                     </FoodItemContext.Provider>
                                 )
                             })

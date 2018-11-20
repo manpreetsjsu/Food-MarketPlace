@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import DisplayItems from '../Grid/displayItems';
 import {download_My_Post_Data} from "../../firebase/firebase_backend";
 import firebase from "firebase";
-
+import  './userProfile.css';
 
 class UserProfilePosts extends Component {
 
@@ -69,7 +69,8 @@ class UserProfilePosts extends Component {
         console.log('[UserProfile.js render method]');
         return(
             <>
-                { <DisplayItems data={this.state.data}/>}
+                { <p  className='userPostText'>Your Posts</p>}
+                { <DisplayItems data={this.state.data} showEditDeleteButton={true}/>}
             </>
         );
     }
