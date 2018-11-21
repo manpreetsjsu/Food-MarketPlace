@@ -7,7 +7,7 @@ const PreviewUploadedImages=(props)=> {
         props.deleteUploadedImage(event.target.id);
 
     };
-
+    console.log(props);
     return(
             props.images.map((img,index)=>{
                 return(
