@@ -36,16 +36,17 @@ const PostSubmissionForm=(props)=>{
 class SellForm extends Component{
     constructor(props){
         super(props);
+        console.log(props);
         this.state={
-            title: '',
-            description:'',
-            category:'',
-            price: '',
-            amount: '',
-            freshness: '',
-            contact: '',
-            location: '',
-            timestamp: '',
+            post_id: props.userInfo ? props.userInfo.post_id : '',
+            title: props.userInfo ? props.userInfo.title : '',
+            description: props.userInfo ? props.userInfo.description : '',
+            category: props.userInfo ? props.userInfo.category : '',
+            price: props.userInfo ? props.userInfo.price : '',
+            freshness: props.userInfo ? props.userInfo.freshness : '',
+            contact: props.userInfo ? props.userInfo.contact : '',
+            location: props.userInfo ? props.userInfo.location : '',
+            timestamp: props.userInfo ? props.userInfo.timestamp : '',
             images: [],
 
             submissionComplete:false,
@@ -79,7 +80,7 @@ class SellForm extends Component{
         if(this.state.location === ""){
             return false;
         }
-        if(this.state.title.length < 7){
+        if(this.state.title.length <= 4){
             return false;
         }
         if(this.state.category === ""){
@@ -99,39 +100,51 @@ class SellForm extends Component{
         // this.setState({isPostSubmitted:true},()=>{
         //     postButtonClickHandler(this.state);
         // });
+        if(this.props.edit === undefined){
+            //user is creating new post - not editing
+            if(this.validateForm()){ //validate sell form before posting
+                console.log('posting item...');
+                this.setState({clickedPostButton: true},
+                    () => {
+                        // uploadFile(this.state).then((url) => url)
+                        //     .then((url) => postDataToFirebase(this.state, url))
+                        //     .then((docRef) => {console.log(docRef);appendIDToPost(docRef);return docRef})
+                        //     .then((docRef) => {querySaveCategories(this.state.category, docRef);return docRef})
+                        //     .then((docRef) => savePostInUserData(docRef))
+                        //     .then(() => {
+                        //         this.setState({submissionComplete: true})
+                        //     })
+                        //     .catch(err =>{
+                        //         this.setState({errorInSubmission:true,clickedPostButton:false})
+                        //     });
 
-        if(this.validateForm()){
-            this.setState({clickedPostButton: true},
-                () => {
-                    // uploadFile(this.state).then((url) => url)
-                    //     .then((url) => postDataToFirebase(this.state, url))
-                    //     .then((docRef) => {console.log(docRef);appendIDToPost(docRef);return docRef})
-                    //     .then((docRef) => {querySaveCategories(this.state.category, docRef);return docRef})
-                    //     .then((docRef) => savePostInUserData(docRef))
-                    //     .then(() => {
-                    //         this.setState({submissionComplete: true})
-                    //     })
-                    //     .catch(err =>{
-                    //         this.setState({errorInSubmission:true,clickedPostButton:false})
-                    //     });
-
-                    uploadFile(this.state).then(url=>url)
-                        .then(url=>postDataToFirebase(this.state,url))
-                        .then(docRef=>{
-                            return Promise.all([
-                                appendIDToPost(docRef),
-                                querySaveCategories(this.state.category,docRef),
-                                savePostInUserData(docRef)
-                            ])
-                        }).then(()=>this.setState({submissionComplete: true}))
-                        .catch(()=>this.setState({errorInSubmission:true,clickedPostButton:false}))
-                });
+                        uploadFile(this.state).then(url=>url)
+                            .then(url=>postDataToFirebase(this.state,url))
+                            .then(docRef=>{
+                                return Promise.all([
+                                    appendIDToPost(docRef),
+                                    querySaveCategories(this.state.category,docRef),
+                                    savePostInUserData(docRef)
+                                ])
+                            }).then(()=>this.setState({submissionComplete: true}))
+                            .catch(()=>this.setState({errorInSubmission:true,clickedPostButton:false}))
+                    });
+            }
         }
-
-
+        else if(this.props.edit){ //user is editing the item
+            if(this.validateForm()){
+                console.log('updating form...')
+                // call to firbase goes here - Sarang
+            }
+        }
 
     };
 
+    deleteButtonHandler=()=>{
+      // delete the item from firebase - sarang
+      // then update the myPosts section - reload - Manpreet
+        console.log('Deleting item...')
+    };
 
 
 
@@ -161,6 +174,13 @@ class SellForm extends Component{
 
        // console.log('[sellform.js] componentDidMount');
     }
+    componentWillMount(){
+        if(this.props.userInfo && this.props.edit){
+            let arr=[];
+            arr.push({file:'',imagePreviewUrl:this.props.userInfo.images})
+            this.setState({images:arr})
+        }
+    }
 
     componentDidUpdate(prevProps){
         console.log('[sellform.js] componentDidUpdate');
@@ -183,11 +203,12 @@ class SellForm extends Component{
             form = (
                 <>
                     <Form.Field>
-                        <DropDownMenu getCategoryValue={this.getCategoryValue}/>
+                        <DropDownMenu defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
                     </Form.Field>
 
                     <Form.Field>
                         {<AutoCompleteInput
+                            value={this.state.location.description}
                             onChange={() => {
                             }}
                             onPlaceSelected={this.getItemLocation}/>}
@@ -195,6 +216,7 @@ class SellForm extends Component{
 
                     <Form.Field>
                         <input
+                            defaultValue={this.state.title}
                             placeholder='What are you selling ?'
                             name="title"
                             onChange={this.saveInfo}/>
@@ -205,24 +227,25 @@ class SellForm extends Component{
                                type='text'
                                placeholder='Amount'
                         >
-                            <input name="price" onChange={this.saveInfo}/>
+                            <input defaultValue={this.state.price} name="price" onChange={this.saveInfo}/>
                             <Label basic>$</Label>
                         </Input>
                     </Form.Field>
 
                     <Form.Field>
                         <input
+                            defaultValue={this.state.contact}
                             placeholder='Contact Me Here'
                             name="contact"
                             onChange={this.saveInfo}/>
                     </Form.Field>
 
                     <Form.Field>
-                        <textarea rows="4" cols="50" name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                        <textarea defaultValue={this.state.description} rows="4" cols="50" name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
                     </Form.Field>
 
                     <Form.Field>
-                        <FreshnessRating freshnessRating={this.getFreshnessRating}/>
+                        <FreshnessRating defaultValue={this.state.freshness} freshnessRating={this.getFreshnessRating}/>
                     </Form.Field>
 
                     <Form.Field>
@@ -232,9 +255,14 @@ class SellForm extends Component{
 
                     <Form.Field>
                         <Button
+                            color="blue"
                             type='submit'
-                            onClick={this.postButtonClickHandler}>Post
+                            onClick={this.postButtonClickHandler}>{this.props.edit ? 'Update' : 'Post'}
                         </Button>
+                        {this.props.edit ?
+                            <Button onClick={this.deleteButtonHandler} color="red" type='submit'> Delete Item </Button>
+                            : null
+                        }
 
                     </Form.Field>
 

@@ -4,6 +4,7 @@ import Modal from '../ItemClickModal/ItemClickModal'
 import './Card.css'
 import {FoodItemContext} from "../../Context/LoggedInContext";
 import SellModal from '../sellModal/sellModal';
+
 class FoodItemCard extends Component {
     constructor(props){
         super(props);
@@ -11,15 +12,14 @@ class FoodItemCard extends Component {
             isModalOpen:false
         };
     }
+    componentDidUpdate(prevProps,prevState,snapShot){
+        console.log("[ItemCard.js componentDidUpdate]");
+        // console.log(prevState);
+        // console.log(this.state);
+    }
 
-    closeItemInfoModal=()=>{
-        console.log("closeItemInfoModal");
-        this.setState((currentState)=>{
-            return ({isModalOpen:!currentState.isModalOpen})
-        })
-    };
     onClickingCardHandler=()=>{
-       // console.log("onclickCardHandler");
+        console.log("onclickCardHandler");
         this.setState((currentState)=>{
             return ({isModalOpen:!currentState.isModalOpen})
         })
@@ -29,27 +29,15 @@ class FoodItemCard extends Component {
         return(
             <FoodItemContext.Consumer>
                 {foodItemInfo=> (
+                    <>
                     <Modal isModalOpen={this.state.isModalOpen}>
-                        <Card onClick={this.onClickingCardHandler}>
-                            <img alt='' src={foodItemInfo.images} height='250px' width='auto' />
+                        <Card onClick={this.onClickingCardHandler} fluid>
+                            <img alt='' src={foodItemInfo.images} height='220px' width='auto' />
                             <Card.Content>
                                 <Card.Header>{foodItemInfo.title}</Card.Header>
                                 <Card.Meta>
                                     <span className='date'>{foodItemInfo.category}</span>
-                                    {this.props.showEditDeleteButton ?
-                                        <>
-                                            <SellModal>
-                                                <Label as='a' size="medium" className="positionEdit" onClick={this.closeItemInfoModal}>
-                                                    <Icon name='edit' color="blue" />
-                                                </Label>
-                                            </SellModal>
-                                            <SellModal>
-                                            <Label as='a' size="medium" className="positionDelete" onClick={this.closeItemInfoModal}>
-                                                <Icon name='delete' color="red" corner/>
-                                            </Label>
-                                            </SellModal>
-                                        </>
-                                        : null}
+
                                 </Card.Meta>
                             </Card.Content>
                             <Card.Content extra>
@@ -57,6 +45,16 @@ class FoodItemCard extends Component {
                             </Card.Content>
                         </Card>
                     </Modal>
+                        {this.props.showEditDeleteButton ?
+                            <>
+                                <SellModal edit={true} userInfo={foodItemInfo}>
+                                    <Label as='a' size="medium" className="positionEdit" >
+                                        <Icon name='edit' color="blue" />
+                                    </Label>
+                                </SellModal>
+                            </>
+                            : null}
+                    </>
                 )}
 
             </FoodItemContext.Consumer>

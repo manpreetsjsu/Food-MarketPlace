@@ -1,29 +1,43 @@
-import React from 'react'
+import React,{Component} from 'react'
 import { Dropdown } from 'semantic-ui-react'
 
-const DropDownMenu =  ((props)=> {
 
-    const options = [
-        { key: 'Fruits', text: 'Fruits', value: 'Fruits' },
-        { key: 'Vegetables', text: 'Vegetables', value: 'Vegetables' },
-        { key: 'HomeCooked', text: 'HomeCooked', value: 'Home-Cooked' },
-        { key: 'GreenWaste', text: 'GreenWaste', value: 'Green-Waste' },
-        { key: 'Other', text: 'Other', value: 'other' },
+const options = [
+    { key: 'Fruits', text: 'Fruits', value: 'Fruits' },
+    { key: 'Vegetables', text: 'Vegetables', value: 'Vegetables' },
+    { key: 'HomeCooked', text: 'HomeCooked', value: 'HomeCooked' },
+    { key: 'GreenWaste', text: 'GreenWaste', value: 'GreenWaste' },
+    { key: 'Other', text: 'Other', value: 'Other' },
 
-    ];
+];
 
-    function onChangeHandler(e) {
+class DropDownMenu extends Component{
+
+    constructor(props){
+        super(props);
+        this.state={
+            value: props.defaultValue || '' ,
+        };
+    }
+
+
+    handleChange = (e, { value }) => {
+        this.setState({ value },()=> this.props.getCategoryValue(this.state.value))};
+
+    onChangeHandler=(e)=> {
         e.persist();
       console.log(e.target.innerText);
       console.log(e.target.value);
-      props.getCategoryValue(e.target.innerText);
     };
 
-    return (
-            <Dropdown placeholder='Category' fluid selection options={options} onChange={onChangeHandler} />
+    render(){
+        return (
+            <Dropdown value={this.state.value} placeholder='Category' fluid selection options={options} onChange={this.handleChange} />
 
         );
+    }
 
-});
+
+};
 
 export default React.memo(DropDownMenu);

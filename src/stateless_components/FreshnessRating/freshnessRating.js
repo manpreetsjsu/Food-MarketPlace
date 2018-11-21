@@ -23,9 +23,9 @@ export default class RatingExampleOnRate extends Component {
             <>
                 <Label size='big'>
                     <Icon name='food'/>
-                    Freshness of Food : {this.state.freshness}
+                    Freshness of Food : {this.state.freshness || this.props.defaultValue}
                 </Label>
-                <Rating name='freshness' maxRating={5} onRate={this.handleRate} />
+                <Rating defaultRating={this.state.freshness || this.props.defaultValue} name='freshness' maxRating={5} onRate={this.handleRate} />
             </>
         )
     }

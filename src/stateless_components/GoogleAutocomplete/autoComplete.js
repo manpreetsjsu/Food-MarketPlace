@@ -46,6 +46,7 @@ export default class GooglePlaceSearchInput extends React.Component {
         };
 
         this._getPlace = debounce(this._getPlace, 100) // changed to 00ms - Manpreet
+
     }
 
     componentDidMount() {
@@ -63,9 +64,9 @@ export default class GooglePlaceSearchInput extends React.Component {
 
         this.autocompleteService = new window.google.maps.places.AutocompleteService();
 
-        if (this.props.value) {
-            this._getPlace(this.props.value);
-        }
+        // if (this.props.value) {
+        //     this._getPlace(this.props.value);
+        // }
 
     }
 
