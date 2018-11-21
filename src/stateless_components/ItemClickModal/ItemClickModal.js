@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import {Button, Header, Icon, Image, Modal} from 'semantic-ui-react'
+import {Button, Header, Image, Modal} from 'semantic-ui-react'
 import {FoodItemContext} from "../../Context/LoggedInContext";
 
 class OpenModal extends Component {
@@ -10,14 +10,15 @@ class OpenModal extends Component {
             isModalOpen:false
         };
     }
+    componentDidMount(){
+        console.log(["ItemClickModal.js componentDidMount"]);
+        console.log(this.props);
+    }
 
-
-    // getDerivedStateFromProps(props,state){
-    //     if(props.isModalOpen !== this.state.isModalOpen){
-    //         this.setState({isModalOpen:props.isModalOpen})
-    //     }
-    //}
     componentDidUpdate(prevProps,prevState,snapShot){
+        console.log("[ItemClickModal.js componentDidUpdate]");
+        console.log(prevProps);
+        console.log(this.props);
         if(prevProps.isModalOpen !== this.props.isModalOpen){
             this.setState({isModalOpen:true})
         }

@@ -176,7 +176,6 @@ import firebase from "firebase";
             freshness: state.freshness,
             images: downloadURL,
             contact:state.contact,
-            amount:state.amount,
             timestamp:Date.now()
         })
 };
@@ -325,7 +324,7 @@ import firebase from "firebase";
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
-                    return [];
+                    success_callback('No items posted in marketplace');
                 }
             }).catch(function(error) {
                 console.log("Error getting document:", error);

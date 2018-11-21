@@ -5,6 +5,7 @@ import SellForm from './sellForm'
 
 const SellModal=(props)=> {
 
+    console.log('[SellModal.js]');
     return (
             <div>
                 <Modal closeIcon={true} closeOnEscape={false} size='small' trigger={props.children} centered={false}>
