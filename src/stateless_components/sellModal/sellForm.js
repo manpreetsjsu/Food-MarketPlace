@@ -15,6 +15,10 @@ import {
     querySaveCategories,
     savePostInUserData,
     updateDataToFirebase,
+    updateDataToFirebaseOldimage,
+    delete_from_userid,
+    delete_from_category,
+    delete_from_posts,
 } from "../../firebase/firebase_backend";
 //import firebase from "firebase/index";
 
@@ -132,7 +136,7 @@ class SellForm extends Component{
         }
         else if(this.props.edit){ //user is editing the item
             if(this.validateForm()) { //validate sell form before posting
-                if (this.state.oldURL==""){
+                if (this.state.oldImageUrl==""){
                     console.log('posting item...');
                 this.setState({clickedPostButton: true},
                     () => {
@@ -142,7 +146,8 @@ class SellForm extends Component{
                     });
             }
             else{
-                    this.updateDataToFirebaseOldimage(this.state);
+                    //updating old image
+                    updateDataToFirebaseOldimage(this.state);
                 }
             }
         }
@@ -153,6 +158,11 @@ class SellForm extends Component{
       // delete the item from firebase - sarang
       // then update the myPosts section - reload - Manpreet
         console.log('Deleting item...')
+        delete_from_posts(this.state);
+        delete_from_userid(this.state);
+        delete_from_category(this.state);
+
+
     };
 
 
