@@ -8,12 +8,18 @@ import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
 import {connect} from 'react-redux';
+
 import {
     uploadFile,
     postDataToFirebase,
     appendIDToPost,
     querySaveCategories,
     savePostInUserData,
+    updateDataToFirebase,
+    updateDataToFirebaseOldimage,
+    delete_from_userid,
+    delete_from_category,
+    delete_from_posts,
 } from "../../firebase/firebase_backend";
 import {myPostsClickHandlerDispatcher,marketPlaceCLickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
 
@@ -26,6 +32,7 @@ const PostSubmissionForm=(props)=>{
         </>
     )
 };
+
 
 
 class SellForm extends Component{
@@ -80,6 +87,7 @@ class SellForm extends Component{
             [e.target.name]:e.target.value});
     };
 
+
     validateForm=()=>{
         if(this.state.images.length === 0 ){
             return false;
@@ -101,6 +109,7 @@ class SellForm extends Component{
         }
         return true;
     };
+
 
     postButtonClickHandler=()=> {
         // this.setState({isPostSubmitted:true},()=>{
@@ -140,9 +149,20 @@ class SellForm extends Component{
             }
         }
         else if(this.props.edit){ //user is editing the item
-            if(this.validateForm()){
-                console.log('updating form...')
-                // call to firbase goes here - Sarang
+            if(this.validateForm()) { //validate sell form before posting
+                if (this.state.oldImageUrl==""){
+                    console.log('posting item...');
+                this.setState({clickedPostButton: true},
+                    () => {
+                        uploadFile(this.state).then(url => url)
+                            .then(url => updateDataToFirebase(this.state, url))
+                            .catch(() => this.setState({errorInSubmission: true, clickedPostButton: false}))
+                    });
+            }
+            else{
+                    //updating old image
+                    updateDataToFirebaseOldimage(this.state);
+                }
             }
         }
 
@@ -152,7 +172,13 @@ class SellForm extends Component{
       // delete the item from firebase - sarang
       // then update the myPosts section - reload - Manpreet
         console.log('Deleting item...')
+        delete_from_posts(this.state);
+        delete_from_userid(this.state);
+        delete_from_category(this.state);
+
+
     };
+
 
 
      handleImageUpload= (file)=>{
@@ -178,6 +204,7 @@ class SellForm extends Component{
     }
 
     componentDidMount(){
+
        // console.log('[sellform.js] componentDidMount');
     }
     componentWillMount(){

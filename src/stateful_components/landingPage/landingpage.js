@@ -51,7 +51,9 @@ class LandingPage extends Component {
     // componentWillReceiveProps(){
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
+
    
+
     render() {
         console.log('render method of landing page');
         console.log(this.props);

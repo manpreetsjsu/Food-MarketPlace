@@ -157,7 +157,7 @@ import firebase from "firebase";
 //     };
 
     export const uploadFile=(state)=>{
-        let storageRef = firebase.storage().ref("/allpics/" + state.images[0].file.name);
+        let storageRef = firebase.storage().ref("/allpics/" + state.images[state.images.length-1].file.name);
         return storageRef.put(state.images[0].file).then((snapshot)=>{
             return snapshot.ref.getDownloadURL();
         });
@@ -179,6 +179,36 @@ import firebase from "firebase";
             contact:state.contact,
             timestamp:Date.now()
         })
+};
+export const updateDataToFirebase=(state,downloadURL)=>{
+    let db = firebase.firestore();
+    return db.collection("posts").doc(state.post_id).update({
+        category: state.category,
+        location: state.location,
+        title: state.title,
+        price: state.price,
+        description: state.description,
+        freshness: state.freshness,
+        images: downloadURL,
+        contact:state.contact,
+        update_time:Date.now()
+    })
+
+};
+export const updateDataToFirebaseOldimage=(state)=>{
+    let db = firebase.firestore();
+    return db.collection("posts").doc(state.post_id).update({
+        category: state.category,
+        location: state.location,
+        title: state.title,
+        price: state.price,
+        description: state.description,
+        freshness: state.freshness,
+        images: state.oldImageUrl,
+        contact:state.contact,
+        update_time:Date.now()
+    })
+
 };
 
     export const appendIDToPost=(docRef)=>{
@@ -373,3 +403,68 @@ import firebase from "firebase";
             });
 
     };
+export const  delete_from_posts=(state)=>{
+    let db = firebase.firestore();
+    return db.collection("posts").doc(state.post_id).delete().then(function() {
+        console.log("Document successfully deleted!");
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
+};
+
+export const  delete_from_category=(state)=>{
+    let all_myposts=[];
+    let post_id=[];
+    let db = firebase.firestore();
+    return db.collection("category").doc(state.category).get().then(function(doc) {
+        if (doc.exists) {
+            console.log("Document data:", doc.data());
+            all_myposts.push(doc.data());
+            post_id=all_myposts[0].post_location;
+            let index = post_id.indexOf(state.post_id);
+            if (index > -1) {
+                post_id.splice(index, 1);
+            }
+            db.collection("category").doc(state.category).update({
+                post_location: post_id
+            })
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+
+};
+export const  delete_from_userid=(state)=>{
+    let user = firebase.auth().currentUser;
+    let all_myposts=[];
+    let post_id=[];
+    let db = firebase.firestore();
+    if (user) {
+        // User is signed in.
+        let uid = user.uid;
+        return db.collection("userData").doc(uid).get().then(function (doc) {
+            if (doc.exists) {
+                console.log("Document data:", doc.data());
+                all_myposts.push(doc.data());
+                post_id = all_myposts[0].post_location;
+                let index = post_id.indexOf(state.post_id);
+                if (index > -1) {
+                    post_id.splice(index, 1);
+                }
+                db.collection("userData").doc(uid).update({
+                    post_location: post_id
+                })
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }).catch(function (error) {
+            console.log("Error getting document:", error);
+        });
+    }
+};
+
