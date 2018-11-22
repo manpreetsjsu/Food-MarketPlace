@@ -2,7 +2,6 @@ const initialState =  {
     isLoading:false,
     reset:false,
     disableFilters:false,
-
     location:'',
     filters:{
         Fruits: true,

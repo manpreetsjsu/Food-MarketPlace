@@ -4,7 +4,8 @@ const initialState =  {
     email:'',
     newsFeed: false,
     marketPlace: false,
-    showMemberPosts:false
+    showMemberPosts:false,
+    reloadMemberPosts:false
 
 };
 
@@ -55,6 +56,12 @@ const accountLoginReducer = (state = initialState, action) => {
 
             };
             break;
+        case "RELOAD_MEMBER_POSTS":
+                state={
+                    ...state,
+                    reloadMemberPosts:!state.reloadMemberPosts
+                };
+                break;
         default:
             return state;
     }

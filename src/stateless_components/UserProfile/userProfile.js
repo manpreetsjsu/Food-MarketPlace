@@ -37,24 +37,15 @@ class UserProfilePosts extends Component {
 
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log('[UserProfile.js ComponentDidUpdate]');
-        console.log(this.state);
-        // if(prevProps.reset !==this.props.reset ){
-        //     console.log('reset');
-        //     //reset the marketplace
-        //     this.props.set_loading_status(true);
-        //     this.setState({isLoading:true},()=>{
-        //         download_all_Post_Data()
-        //             .then((res)=> download_category()
-        //                 .then((categories)=>{
-        //                     let result = this.multiMapCollection(res);
-        //                     this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-        //                     this.props.set_loading_status(false);
-        //
-        //                 })
-        //             )
-        //     });
-        //     return;
-        // }
+        console.log(prevProps);
+        console.log(this.props);
+
+        if(prevProps.reloadMemberPosts !== this.props.reloadMemberPosts){
+            console.log('fetching posts in update');
+            let user = firebase.auth().currentUser;
+            this.props.set_loading_status(true);
+            download_My_Post_Data(user.uid,this.success_callback,this.fail_callback);
+        }
 
     }
 

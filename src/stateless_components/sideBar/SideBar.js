@@ -106,7 +106,7 @@ class SideBar extends Component{
 
                     <List.Item className='spacingBetweenItems'>
                         { !this.props.guestLogin.status ?
-                            <SellModal isModalOpen={this.state.displaySellForm}>
+                            <SellModal ismodalopen={this.state.displaySellForm}>
                                 <Button
                                     onClick={this.displaySellForm}
                                     name='sellItem'

@@ -60,3 +60,18 @@ export function myPostsClickHandlerDispatcher() {
 
     };
 };
+
+export function fetchMemberPostDispatcher() {
+    console.log('fetch myPosts Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().accountLogin.status ){
+            dispatch(showMemberPosts());
+        }
+
+        if(!getState().marketPlace.disableFilters && getState().accountLogin.status){
+            // @my posts section - filters should be disabled i.disabled=true
+            dispatch(set_filters_status(true));
+        }
+
+    };
+};
