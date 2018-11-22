@@ -14,7 +14,9 @@ import {
     appendIDToPost,
     querySaveCategories,
     savePostInUserData,
+    updateDataToFirebase,
 } from "../../firebase/firebase_backend";
+//import firebase from "firebase/index";
 
 const PostSubmissionForm=(props)=>{
     return(
@@ -132,9 +134,19 @@ class SellForm extends Component{
             }
         }
         else if(this.props.edit){ //user is editing the item
-            if(this.validateForm()){
-                console.log('updating form...')
-                // call to firbase goes here - Sarang
+            if(this.validateForm()) { //validate sell form before posting
+                if (this.state.oldURL==""){
+                    console.log('posting item...');
+                this.setState({clickedPostButton: true},
+                    () => {
+                        uploadFile(this.state).then(url => url)
+                            .then(url => updateDataToFirebase(this.state, url))
+                            .catch(() => this.setState({errorInSubmission: true, clickedPostButton: false}))
+                    });
+            }
+            else{
+                    this.updateDataToFirebaseOldimage(this.state);
+                }
             }
         }
 
@@ -188,6 +200,7 @@ class SellForm extends Component{
             //redirect user to @ my Posts Section
             this.props.redirectToMyPosts();
         }
+
     }
 
     componentWillUnmount(){

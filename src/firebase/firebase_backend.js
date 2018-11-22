@@ -157,7 +157,7 @@ import firebase from "firebase";
 //     };
 
     export const uploadFile=(state)=>{
-        let storageRef = firebase.storage().ref("/allpics/" + state.images[0].file.name);
+        let storageRef = firebase.storage().ref("/allpics/" + state.images[state.images.length-1].file.name);
         return storageRef.put(state.images[0].file).then((snapshot)=>{
             return snapshot.ref.getDownloadURL();
         });
@@ -178,6 +178,36 @@ import firebase from "firebase";
             contact:state.contact,
             timestamp:Date.now()
         })
+};
+export const updateDataToFirebase=(state,downloadURL)=>{
+    let db = firebase.firestore();
+    return db.collection("posts").doc(state.post_id).update({
+        category: state.category,
+        location: state.location,
+        title: state.title,
+        price: state.price,
+        description: state.description,
+        freshness: state.freshness,
+        images: downloadURL,
+        contact:state.contact,
+        update_time:Date.now()
+    })
+
+};
+export const updateDataToFirebaseOldimage=(state)=>{
+    let db = firebase.firestore();
+    return db.collection("posts").doc(state.post_id).update({
+        category: state.category,
+        location: state.location,
+        title: state.title,
+        price: state.price,
+        description: state.description,
+        freshness: state.freshness,
+        images: state.oldURL,
+        contact:state.contact,
+        update_time:Date.now()
+    })
+
 };
 
     export const appendIDToPost=(docRef)=>{
