@@ -35,7 +35,7 @@ class OpenModal extends Component {
                 {foodItemInfo =>
                     (
                         <>
-                            <Modal open={this.state.isModalOpen } onClose={this.closeButtonHandler} trigger={this.props.children} centered={false} closeOnDimmerClick={true}>
+                            <Modal open={this.state.isModalOpen } onClose={this.closeButtonHandler} closeOnEscape={true}  trigger={this.props.children} centered={false} >
                                 <Modal.Actions>
                                     <Button color='grey' onClick={this.closeButtonHandler} >
                                         Close
@@ -46,8 +46,8 @@ class OpenModal extends Component {
                                     <Image wrapped size='medium' src= {foodItemInfo.images} />
                                     <Modal.Description>
                                         <Header>{foodItemInfo.title}</Header>
-                                        <p>{foodItemInfo.description}</p>
                                         <p>{foodItemInfo.location.description}</p>
+                                        <p>{foodItemInfo.description}</p>
                                         <p>${foodItemInfo.price}</p>
                                         <p>{foodItemInfo.timestamp}</p>
                                         <p>Buy@ {foodItemInfo.contact}</p>
