@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import {Button, Modal,Icon} from 'semantic-ui-react'
+import {Modal,} from 'semantic-ui-react'
 import SellForm from './sellForm'
 
 
@@ -36,6 +36,7 @@ class SellModal extends Component {
                             {/*<Icon name="close"/>Close*/}
                         {/*</Button>*/}
                     </Modal.Actions>
+
                     <Modal.Header>Item For Sale</Modal.Header>
                     <Modal.Content image>
                         {/*<Image wrapped size='medium' src={require('../../assets/images/spartan.jpg')}/>*/}

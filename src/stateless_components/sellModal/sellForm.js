@@ -168,6 +168,7 @@ class SellForm extends Component{
         if(this.props.userInfo && this.props.edit){
             let arr=[];
             arr.push({file:'',imagePreviewUrl:this.props.userInfo.images});
+
             this.setState({images:arr})
         }
     }
@@ -224,6 +225,7 @@ class SellForm extends Component{
                                type='text'
                                placeholder='Price'
                         >
+
                             <Label basic>$</Label>
                             <input defaultValue={this.state.price} name="price" onChange={this.saveInfo}/>
                         </Input>
