@@ -9,7 +9,8 @@ class FoodItemCard extends Component {
     constructor(props){
         super(props);
         this.state={
-            isModalOpen:false
+            isModalOpen:false,
+            isSellFormOpen:false
         };
     }
     componentDidUpdate(prevProps,prevState,snapShot){
@@ -22,6 +23,13 @@ class FoodItemCard extends Component {
         console.log("onclickCardHandler");
         this.setState((currentState)=>{
             return ({isModalOpen:!currentState.isModalOpen})
+        })
+    };
+
+    onClickEditButtonHandler=()=>{
+        console.log("onclickEditButtonHandler");
+        this.setState((currentState)=>{
+            return ({isSellFormOpen:!currentState.isSellFormOpen})
         })
     };
 
@@ -47,8 +55,8 @@ class FoodItemCard extends Component {
                     </Modal>
                         {this.props.showEditDeleteButton ?
                             <>
-                                <SellModal edit={true} userInfo={foodItemInfo}>
-                                    <Label as='a' size="medium" className="positionEdit" >
+                                <SellModal ismodalopen={this.state.isSellFormOpen} edit={true} userInfo={foodItemInfo}>
+                                    <Label as='a' size="medium" className="positionEdit" onClick={this.onClickEditButtonHandler} >
                                         <Icon name='edit' color="blue" />
                                     </Label>
                                 </SellModal>
