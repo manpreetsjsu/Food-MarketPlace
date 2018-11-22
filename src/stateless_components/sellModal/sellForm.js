@@ -7,6 +7,7 @@ import './sellForm.css';
 import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
+import {connect} from 'react-redux';
 import {
     uploadFile,
     postDataToFirebase,
@@ -14,6 +15,7 @@ import {
     querySaveCategories,
     savePostInUserData,
 } from "../../firebase/firebase_backend";
+import {myPostsClickHandlerDispatcher,marketPlaceCLickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
 
 const PostSubmissionForm=(props)=>{
     return(
@@ -29,7 +31,6 @@ const PostSubmissionForm=(props)=>{
 class SellForm extends Component{
     constructor(props){
         super(props);
-        console.log(props);
         this.state={
             post_id: props.userInfo ? props.userInfo.post_id : '',
             title: props.userInfo ? props.userInfo.title : '',
@@ -42,6 +43,7 @@ class SellForm extends Component{
             timestamp: props.userInfo ? props.userInfo.timestamp : '',
             oldImageUrl:props.userInfo ? props.userInfo.images : '',
             images: [],
+            userInfo:this.createUserInfoObject(this.props.accountLogin.userInfo),
             submissionComplete:false,
             clickedPostButton:false,
             errorInSubmission:false,
@@ -49,6 +51,18 @@ class SellForm extends Component{
             redirectToMarketPlace:false
         }
     }
+
+    createUserInfoObject=(obj)=>{
+        let userInfo={
+            displayName:obj.displayName,
+            uid:obj.uid,
+            photoURL:obj.photoURL,
+            email:obj.email,
+            phoneNumber:obj.phoneNumber
+        };
+        return userInfo
+    }
+    ;
 
     getCategoryValue=(category)=>{
         this.setState({category: category})
@@ -119,7 +133,9 @@ class SellForm extends Component{
                                     savePostInUserData(docRef)
                                 ])
                             }).then(()=>this.setState({submissionComplete: true}))
-                            .catch(()=>this.setState({errorInSubmission:true,clickedPostButton:false}))
+                            .catch((err)=>{
+                                console.log(err);
+                                this.setState({errorInSubmission:true,clickedPostButton:false})})
                     });
             }
         }
@@ -175,12 +191,12 @@ class SellForm extends Component{
 
     componentDidUpdate(prevProps){
         console.log('[sellform.js] componentDidUpdate');
-        if(this.state.submissionComplete && !this.state.redirectToPostSection && this.props.accountLoginMarketPlace){
+        if(this.state.submissionComplete && !this.state.redirectToPostSection && this.props.accountLogin.marketPlace){
             //if user is currently at marketPlace section
             //redirect user to @ my Posts Section and reload the posts
-            this.setState({redirectToPostSection:true},()=>this.props.redirectToMyPosts()); //condition to break infinite loop in DidUpdate
+            this.setState({redirectToPostSection:true},()=>this.props.redirectToPostSection()); //condition to break infinite loop in DidUpdate
         }
-        else if( this.state.submissionComplete && !this.state.redirectToMarketPlace && !this.props.accountLoginMarketPlace ){
+        else if( this.state.submissionComplete && !this.state.redirectToMarketPlace && !this.props.accountLogin.marketPlace){
             // if user is currently at My posts section or newsfeed section
             //redirect user to marketplace
             this.setState({redirectToMarketPlace:true},()=>this.props.redirectToMarketPlace());
@@ -201,7 +217,7 @@ class SellForm extends Component{
             form = (
                 <>
                     <Form.Field>
-                        <DropDownMenu defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
+                        <DropDownMenu edit={this.props.edit} defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
                     </Form.Field>
 
                     <Form.Field>
@@ -303,6 +319,21 @@ class SellForm extends Component{
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        accountLogin:{
+            marketPlace:state.accountLogin.marketPlace,
+            userInfo:state.accountLogin.userInfo
+        }
 
+    };
+};
 
-export default SellForm
+const mapDispatchToProps = dispatch => {
+    return {
+        redirectToMarketPlace:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
+        redirectToPostSection:()=>{dispatch(myPostsClickHandlerDispatcher());},
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(SellForm);

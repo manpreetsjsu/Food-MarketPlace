@@ -168,6 +168,7 @@ import firebase from "firebase";
         let db = firebase.firestore();
         return db.collection("posts").add({
             post_id: "",
+            userInfo:state.userInfo,
             category: state.category,
             location: state.location,
             title: state.title,
