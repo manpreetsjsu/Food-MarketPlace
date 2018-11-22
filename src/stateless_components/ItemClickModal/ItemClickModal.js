@@ -46,11 +46,19 @@ class OpenModal extends Component {
                                     <Image wrapped size='medium' src= {foodItemInfo.images} />
                                     <Modal.Description>
                                         <Header>{foodItemInfo.title}</Header>
-                                        <p>{foodItemInfo.location.description}</p>
-                                        <p>{foodItemInfo.description}</p>
-                                        <p>${foodItemInfo.price}</p>
-                                        <p>{foodItemInfo.timestamp}</p>
-                                        <p>Buy@ {foodItemInfo.contact}</p>
+                                        <p>Location: {foodItemInfo.location.description}</p>
+                                        <p>Description: {foodItemInfo.description}</p>
+                                        <p>Price: ${foodItemInfo.price}</p>
+                                        <p>Posted on: {foodItemInfo.timestamp}</p>
+                                        <p>Seller Info </p>
+                                        <p>Contact :{foodItemInfo.contact}</p>
+                                        {foodItemInfo.userInfo ?
+                                        <>
+                                            <p> Post By: {foodItemInfo.userInfo.displayName}</p>
+                                            <p>Email:{foodItemInfo.userInfo.email}</p>
+                                        </>
+                                            : null}
+
                                     </Modal.Description>
                                 </Modal.Content>
 
