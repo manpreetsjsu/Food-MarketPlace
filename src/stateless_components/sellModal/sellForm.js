@@ -19,13 +19,8 @@ const PostSubmissionForm=(props)=>{
     return(
         <>
             <Form.Field>
-            <h2>Your item has been posted successfully on marketplace </h2>
+            <h2>Your item has been posted successfully on marketplace. Check My Posts or Marketplace Section! </h2>
             </Form.Field>
-             <Form.Field>
-            <Button
-                type='submit'>Close
-            </Button>
-             </Form.Field>
         </>
     )
 };
@@ -45,10 +40,13 @@ class SellForm extends Component{
             contact: props.userInfo ? props.userInfo.contact : '',
             location: props.userInfo ? props.userInfo.location : '',
             timestamp: props.userInfo ? props.userInfo.timestamp : '',
+            oldImageUrl:props.userInfo ? props.userInfo.images : '',
             images: [],
             submissionComplete:false,
             clickedPostButton:false,
-            errorInSubmission:false
+            errorInSubmission:false,
+            redirectToPostSection:false,
+            redirectToMarketPlace:false
         }
     }
 
@@ -153,7 +151,7 @@ class SellForm extends Component{
          this.setState((prevState)=>{
              return{
                  // images: prevState.images.splice(indexOfImage,1)
-                 images: update(this.state.images, {$splice: [[indexOfImage,1]]})
+                 oldImageUrl:'',images: update(this.state.images, {$splice: [[indexOfImage,1]]})
              }
          })
      };
@@ -169,17 +167,24 @@ class SellForm extends Component{
     componentWillMount(){
         if(this.props.userInfo && this.props.edit){
             let arr=[];
-            arr.push({file:'',imagePreviewUrl:this.props.userInfo.images})
+            arr.push({file:'',imagePreviewUrl:this.props.userInfo.images});
             this.setState({images:arr})
         }
     }
 
     componentDidUpdate(prevProps){
         console.log('[sellform.js] componentDidUpdate');
-        if(this.state.submissionComplete){
-            //redirect user to @ my Posts Section
-            this.props.redirectToMyPosts();
+        if(this.state.submissionComplete && !this.state.redirectToPostSection && this.props.accountLoginMarketPlace){
+            //if user is currently at marketPlace section
+            //redirect user to @ my Posts Section and reload the posts
+            this.setState({redirectToPostSection:true},()=>this.props.redirectToMyPosts()); //condition to break infinite loop in DidUpdate
         }
+        else if( this.state.submissionComplete && !this.state.redirectToMarketPlace && !this.props.accountLoginMarketPlace ){
+            // if user is currently at My posts section or newsfeed section
+            //redirect user to marketplace
+            this.setState({redirectToMarketPlace:true},()=>this.props.redirectToMarketPlace());
+        }
+
     }
 
     componentWillUnmount(){
@@ -217,10 +222,10 @@ class SellForm extends Component{
                     <Form.Field>
                         <Input labelPosition='left'
                                type='text'
-                               placeholder='Amount'
+                               placeholder='Price'
                         >
-                            <input defaultValue={this.state.price} name="price" onChange={this.saveInfo}/>
                             <Label basic>$</Label>
+                            <input defaultValue={this.state.price} name="price" onChange={this.saveInfo}/>
                         </Input>
                     </Form.Field>
 
