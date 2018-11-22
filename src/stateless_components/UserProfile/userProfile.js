@@ -10,7 +10,8 @@ class UserProfilePosts extends Component {
         super(props);
         this.state = {
             data:[],
-            error:false
+            error:false,
+            reloadPostSection:false
         }
     };
     success_callback=(user_posts)=>{
