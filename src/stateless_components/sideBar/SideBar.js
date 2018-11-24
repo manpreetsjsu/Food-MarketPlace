@@ -52,6 +52,7 @@ class SideBar extends Component{
         })
     };
 
+
     render(){
         let marketPlace_highlight=false;
         let myPost_hightlight = false;
@@ -81,8 +82,9 @@ class SideBar extends Component{
                         </Label>
                     </List.Item>
 
-                    <GuestModal redirectToSignIn={this.props.signInHandler} content={modalContent1} isOpen={this.state.myPostOpenModal}>
+
                     <List.Item as='a' className='spacingBetweenItems'>
+                        <GuestModal redirectToSignIn={this.props.signInHandler} content={modalContent1} isOpen={this.state.myPostOpenModal}>
                         <Label className={ myPost_hightlight ? "labelHighLight": ""}
                                onClick={!this.props.guestLogin.status ? this.props.myPostsClickHandler : this.displayPostClickModal}
                                size='huge'
@@ -90,8 +92,9 @@ class SideBar extends Component{
 
                             My Posts
                         </Label>
+                        </GuestModal>
                     </List.Item>
-                    </GuestModal>
+
 
 
 

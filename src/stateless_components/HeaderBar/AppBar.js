@@ -37,6 +37,7 @@ class AppBar extends Component {
             this.props.guestLogIn();
         }
     };
+
     render() {
         const { activeItem } = this.state;
         console.log('render of appbar');

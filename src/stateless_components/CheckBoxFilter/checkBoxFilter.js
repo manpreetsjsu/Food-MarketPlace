@@ -15,6 +15,10 @@ export default class CheckboxExampleRemoteControl extends Component {
         this.setState({ [key]: !this.state[key] },()=>this.props.filterState(this.state));
     };
 
+    shouldComponentUpdate(nextProps,nextState){
+        return this.state !== nextState || this.props.resetFilters !== nextProps.resetFilters ;
+    }
+
     resetState=()=>{
         this.setState({
             Fruits: true,

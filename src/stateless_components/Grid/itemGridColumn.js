@@ -22,4 +22,4 @@ const gridColumn = (props)=>{
     )
 };
 
-export default gridColumn;
+export default React.memo(gridColumn);
