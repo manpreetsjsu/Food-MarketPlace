@@ -43,6 +43,7 @@ const PostSubmissionForm=(props)=>{
 class SellForm extends Component{
     constructor(props){
         super(props);
+        this.deleteButtonHandler=this.deleteButtonHandler.bind(this);
         this.state={
             post_id: props.userInfo ? props.userInfo.post_id : '',
             title: props.userInfo ? props.userInfo.title : '',
@@ -116,7 +117,7 @@ class SellForm extends Component{
     };
 
 
-    postButtonClickHandler=()=> {
+    postButtonClickHandler= ()=> {
         // this.setState({isPostSubmitted:true},()=>{
         //     postButtonClickHandler(this.state);
         // });
@@ -125,19 +126,20 @@ class SellForm extends Component{
             if(this.validateForm()){ //validate sell form before posting
                 console.log('posting item...');
                 this.setState({clickedPostButton: true},
-                    () => {
-                        uploadFile(this.state).then(url=>url)
-                            .then(url=>postDataToFirebase(this.state,url))
-                            .then(docRef=>{
-                                return Promise.all([
-                                    appendIDToPost(docRef),
-                                    querySaveCategories(this.state.category,docRef),
-                                    savePostInUserData(docRef)
-                                ])
-                            }).then(()=>this.setState({submissionComplete: true}))
-                            .catch((err)=>{
-                                console.log(err);
-                                this.setState({errorInSubmission:true,clickedPostButton:false})})
+                    async () => {
+                        try {
+                            const download_url = await uploadFile(this.state);
+                            const docRef = await postDataToFirebase(this.state,download_url);
+                            await Promise.all([
+                                                appendIDToPost(docRef),
+                                                querySaveCategories(this.state.category,docRef),
+                                                savePostInUserData(docRef)
+                            ]);
+                            this.setState({submissionComplete:true})
+                        } catch(e) {
+                            console.error("Problem", e);
+                            this.setState({errorInSubmission: true, clickedPostButton: false});
+                        }
                     });
             }
         }
@@ -146,26 +148,29 @@ class SellForm extends Component{
                 if (this.state.oldImageUrl===""){ // user has uploaded new image while editing..
                     console.log('posting item...');
                     this.setState({clickedPostButton: true},
-                        () => {
-                            uploadFile(this.state).then(url => url)
-                                .then(url => updateDataToFirebase(this.state, url))
-                                .then(()=>this.setState({submissionComplete:true}))
-                                .catch((err) =>{
-                                    console.log(err);
-                                    this.setState({errorInSubmission: true, clickedPostButton: false}) // this will take user back to sellForm
-                                })
+                        async () => {
+                            try {
+                                const download_url = await uploadFile(this.state);
+                                await updateDataToFirebase(this.state,download_url);
+                                this.setState({submissionComplete:true})
+                            } catch(e) {
+                                console.error("Problem", e);
+                                this.setState({errorInSubmission: true, clickedPostButton: false});
+                            }
+
                         });
             }
             else{
                     //updating post with old image
                     this.setState({clickedPostButton:true},
-                        ()=>{
-                        updateDataToFirebaseOldimage(this.state)
-                            .then(()=>this.setState({submissionComplete:true}))
-                            .catch((err)=> {
-                                console.log(err);
-                                this.setState({errorInSubmission: true, clickedPostButton: false})
-                            })
+                        async ()=>{
+                            try {
+                                await updateDataToFirebaseOldimage(this.state);
+                                this.setState({submissionComplete:true})
+                            } catch(e) {
+                                console.error("Problem", e);
+                                this.setState({errorInSubmission: true, clickedPostButton: false});
+                            }
                     });
 
 
@@ -175,7 +180,7 @@ class SellForm extends Component{
 
     };
 
-    deleteButtonHandler=()=>{
+    async deleteButtonHandler(){
       // delete the item from firebase - sarang
       // then update the myPosts section - reload - Manpreet
         console.log('Deleting item...')
@@ -187,12 +192,13 @@ class SellForm extends Component{
             delete_from_category(this.state),
         ]);
 
-        delete_promise_calls.then(()=>{
-            this.setState({submissionComplete:true})
-        }).catch((err)=>{
-            console.log(err);
-            this.setState({errorInSubmission: true, clickedPostButton: false})
-        })
+        try {
+           await delete_promise_calls ;
+           this.setState({submissionComplete:true})
+        } catch(e) {
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true, clickedPostButton: false});
+        }
     };
 
 
