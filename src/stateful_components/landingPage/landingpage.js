@@ -96,7 +96,8 @@ class LandingPage extends Component {
                     <HeaderBar/>
                     <SideBar/>
                     <GridContainer >
-                        <UserProfilePosts set_loading_status={this.props.set_loading_status}/>
+                        <UserProfilePosts set_loading_status={this.props.set_loading_status}
+                                            reloadMemberPosts={this.props.accountLogin.reloadMemberPosts}/>
                     </GridContainer>
                 </>
             )
@@ -146,7 +147,8 @@ const mapStateToProps = (state) => {
             newsFeed: state.accountLogin.newsFeed,
             marketPlace: state.accountLogin.marketPlace,
             userInfo: state.accountLogin.userInfo,
-            showMemberPosts:state.accountLogin.showMemberPosts
+            showMemberPosts:state.accountLogin.showMemberPosts,
+            reloadMemberPosts: state.accountLogin.reloadMemberPosts
 
         },
         marketPlace:{
