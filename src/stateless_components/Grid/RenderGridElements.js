@@ -2,7 +2,10 @@ import React,{Component} from 'react'
 import  './Grid.css'
 import Multimap from 'multimap';
 import DisplayItems from './displayItems';
-import {download_all_Post_Data,download_category} from "../../firebase/firebase_backend";
+import {
+    download_all_Post_Data,
+    download_category
+} from "../../firebase/firebase_backend";
 
 class RenderGridElements extends Component {
 
@@ -17,22 +20,24 @@ class RenderGridElements extends Component {
             categories:''
         }
     };
+    fetchPosts=async()=>{
+        try {
+            this.props.set_loading_status(true);
+            const res= await download_all_Post_Data();
+            const categories = await download_category() ;
+            let result = this.multiMapCollection(res);
+            this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]},
+                ()=>this.props.set_loading_status(false));
+        } catch(e) {
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true, clickedPostButton: false});
+        }
+    };
 
     componentDidMount(){
         console.log('[gridLayout.js ComponentDidMount]');
-        this.props.set_loading_status(true);
-        this.setState({isLoading:true},()=>{
-            download_all_Post_Data()
-                .then((res)=> download_category()
-                    .then((categories)=>{
-                        let result = this.multiMapCollection(res);
-                        this.props.set_loading_status(false);
-                        this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-                    })
-                )
-        });
-
-
+        this.setState({isLoading:true},
+            ()=>this.fetchPosts());
     }
 
     componentDidUpdate(prevProps, prevState, snapsShot){
@@ -40,34 +45,21 @@ class RenderGridElements extends Component {
         if(prevProps.reset !==this.props.reset ){
             console.log('reset');
             //reset the marketplace
-            this.props.set_loading_status(true);
-            this.setState({isLoading:true},()=>{
-                download_all_Post_Data()
-                    .then((res)=> download_category()
-                        .then((categories)=>{
-                            let result = this.multiMapCollection(res);
-                            this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-                            this.props.set_loading_status(false);
-
-                        })
-                    )
-            });
+            this.setState({isLoading:true},
+                ()=>this.fetchPosts());
             return;
         }
         if(prevProps.location !== this.props.location){
             console.log('location props are not same');
-            this.props.set_loading_status(true);
             this.setState((updatedState)=>{
                 return({...updatedState,isLoading:true})
             },
                 //callback
-                ()=> {
-                    download_all_Post_Data()
-                        .then((res)=> download_category()
-                            .then((categories)=>{
-                                this.setState({data:res, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
-                            })
-                        );
+                async ()=> {
+                    this.props.set_loading_status(true);
+                    const res= await download_all_Post_Data();
+                    const categories = await download_category() ;
+                    this.setState({data:res, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
                 });//end setState
 
         }
