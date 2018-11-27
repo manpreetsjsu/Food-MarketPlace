@@ -1,9 +1,9 @@
-import React,{Component} from 'react'
+import React,{PureComponent} from 'react'
 import {Modal,Button} from 'semantic-ui-react'
 import SellForm from './sellForm'
 
 
-class SellModal extends Component {
+class SellModal extends PureComponent {
 
     constructor(props){
         super(props);
@@ -12,7 +12,9 @@ class SellModal extends Component {
         }
     }
 
-
+    // shouldComponentUpdate(nextProps,nextState){
+    //     return this.props.ismodalopen !== nextProps.ismodalopen || this.state.open !== nextState.open ;
+    // }
 
     componentDidUpdate(prevProps,prevState,snapShot){
         console.log("[SellModal.js componentDidUpdate]");
@@ -64,4 +66,4 @@ class SellModal extends Component {
 
 
 
-export default React.memo(SellModal);
+export default (SellModal);

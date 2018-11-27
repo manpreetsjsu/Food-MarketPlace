@@ -20,6 +20,9 @@ class DropDownMenu extends Component{
         };
     }
 
+    shouldComponentUpdate(nextProps,nextState){
+        return this.state.value !== nextState.value ;
+    }
 
     handleChange = (e, { value }) => {
         this.setState({ value },()=> this.props.getCategoryValue(this.state.value))};

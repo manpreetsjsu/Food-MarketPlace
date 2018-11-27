@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Checkbox } from 'semantic-ui-react'
+import {change_filters_state} from "../../Redux/actions/marketPlaceAction";
 
 export default class CheckboxExampleRemoteControl extends Component {
     state = {
@@ -12,7 +13,7 @@ export default class CheckboxExampleRemoteControl extends Component {
     };
     toggle = (e) => {
         let key = e.target.innerText;
-        this.setState({ [key]: !this.state[key] },()=>this.props.filterState(this.state));
+        this.setState({ [key]: !this.state[key] },()=>this.props.dispatch(change_filters_state(this.state)));
     };
 
     shouldComponentUpdate(nextProps,nextState){

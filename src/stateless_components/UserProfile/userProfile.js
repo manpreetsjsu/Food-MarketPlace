@@ -1,10 +1,10 @@
-import React,{Component} from 'react';
+import React,{PureComponent,} from 'react';
 import DisplayItems from '../Grid/displayItems';
 import {download_My_Post_Data} from "../../firebase/firebase_backend";
 import firebase from "firebase";
 import  './userProfile.css';
 
-class UserProfilePosts extends Component {
+class UserProfilePosts extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -35,6 +35,7 @@ class UserProfilePosts extends Component {
 
     }
 
+
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log('[UserProfile.js ComponentDidUpdate]');
         console.log(prevProps);
@@ -49,10 +50,10 @@ class UserProfilePosts extends Component {
 
     }
 
-    shouldComponentUpdate(){
-        console.log('[UserProfile.js shouldComponentUpdate]');
-        return true;
-    }
+    // shouldComponentUpdate(){
+    //     console.log('[UserProfile.js shouldComponentUpdate]');
+    //     return true;
+    // }
     componentWillUpdate(){
         console.log('[UserProfile.js componentWillUpdate]');
     }

@@ -18,7 +18,7 @@ class AppBar extends Component {
     logout=()=>{
 
         let that = this ;
-        if(this.props.accountLogin.status){
+        if(this.props.accountLoginStatus){
             let user= firebase.auth().currentUser;
             if(user){
                 firebase.auth().signOut().then(function() {
@@ -38,12 +38,13 @@ class AppBar extends Component {
         }
     };
 
+    // shouldComponentUpdate(nextProps,nextState){
+    //     return this.props.accountLoginStatus !== nextProps.accountLoginStatus ;
+    // }
     render() {
         const { activeItem } = this.state;
         console.log('render of appbar');
         return (
-            <LoggedInContext.Consumer>
-                {userLoginInfo =>
                     (
                         <Menu inverted >
 
@@ -57,30 +58,27 @@ class AppBar extends Component {
                             </Menu.Item>
 
                             <Menu.Item
-                                name={userLoginInfo.status ? userLoginInfo.userInfo.displayName : 'Welcome As Guest'}
+                                name={this.props.accountLoginStatus ? this.props.accountLoginUserInfo.displayName : 'Welcome As Guest'}
                                 active={activeItem === ''}
                                 onClick={this.handleItemClick} />
 
 
                             <Menu.Menu position='right'>
                                 <Menu.Item>
-                                    <Button onClick={this.logout} primary> {userLoginInfo.status ? 'Logout' : 'Sign In'} </Button>
+                                    <Button onClick={this.logout} primary> {this.props.accountLoginStatus ? 'Logout' : 'Sign In'} </Button>
                                 </Menu.Item>
                             </Menu.Menu>
 
                         </Menu>
-                    )}
-
-            </LoggedInContext.Consumer>
+                    )
         )
     }
 }
 
 const mapPropsToState=(state)=>{
     return{
-        accountLogin: {
-            status: state.accountLogin.status
-        }
+            accountLoginStatus: state.accountLogin.status,
+            accountLoginUserInfo: state.accountLogin.userInfo,
     }
 };
 
