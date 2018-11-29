@@ -1,5 +1,5 @@
-import React,{Component,Suspense} from 'react'
-import {Header,Form,Segment,Button,Image,Placeholder} from 'semantic-ui-react';
+import React,{Component} from 'react'
+import {Header,Form,Segment,Button,Image} from 'semantic-ui-react';
 import './loginModal.css';
 import firebase from "firebase"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
@@ -17,13 +17,14 @@ class LoginModal extends Component {
             signInSuccess: function(result) {
                 console.log(result);
                 this.props.userLogin(result);
+                console.log('afterS')
             }.bind(this)
         }
     };
 
 
-    render() {
 
+    render() {
         return(
                 <div id='form'>
                     <Header as='h2' style={{color: "white"}} textAlign='center'>

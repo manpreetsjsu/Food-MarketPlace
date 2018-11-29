@@ -2,6 +2,19 @@
     position: relative;
     margin:10px;
 }
+.marketPlaceHighLight{
+    border:1px solid #f6f7f9;
+    border-radius:5px;
+    padding:5px;
+    margin:5px;
+    background-color:#f6f7f9;
+    color:#1d2129;
+}
+
+.labelHighLight{
+    color: #1d2129!important;
+    background-color: #f6f7f9!important;
+}
 .locationInput{
     width:100%!important;
     border-radius: 12px!important;
@@ -13,6 +26,7 @@
   ##Device = Tablets, Ipads (portrait)
   ##Screen = B/w 768px to 1024px
 */
+
 
 @media (min-width: 768px) and (max-width: 1024px) {
     .media-display{

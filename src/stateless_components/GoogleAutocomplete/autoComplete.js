@@ -19,6 +19,7 @@ function debounce(fn, delay) {
 export default class GooglePlaceSearchInput extends React.Component {
 
     static propTypes = {
+        reset:PropTypes.bool,
         onChange: PropTypes.func,
         onPlaceSelected: PropTypes.func.isRequired,
         onRemove: PropTypes.func,
@@ -45,6 +46,7 @@ export default class GooglePlaceSearchInput extends React.Component {
         };
 
         this._getPlace = debounce(this._getPlace, 100) // changed to 00ms - Manpreet
+
     }
 
     componentDidMount() {
@@ -62,9 +64,9 @@ export default class GooglePlaceSearchInput extends React.Component {
 
         this.autocompleteService = new window.google.maps.places.AutocompleteService();
 
-        if (this.props.value) {
-            this._getPlace(this.props.value);
-        }
+        // if (this.props.value) {
+        //     this._getPlace(this.props.value);
+        // }
 
     }
 
@@ -72,12 +74,15 @@ export default class GooglePlaceSearchInput extends React.Component {
         console.log('[autoComplete.js] componentWillUpdate');
     }
 
-    shouldComponentUpdate(nextProps,nextState){
+    shouldComponentUpdate(nextProps,nextState,nextContext){
         console.log('[autoComplete.js] shouldComponentUpdate');
-        return nextState.inputValue !== this.state.inputValue || nextState.placeResults !== this.state.placeResults ;
+        return nextState.inputValue !== this.state.inputValue || nextState.placeResults !== this.state.placeResults || this.props.reset !== nextProps.reset ;
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps,prevState,snapShot){
+        if(this.props.reset !== prevProps.reset){
+            this.setState({inputValue: '', placeResults: []})
+        }
         console.log('[autoComplete.js] componentDidUpdate');
 
     }
@@ -233,12 +238,12 @@ export default class GooglePlaceSearchInput extends React.Component {
             <div className={'searchInputContainer'}>
 
                 <input
-
+                    disabled={this.props.filters_status}
                     value={this.state.inputValue}
                     onChange={this._onChange}
                     className={classNames(['searchInput', this.props.inputClassName])}
                     onKeyDown={this._handleInputKeyDown}
-                    placeholder='Location'
+                    placeholder="Location"
                 />
             </div>
             {/*<div className={classNames(['poweredByGoogle', this.props.resultClassName])}><img src={this.poweredImage} /></div>*/}

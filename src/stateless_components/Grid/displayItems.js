@@ -5,6 +5,7 @@ import ItemGridRow from './itemGridRow';
 import ItemGridColumn from './itemGridColumn';
 import {FoodItemContext} from "../../Context/LoggedInContext";
 
+
 const DisplayItems=(props)=>{
 
     function computeRowsNeeded(data){
@@ -13,36 +14,54 @@ const DisplayItems=(props)=>{
     };
 
     function updateDisplayItems(){
-        const itemsInRow =[];
+        let itemsInRow =[];
         const data = props.data; // we will fetch this data from backend... will not come form props.. temporary
-        const numberofRows =  computeRowsNeeded(data)  ;
-        let start_index = 0 ;
-        let end_index =0 ;
-        for(let i=0 ; i<numberofRows ; i++) {
-            start_index = end_index;// old initial end_index becomes new start_index at ith iteration
-            end_index += 4;
+        if(data.length > 0){
+            const numberofRows =  computeRowsNeeded(data)  ;
+            let start_index = 0 ;
+            let end_index =0 ;
+            for(let i=0 ; i<numberofRows ; i++) {
+                start_index = end_index;// old initial end_index becomes new start_index at ith iteration
+                end_index += 4;
 
-            itemsInRow.push(
-                <ItemGridRow key={i}>
-                    {
-                        data.slice(start_index, end_index).map((item) => {
-                            return (
-                                <FoodItemContext.Provider key={item._id} value={item}>
-                                    <ItemGridColumn
-                                        key={item._id}
-                                        item={item}/>
-                                </FoodItemContext.Provider>
-                            )
-                        })
-                    }
-                </ItemGridRow>
-            );
+                itemsInRow.push(
+                    <ItemGridRow key={i}>
+                        {
+                            data.slice(start_index, end_index).map((item) => {
+                                return (
+                                    <FoodItemContext.Provider key={item.post_id} value={item}>
+                                        <ItemGridColumn
+                                            isLoading={props.isLoading}
+                                            key={item.post_id}
+                                            item={item}
+                                             showEditDeleteButton={props.showEditDeleteButton}/>
+                                    </FoodItemContext.Provider>
+                                )
+                            })
+                        }
+                    </ItemGridRow>
+                );
 
+
+            }
+            return itemsInRow;
         }
-       return itemsInRow
+        return itemsInRow;
     };
-    let gridData = updateDisplayItems();
+    let gridData =null;
+    if(typeof(props.data) === 'string'){
+        //this covers the corner case when there are no items posted at a location.. hence render friendly message on screen
+        // or when there are no items to be displayed against a search criteria/filters
+        gridData = (
+            <p style={{fontSize:"30px"}}>{props.data}</p>
+        )
+    }
+    else{
+        gridData = updateDisplayItems();
+    }
 
+    console.log("displayItems.js");
+    console.log(gridData);
     return(
         <Grid container>
             { !props.isLoading && gridData }

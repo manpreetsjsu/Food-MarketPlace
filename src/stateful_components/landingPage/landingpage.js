@@ -1,61 +1,41 @@
 import React , {Component} from 'react';
 import LoginModal from '../loginDisplay/loginModal';
 import GridContainer from '../../stateless_components/Grid/GridLayout'
- import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
+import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
-import firebase from "firebase"
 import {LoggedInContext} from "../../Context/LoggedInContext";
+import {connect} from "react-redux";
+import { memberLoginMarketPlace,memberLogOut} from "../../Redux/actions/accountLoginAction";
+import {guestLoginMarketPlace,guestLogIn} from "../../Redux/actions/guestLoginAction";
+
+import {Loader} from 'semantic-ui-react';
+import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
+import RenderGridElements from "../../stateless_components/Grid/RenderGridElements";
+import firebase from "firebase";
+import UserProfilePosts from '../../stateless_components/UserProfile/userProfile';
+
 
 class LandingPage extends Component {
-    constructor(props){
-        console.log('constructor of landing');
-        super(props);
-        this.state={
-
-            guestLogin: {
-                status : false,
-                newsFeed: false,
-                marketPlace: false
-            },
-            accountLogin: {
-                status: false,
-                userInfo:'',
-                email:'',
-                newsFeed: false,
-                marketPlace: false
-            },
-            marketPlace:{
-                reset:false,
-                location:'',
-                filters:{
-                    Fruits: true,
-                    Vegetables: true,
-                    HomeCooked: true,
-                    GreenWaste: true,
-                    Other: true,
-
-                }
-            }
-        }
-    }
 
     // componentWillMount(){
     //     console.log('[landing page] componentWillMount update]');
     // }
     shouldComponentUpdate(nextProps,nextState){
         console.log('[landing page] shouldComponent update]');
-        return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-            nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.accountLogin.status !== this.state.accountLogin.status
-            || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace
-            || nextState.marketPlace.location !== this.state.marketPlace.location || nextState.marketPlace.filters !== this.state.marketPlace.filters
-            ||  nextState.marketPlace.reset !== this.state.marketPlace.reset   ;
+        return true;
+        // return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
+        //     nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.accountLogin.status !== this.state.accountLogin.status
+        //     || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace
+        //     || nextState.marketPlace.location !== this.state.marketPlace.location || nextState.marketPlace.filters !== this.state.marketPlace.filters
+        //     ||  nextState.marketPlace.reset !== this.state.marketPlace.reset   ;
     }
+
     //
-    // componentDidMount(){
-    //     console.log('[landing page] componentDidMount update]');
-    // }
+    componentDidMount(){
+        console.log('[landing page] componentDidMount update]');
+    }
     //
     // componentWillUpdate(){
     //     console.log('[landing page] willComponent update]');
@@ -65,280 +45,65 @@ class LandingPage extends Component {
     //     console.log('[landing page] componentWillUnmount update]');
     // }
     //
-    // componentDidUpdate(){
-    //     console.log('[landing page componentDidUpdate update]');
-    // }
+    componentDidUpdate(){
+        console.log('[landing page componentDidUpdate update]');
+    }
     // componentWillReceiveProps(){
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
 
-    guestLogin = () => {
-        this.setState((prevState, props) => {
-            return { ...prevState,
-                guestLogin:
-                    {
-                        status:true,
-                        newsFeed:false,
-                        marketPlace: true
-                    }
-            }
-        })
-    };
-    guestNewsFeedClickHandler= ()=>{
-        this.setState((prevState, props) => {
-            return {...prevState,
-                    guestLogin :{
-                        status: true,
-                        newsFeed: true,
-                        marketPlace: false
-                    }
-            }
-        });
+   
 
-    };
-
-    memberNewsFeedClickHandler=()=>{
-        this.setState((prevState, props) => {
-            return {...prevState,
-                accountLogin :{
-                    status: prevState.accountLogin.status,
-                    userInfo: prevState.accountLogin.userInfo,
-                    email:prevState.accountLogin.email,
-                    newsFeed: true,
-                    marketPlace: false
-                }
-            }
-        });
-    };
-
-    guestMarketPlaceClickHandler = () =>{
-        this.setState((prevState, props) => {
-            return {...prevState,
-                guestLogin:{
-                    status: true,
-                    newsFeed: false,
-                    marketPlace: true
-                },
-                marketPlace:{
-                    reset: !prevState.marketPlace.reset,
-                    location:'',
-                    filters:{
-                        Fruits: true,
-                        Vegetables: true,
-                        HomeCooked: true,
-                        GreenWaste: true,
-                        Other: true,
-
-                    }
-                }
-            }
-        });
-    };
-    memberMarketPlaceClickHandler = () =>{
-        this.setState((prevState, props) => {
-            return {...prevState,
-                accountLogin:{
-                    status: prevState.accountLogin.status,
-                    userInfo: prevState.accountLogin.userInfo,
-                    email: prevState.accountLogin.email,
-                    newsFeed: false,
-                    marketPlace: true
-                },
-                marketPlace:{
-                    reset: !prevState.marketPlace.reset,
-                    location:'',
-                    filters:{
-                        Fruits: true,
-                        Vegetables: true,
-                        HomeCooked: true,
-                        GreenWaste: true,
-                        Other: true,
-
-                    }
-                }
-            }
-        });
-    };
-
-    firebaseLogin = (userObject)=> {
-        this.setState((prevState, props) => {
-            return { ...prevState,
-                accountLogin: {
-                    status: true,
-                    userInfo: userObject,
-                    email: userObject.email,
-                    newsFeed:false,
-                    marketPlace: true
-                }
-            }
-        });
-    };
-
-    getData = ()=> {
-        var db = firebase.firestore();
-        var docRef = db.collection("data").doc("fv");
-
-        docRef.get().then(function(doc) {
-            if (doc.exists) {
-                console.log("Document data:", doc.data());
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        }).catch(function(error) {
-            console.log("Error getting document:", error);
-        });
-    };
-
-    filterByLocation=(location)=>{
-        this.setState((updatedState)=> {
-                return {...updatedState,marketPlace: {...updatedState.marketPlace,location: location}}
-            });
-        console.log('this is sidebar locatiin' +location);
-    };
-
-    filterState=(state)=>{
-        this.setState((updatedState)=>{
-            return {...updatedState,marketPlace:{ ...updatedState.marketPlace,filters:state}}
-        });
-    };
     render() {
         console.log('render method of landing page');
-        // this will come from backend
-        const  data = [
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            },
-            {
-                "title": "Fresh Avacados",
-                "description":"These are organic backyard produced vegetables. Fresh, cheap, Hurry UP to buy!",
-                "category":"home-cooked",
-                "price": "3",
-                "amount":"6",
-                "freshness": "5",
-                "contact": "5103614640",
-                "location": "San Jose",
-                "timestamp": "2 Hours ago",
-                "image": ""
-            }
-        ];
-
+        console.log(this.props);
         let landingPageOutput = null;
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
+        let userPostsSection = null ;
 
-        if( this.state.guestLogin.marketPlace ||  this.state.accountLogin.marketPlace ){
+
+        if( this.props.guestLogin.marketPlace ||  this.props.accountLogin.marketPlace ){
             marketPlacePageSection = (
 
                 <>
                 <HeaderBar/>
-                            <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
-                                     marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}
-                                     getItemLocation={this.filterByLocation}
-                                     filterState={this.filterState}
-                                     resetFilters={this.state.marketPlace.reset}
-                                />
-                <GridContainer location={this.state.marketPlace.location}
-                               reset={this.state.marketPlace.reset}
-                               filterState={this.state.marketPlace.filters}
-                               category='Recent'
-                               data={data}
-                />
+                    <SideBar/>
+                <GridContainer >
+                    <RenderGridElements location={this.props.marketPlace.location}
+                                        reset={this.props.marketPlace.reset}
+                                        filterState={this.props.marketPlace.filters}
+
+                                        set_loading_status={this.props.set_loading_status}/>
+                </GridContainer>
                 </>
             );
         }
-        else if(this.state.guestLogin.newsFeed || this.state.accountLogin.newsFeed ){
+        else if(this.props.guestLogin.newsFeed || this.props.accountLogin.newsFeed ){
             newsFeedSection= (
                 <>
-                <HeaderBar />
-                    <SideBar newsFeedClickHandler={this.state.guestLogin.status ? this.guestNewsFeedClickHandler : this.memberNewsFeedClickHandler}
-                             marketPlaceClickHandler={this.state.guestLogin.status ? this.guestMarketPlaceClickHandler : this.memberMarketPlaceClickHandler}/>
+                <HeaderBar memberLogOut={()=>this.props.memberLogOut}
+                           guestLogIn={this.props.guestLogIn}/>
+
+                    <SideBar/>
                     <NewsFeed/>
                 </>
             );
         }
-        else if (!this.state.guestLogin.status || !this.state.accountLogin.status){
+        else if(this.props.accountLogin.status && this.props.accountLogin.showMemberPosts){
+            userPostsSection = (
+                <>
+                    <HeaderBar/>
+                    <SideBar/>
+                    <GridContainer >
+                        <UserProfilePosts set_loading_status={this.props.set_loading_status}
+                                            reloadMemberPosts={this.props.accountLogin.reloadMemberPosts}/>
+                    </GridContainer>
+                </>
+            )
+        }
+
+        else if (!this.props.guestLogin.status || !this.props.accountLogin.status){
              landingPageOutput= (
 
                 <>
@@ -349,17 +114,20 @@ class LandingPage extends Component {
                            loop>
                         <source src={require('../../assets/video/earth.mp4')} type='video/mp4'/>
                     </video>
-                    { <LoginModal guestLogin={this.guestLogin} userLogin={this.firebaseLogin}/> }
+                    { <LoginModal guestLogin={ this.props.guestLoginClickHandler} userLogin={this.props.firebaseLogin}/> }
                 </>
             );
         }
 
         return (
             <Aux>
-                <LoggedInContext.Provider value={this.state.accountLogin}>
+                <LoggedInContext.Provider value={this.props.accountLogin}>
                 {landingPageOutput}
                 {marketPlacePageSection}
                 {newsFeedSection}
+                {userPostsSection}
+
+                {this.props.marketPlace.isLoading && <Loader size='large' active/>}
                 </LoggedInContext.Provider>
             </Aux>
         );
@@ -367,4 +135,44 @@ class LandingPage extends Component {
     }
 }
 
-export default LandingPage;
+const mapStateToProps = (state) => {
+    return {
+        guestLogin:{
+            status : state.guestLogin.status,
+            newsFeed: state.guestLogin.newsFeed,
+            marketPlace:state.guestLogin.marketPlace
+        },
+        accountLogin:{
+            status: state.accountLogin.status,
+            newsFeed: state.accountLogin.newsFeed,
+            marketPlace: state.accountLogin.marketPlace,
+            userInfo: state.accountLogin.userInfo,
+            showMemberPosts:state.accountLogin.showMemberPosts,
+            reloadMemberPosts: state.accountLogin.reloadMemberPosts
+
+        },
+        marketPlace:{
+            isLoading:state.marketPlace.isLoading,
+            reset:state.marketPlace.reset,
+            location:state.marketPlace.location,
+            filters:state.marketPlace.filters
+        }
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        guestLoginClickHandler: ()=> {dispatch(guestLoginMarketPlace());},
+        firebaseLogin:(userInfo)=>{console.log(userInfo);dispatch(memberLoginMarketPlace(userInfo));},
+        set_loading_status:(flag)=>{dispatch(set_loading_status(flag))},
+        memberLogOut:()=>{dispatch(memberLogOut())},
+        guestLogIn:()=>{dispatch(guestLogIn())}
+
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+
+
+

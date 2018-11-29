@@ -7,33 +7,69 @@ import './sellForm.css';
 import PreviewImages from '../PreviewImage/previewUploadedImages';
 import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
-import axios from 'axios';
-import firebase from "firebase"
-import App from '../../App';
-import ReactDOM from 'react-dom';
+import {connect} from 'react-redux';
+
+import {
+    uploadFile,
+    postDataToFirebase,
+    appendIDToPost,
+    querySaveCategories,
+    savePostInUserData,
+    updateDataToFirebase,
+    updateDataToFirebaseOldimage,
+    delete_from_userid,
+    delete_from_category,
+    delete_from_posts,
+} from "../../firebase/firebase_backend";
+import {myPostsClickHandlerDispatcher,marketPlaceCLickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
+import {reload_member_posts} from "../../Redux/actions/accountLoginAction";
+
+const PostSubmissionForm=(props)=>{
+    return(
+        <>
+            <Form.Field>
+            <h2>Your request has been successfully processed! </h2>
+            </Form.Field>
+        </>
+    )
+};
+
+
 
 class SellForm extends Component{
     constructor(props){
         super(props);
+        this.deleteButtonHandler=this.deleteButtonHandler.bind(this);
         this.state={
-            postID: '',
-            title: '',
-            description:'',
-            category:'',
-            price: '',
-            amount: '',
-            freshness: '',
-            contact: '',
-            location: '',
-            post_location:'',
-            timestamp: '',
+            post_id: props.userInfo ? props.userInfo.post_id : '',
+            title: props.userInfo ? props.userInfo.title : '',
+            description: props.userInfo ? props.userInfo.description : '',
+            category: props.userInfo ? props.userInfo.category : '',
+            price: props.userInfo ? props.userInfo.price : '',
+            freshness: props.userInfo ? props.userInfo.freshness : '',
+            contact: props.userInfo ? props.userInfo.contact : '',
+            location: props.userInfo ? props.userInfo.location : '',
+            timestamp: props.userInfo ? props.userInfo.timestamp : '',
+            oldImageUrl:props.userInfo ? props.userInfo.images : '',
             images: [],
-            photo:[],
-            isValidated: false,
-            submitted: false,
-            opened: true
+            userInfo:this.createUserInfoObject(this.props.accountLogin.userInfo),
+            submissionComplete:false,
+            clickedPostButton:false,
+            errorInSubmission:false,
         }
     }
+
+    createUserInfoObject=(obj)=>{
+        let userInfo={
+            displayName:obj.displayName,
+            uid:obj.uid,
+            photoURL:obj.photoURL,
+            email:obj.email,
+            phoneNumber:obj.phoneNumber
+        };
+        return userInfo
+    }
+    ;
 
     getCategoryValue=(category)=>{
         this.setState({category: category})
@@ -51,188 +87,110 @@ class SellForm extends Component{
             [e.target.name]:e.target.value});
     };
 
-//     uploadImage=()=>{
-//
-//         let storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-//         let uploadTask = storageRef.put(this.state.images[0].file);
-//
-// // Register three observers:
-// // 1. 'state_changed' observer, called any time the state changes
-// // 2. Error observer, called on failure
-// // 3. Completion observer, called on successful completion
-//         uploadTask.on('state_changed', function(snapshot){
-//             // Observe state change events such as progress, pause, and resume
-//             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-//             let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-//             console.log('Upload is ' + progress + '% done');
-//             switch (snapshot.state) {
-//                 case firebase.storage.TaskState.PAUSED: // or 'paused'
-//                     console.log('Upload is paused');
-//                     break;
-//                 case firebase.storage.TaskState.RUNNING: // or 'running'
-//                     console.log('Upload is running');
-//                     break;
-//             }
-//         }, function(error) {
-//             // Handle unsuccessful uploads
-//         }, () => {
-//             // Handle successful uploads on complete
-//             // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-//             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-//                 // localStorage.clear();
-//                 this.setState({photo: downloadURL})
-//                 console.log(this.state.photo);
-//                 // localStorage.setItem('myData', downloadURL);
-//                 // console.log("local: " + localStorage);
-//                 //console.log('File available at', downloadURL);
-//
-//             });
-//         });
-//
-//
-//     };
 
-
-
-    postItem=()=>{
-      axios.post('http://localhost:3001/posts/',{...this.state})
-          .then()
-          .catch()
-    };
-
-    validate = () => {
-
-        if(this.state.description.length < 10) {
+    validateForm=()=>{
+        if(this.state.images.length === 0 ){
             return false;
         }
-
-        if(this.state.title.length < 5) {
+        if(this.state.location === ""){
             return false;
         }
-
-        if(!this.state.images.length || this.state.images === undefined) {
+        if(this.state.title.length <= 4){
             return false;
         }
-
+        if(this.state.category === ""){
+            return false;
+        }
+        if(this.state.price === "" ){
+            return false;
+        }
+        if(this.state.contact === ""){
+            return false;
+        }
         return true;
     };
 
-    postButtonClickHandler = () => {
 
-        if(this.validate()) {
-            this.submitHandler()
-        }
-    };
-
-    close = () => {
-        this.setState({opened: false})
-    };
-
-    submitHandler = () =>{
-        console.log(this.state);
-       // this.postItem();
-        // send this info to firebase database
-       // this.uploadImage();
-        let storageRef = firebase.storage().ref("/allpics/" + this.state.images[0].file.name);
-        let uploadTask = storageRef.put(this.state.images[0].file);
-
-// Register three observers:
-// 1. 'state_changed' observer, called any time the state changes
-// 2. Error observer, called on failure
-// 3. Completion observer, called on successful completion
-        uploadTask.on('state_changed', function(snapshot){
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-                case firebase.storage.TaskState.PAUSED: // or 'paused'
-                    console.log('Upload is paused');
-                    break;
-                case firebase.storage.TaskState.RUNNING: // or 'running'
-                    console.log('Upload is running');
-                    break;
+    postButtonClickHandler= ()=> {
+        // this.setState({isPostSubmitted:true},()=>{
+        //     postButtonClickHandler(this.state);
+        // });
+        if(this.props.edit === undefined){
+            //user is creating new post - not editing
+            if(this.validateForm()){ //validate sell form before posting
+                console.log('posting item...');
+                this.setState({clickedPostButton: true},
+                    async () => {
+                        try {
+                            const download_url = await uploadFile(this.state);
+                            const docRef = await postDataToFirebase(this.state,download_url);
+                            await Promise.all([
+                                                appendIDToPost(docRef),
+                                                querySaveCategories(this.state.category,docRef),
+                                                savePostInUserData(docRef)
+                            ]);
+                            this.setState({submissionComplete:true})
+                        } catch(e) {
+                            console.error("Problem", e);
+                            this.setState({errorInSubmission: true, clickedPostButton: false});
+                        }
+                    });
             }
-        }, function(error) {
-            // Handle unsuccessful uploads
-        }, () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                // localStorage.clear();
-               // this.setState({photo: downloadURL})
-               // console.log(this.state.photo);
-                // localStorage.setItem('myData', downloadURL);
-                // console.log("local: " + localStorage);
-                //console.log('File available at', downloadURL);
-                let category = this.state.category;
-                let db = firebase.firestore();
-                db.collection("data").doc(this.state.category).collection("posts").add({
-                    category: this.state.category,
-                    location: this.state.location,
-                    title: this.state.title,
-                    price: this.state.price,
-                    images: downloadURL,
-                }).then((docRef) => {
-                    let post_location ="/data" + "/"+ category + "/posts" + "/" + docRef.id;
-                   // this.setState({post_location: post_location})
-                   // console.log(this.state.post_location);
-                    let user = firebase.auth().currentUser;
+        }
+        else if(this.props.edit){ //user is editing the item
+            if(this.validateForm()) { //validate sell form before posting
+                if (this.state.oldImageUrl===""){ // user has uploaded new image while editing..
+                    console.log('posting item...');
+                    this.setState({clickedPostButton: true},
+                        async () => {
+                            try {
+                                const download_url = await uploadFile(this.state);
+                                await updateDataToFirebase(this.state,download_url);
+                                this.setState({submissionComplete:true})
+                            } catch(e) {
+                                console.error("Problem", e);
+                                this.setState({errorInSubmission: true, clickedPostButton: false});
+                            }
 
-                    if (user) {
-                        // User is signed in.
-                        let  uid = user.uid;
-                        console.log("uid: "  + uid);
-                        db.collection("userData").doc(uid).S({
-                            post_location: post_location
                         });
-                    } else {
-                        // No user is signed in.
-
-                        console.log("No user is signed in.");
-                    }
-                    // localStorage.setItem('location', location)
-                    // console.log("Document written with ID: ", docRef.id);
-                })
-                    .catch(function(error) {
-                        console.error("Error adding document: ", error);
+            }
+            else{
+                    //updating post with old image
+                    this.setState({clickedPostButton:true},
+                        async ()=>{
+                            try {
+                                await updateDataToFirebaseOldimage(this.state);
+                                this.setState({submissionComplete:true})
+                            } catch(e) {
+                                console.error("Problem", e);
+                                this.setState({errorInSubmission: true, clickedPostButton: false});
+                            }
                     });
 
-            });
-        });
+                }
+            }
+        }
 
-    // let  docData = {
-    //         category: this.state.category,
-    //         location: this.state.location,
-    //         title: this.state.title,
-    //         price: this.state.price,
-    //         images: [localStorage.getItem('myData')],
-    //     };
-      //  console.log(this.state.photo);
-
-        this.setState({
-            submitted: true
-        });
-
-        this.downloadPostData();
     };
 
+    async deleteButtonHandler(){
+      // delete the item from firebase - sarang
+      // then update the myPosts section - reload - Manpreet
+        console.log('Deleting item...')
 
-    downloadPostData=()=>{
-        let abc=[];
-        let db = firebase.firestore();
-        let postsRef = db.collection('data').doc('fruits').collection('posts');
-        let allPosts = postsRef.get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    //console.log(doc.id, '=>', doc.data());
-                    abc.push(doc.data());
-                });
-            })
-            .catch(err => {
-                console.log('Error getting documents', err);
-            });
-        console.log(abc);
+        let delete_promise_calls = Promise.all([
+            delete_from_posts(this.state),
+            delete_from_userid(this.state),
+            delete_from_category(this.state),
+        ]);
+
+        try {
+           await delete_promise_calls ;
+           this.setState({submissionComplete:true})
+        } catch(e) {
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true, clickedPostButton: false});
+        }
     };
 
      handleImageUpload= (file)=>{
@@ -247,7 +205,7 @@ class SellForm extends Component{
          this.setState((prevState)=>{
              return{
                  // images: prevState.images.splice(indexOfImage,1)
-                 images: update(this.state.images, {$splice: [[indexOfImage,1]]})
+                 oldImageUrl:'',images: update(this.state.images, {$splice: [[indexOfImage,1]]})
              }
          })
      };
@@ -258,17 +216,44 @@ class SellForm extends Component{
     }
 
     componentDidMount(){
-        console.log('[sellform.js] componentDidMount');
+
+       // console.log('[sellform.js] componentDidMount');
+    }
+    componentWillMount(){
+        if(this.props.userInfo && this.props.edit){
+            let arr=[];
+            arr.push({file:'',imagePreviewUrl:this.props.userInfo.images});
+
+            this.setState({images:arr})
+        }
     }
 
-    static getDerivedStateFromProps(props, state){
-        //this lifecycle executes when function gets new props before render()
-        //only use when component's inner state depends upon props...
-        console.log('[sellform.js] getDerivedStateFromProps');
-        return null;
-    }
-    componentDidUpdate(prevProps){
-        console.log('[sellform.js] componentDidUpdate')
+    componentDidUpdate(prevProps,prevState){
+        console.log('[sellform.js] componentDidUpdate');
+        if(this.state.submissionComplete && this.props.accountLogin.marketPlace){
+            //if user is currently at marketPlace section
+            //redirect user to @ my Posts Section and reload the posts
+            this.setState({submissionComplete:true},()=>this.props.redirectToPostSection()); //condition to break infinite loop in DidUpdate
+        }
+        else if( this.state.submissionComplete && !this.props.accountLogin.marketPlace){
+            // if user is currently at My posts section
+            this.setState({submissionComplete:true},()=>{
+                if(this.props.accountLogin.newsFeed){
+                    // if user is at newsFeed..redirect to myposts
+                    this.props.redirectToPostSection();
+                    return;
+                }
+                //update the my post section...
+                this.props.fetchMemberPosts();
+                this.props.closeSellModal(); // // close sell modal, hence sellModal Component gets Unmounted
+            });
+        }
+        else if(this.state.submissionComplete && this.props.edit){
+            this.setState({submissionComplete:false},()=>{
+                this.props.fetchMemberPosts();
+                this.props.closeSellModal(); // // close sell modal, hence sellModal Component gets Unmounted
+            })
+        }
     }
 
     componentWillUnmount(){
@@ -277,32 +262,25 @@ class SellForm extends Component{
 
     render(){
         console.log('render of sellForm');
-        let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>);
-
-        if(!this.state.opened) {
-            ReactDOM.render(<App />, document.getElementById('root'));
-        }
-        if(this.state.submitted) {
-            return (
-                <Form>
-                    <h4>Your item was submitted successfully!</h4>
-                    <Button
-                        type='submit'
-                        onClick={this.close}>Close
-                    </Button>
-                </Form>
-            )
-        }
-
-        else {
-            return (
-                <Form>
+        console.log(this.state);
+        let previewImages = (<PreviewImages deleteUploadedImage={this.handleImageDeletion} images={this.state.images}/>)
+        let form = null;
+        if(!this.state.clickedPostButton){
+            form = (
+                <>
+                    {this.state.errorInSubmission ?
+                      <Form.Field>
+                          <p>Failed to process your request</p>
+                      </Form.Field>
+                    : null
+                  }
                     <Form.Field>
-                        <DropDownMenu getCategoryValue={this.getCategoryValue}/>
+                        <DropDownMenu edit={this.props.edit} defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
                     </Form.Field>
 
                     <Form.Field>
                         {<AutoCompleteInput
+                            value={this.state.location.description}
                             onChange={() => {
                             }}
                             onPlaceSelected={this.getItemLocation}/>}
@@ -310,38 +288,54 @@ class SellForm extends Component{
 
                     <Form.Field>
                         <input
+                            defaultValue={this.state.title}
                             placeholder='What are you selling ?'
                             name="title"
                             onChange={this.saveInfo}/>
                     </Form.Field>
 
                     <Form.Field>
-                        <Input labelPosition='right'
+                        <Input labelPosition='left'
                                type='text'
-                               placeholder='Amount'
+                               placeholder='Price'
                         >
-                            <input name="price" onChange={this.saveInfo}/>
+
                             <Label basic>$</Label>
+                            <input defaultValue={this.state.price} name="price" onChange={this.saveInfo}/>
                         </Input>
                     </Form.Field>
 
                     <Form.Field>
-                        <textarea name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
+                        <input
+                            defaultValue={this.state.contact}
+                            placeholder='Contact Me Here'
+                            name="contact"
+                            onChange={this.saveInfo}/>
                     </Form.Field>
 
                     <Form.Field>
-                        <FreshnessRating freshnessRating={this.getFreshnessRating}/>
+                        <textarea defaultValue={this.state.description} rows="4" cols="50" name='description' onChange={this.saveInfo} placeholder='Brief Description'/>
                     </Form.Field>
 
                     <Form.Field>
+                        <FreshnessRating defaultValue={this.state.freshness} freshnessRating={this.getFreshnessRating}/>
+                    </Form.Field>
+
+                    <Form.Field>
+
                         <FileInput appendImageToArray={this.handleImageUpload}/>
                     </Form.Field>
 
                     <Form.Field>
                         <Button
+                            color="blue"
                             type='submit'
-                            onClick={this.postButtonClickHandler}>Post
+                            onClick={this.postButtonClickHandler}>{this.props.edit ? 'Update' : 'Post'}
                         </Button>
+                        {this.props.edit ?
+                            <Button onClick={this.deleteButtonHandler} color="red" type='submit'> Delete Item </Button>
+                            : null
+                        }
 
                     </Form.Field>
 
@@ -350,13 +344,57 @@ class SellForm extends Component{
                             {previewImages}
                         </div>
                     </Form.Field>
-
-                </Form>
+                </>
             )
         }
+        else if(this.state.clickedPostButton && (!this.state.submissionComplete || !this.state.postUpdateComplete)){
+            form=(
+                <>
+                    <Form.Field>
+                        <h3>Submitting Your Request ! Please Wait ...</h3>
+                    </Form.Field>
+                </>
+            )
+        }
+        else if(this.state.submissionComplete || this.state.postUpdateComplete){
+            form= (<PostSubmissionForm/>)
+        }
+
+        else if(this.state.errorInSubmission){ // it never reaches here... dead code
+            form=(
+                <Form.Field>
+                    <h3>There was error while submitting your request. Please try again!</h3>
+                </Form.Field>
+            )
+        }
+
+        return(
+                <Form>
+                    {form}
+                </Form>
+
+        )
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        accountLogin:{
+            newsFeed:state.accountLogin.newsFeed,
+            marketPlace:state.accountLogin.marketPlace,
+            userInfo:state.accountLogin.userInfo,
+            reloadMemberPosts:state.accountLogin.reloadMemberPosts
+        }
 
+    };
+};
 
-export default SellForm
+const mapDispatchToProps = dispatch => {
+    return {
+        redirectToMarketPlace:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
+        redirectToPostSection:()=>{dispatch(myPostsClickHandlerDispatcher());},
+        fetchMemberPosts:()=>{dispatch(reload_member_posts())}
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(SellForm);

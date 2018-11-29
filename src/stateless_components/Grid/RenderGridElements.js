@@ -1,20 +1,11 @@
 import React,{Component} from 'react'
 import  './Grid.css'
-import axios from 'axios';
 import Multimap from 'multimap';
 import DisplayItems from './displayItems';
-
-const categories =   {
-    "_id": "5be7f9d768e6065f38baf1b4",
-    "Fruits": ["5be7f9d768e6065f38baf1b3","5be73b1c07141e5dd090aba9","5be7427c07141e5dd090abad","5be7426807141e5dd090abac","5be7428707141e5dd090abae","5be7428e07141e5dd090abaf",
-    "5be7429b07141e5dd090abb0","5be742a807141e5dd090abb1"],
-    "Vegetables": ["5be768f707141e5dd090abb5","5be7416107141e5dd090abab"],
-    "HomeCooked": [],
-    "GreenWaste": ["5be7fcb5041a938e746e75ba"],
-    "Other": ["5be76e9507141e5dd090abb6","5be74a3907141e5dd090abb2","5be7687707141e5dd090abb3","5be768ac07141e5dd090abb4","5be76e9507141e5dd090abb6",
-    ],
-    "__v": 0
-};
+import {
+    download_all_Post_Data,
+    download_category
+} from "../../firebase/firebase_backend";
 
 class RenderGridElements extends Component {
 
@@ -29,17 +20,24 @@ class RenderGridElements extends Component {
             categories:''
         }
     };
+    fetchPosts=async()=>{
+        try {
+            this.props.set_loading_status(true);
+            const res= await download_all_Post_Data();
+            const categories = await download_category() ;
+            let result = this.multiMapCollection(res);
+            this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]},
+                ()=>this.props.set_loading_status(false));
+        } catch(e) {
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true, clickedPostButton: false});
+        }
+    };
 
     componentDidMount(){
-        // fetching remote posts from backend
-        axios.get('http://localhost:3001/posts/').
-        then(res=>{
-            //whenever location is changed, fetch catgories result also - not imp,emented yet
-            console.log(res);
-            let result = this.multiMapCollection(res.data);
-            this.setState({data:res.data, categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-        }).catch(err=>console.log(err));
         console.log('[gridLayout.js ComponentDidMount]');
+        this.setState({isLoading:true},
+            ()=>this.fetchPosts());
     }
 
     componentDidUpdate(prevProps, prevState, snapsShot){
@@ -48,16 +46,7 @@ class RenderGridElements extends Component {
             console.log('reset');
             //reset the marketplace
             this.setState({isLoading:true},
-                ()=>{
-                    axios.get('http://localhost:3001/posts/').
-                    then(res=>{
-                        //need to fetch catgories result here also
-                        console.log(res);
-                        let result = this.multiMapCollection(res.data);
-                        this.setState({data:res.data,isLoading:false, categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-                    }).catch();
-                });
-
+                ()=>this.fetchPosts());
             return;
         }
         if(prevProps.location !== this.props.location){
@@ -66,14 +55,12 @@ class RenderGridElements extends Component {
                 return({...updatedState,isLoading:true})
             },
                 //callback
-                ()=> axios.get('http://localhost:3001/posts/').
-                then(res=>{
-                    //whenever location is changed, fetch categories result also - not implemented - need endpoint here
-                    console.log(res);
-                    this.setState({data:res.data, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
-
-                }).catch((err)=>console.log(err))
-                );//end setState
+                async ()=> {
+                    this.props.set_loading_status(true);
+                    const res= await download_all_Post_Data();
+                    const categories = await download_category() ;
+                    this.setState({data:res, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
+                });//end setState
 
         }
         if(prevProps.filterState !== this.props.filterState){ // if filters are changed by user, initially all categories post are shown to user
@@ -138,7 +125,7 @@ class RenderGridElements extends Component {
         if(location_post_entries){ // if location has posts...
             this.state.categories[key].map((post_id)=>{
                 let post_entry=location_post_entries.find((each_entry)=>{
-                    return each_entry._id === post_id ; // will return matching post or undefined////
+                    return each_entry.post_id === post_id ; // will return matching post or undefined////
                 });
 
                 if(post_entry){
@@ -169,7 +156,7 @@ class RenderGridElements extends Component {
         console.log('applying fiters on location');
         console.log(delete_entries);
         this.stateChangeByFiltersOn(delete_entries);
-
+        this.props.set_loading_status(false);
     };
 
     stateChangeByFiltersOn=(delete_entries)=>{
@@ -182,7 +169,9 @@ class RenderGridElements extends Component {
             let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : new_data,sortedByIdCollection:new_sortedByIdCollection}
+                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : 'There are currently no items matching your search criteria.'
+                    ,sortedByIdCollection:new_sortedByIdCollection}
+
             });
         }
         else{
@@ -197,7 +186,9 @@ class RenderGridElements extends Component {
             console.log('new data');
             console.log(new_data);
             let result_data= this.convert2DArrayto1D(new_data);
-            result_data.push(...this.state.data);
+            if(typeof(this.state.data) === "object"){
+                result_data.push(...this.state.data);
+            }
             console.log(result_data);
             this.setState((updatedState)=>{
                 return{...updatedState,isLoading:false,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
@@ -288,9 +279,9 @@ class RenderGridElements extends Component {
         let sortByLocation = new Multimap();
         let immutable_sortById = new Multimap();
         data.map((item)=>{
-            sortedById.set(item._id,item);
+            sortedById.set(item.post_id,item);
             sortByLocation.set(item.location.id,item);
-            immutable_sortById.set(item._id,item);
+            immutable_sortById.set(item.post_id,item);
         }) ;
         let temp_arr = [];
         temp_arr.push(sortedById);
@@ -302,7 +293,7 @@ class RenderGridElements extends Component {
     ArrayToMultimap=(data)=>{
         let multimap = new Multimap();
         data.map((item)=>{
-            multimap.set(item._id,item);
+            multimap.set(item.post_id,item);
         }) ;
         return multimap;
     };
@@ -317,9 +308,12 @@ class RenderGridElements extends Component {
         else { // there are no items posted in the searched location, hence display nothing
             this.setState((updatedState)=> {
 
-                return({isLoading:false,data:[],sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+                return({isLoading:false,data:'There are currently no items posted in this area. Please check back later.'
+                    ,sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
+
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
             });//end setstate
+            this.props.set_loading_status(false);
 
         }
     };
@@ -328,7 +322,8 @@ class RenderGridElements extends Component {
         console.log('[RenderGridElements.js render method]');
         return(
             <>
-                { <p  className='foodTextCategory'>{this.props.category}</p>}
+                {/*{ <p  className='foodTextCategory'></p>}*/}
+
                     { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
             </>
         );

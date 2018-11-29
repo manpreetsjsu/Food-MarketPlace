@@ -1,0 +1,6 @@
+.positionEdit{
+    position: absolute;
+    left: 80%;
+    bottom: 16%;
+    z-index: 100;
+}
