@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import styles from './styles.css';
-
+import {
+    set_location,
+} from "../../Redux/actions/marketPlaceAction";
 
 function debounce(fn, delay) {
     let timer = null;
@@ -130,7 +132,7 @@ export default class GooglePlaceSearchInput extends React.Component {
 
         if (!place) return;
 
-        this.props.onPlaceSelected(place);
+        this.props.onPlaceSelected(set_location(place)); //dispatch
     }
 
     _removeLocation = (event) => {
@@ -175,7 +177,7 @@ export default class GooglePlaceSearchInput extends React.Component {
             placeResults: []
         });
 
-        this.props.onPlaceSelected(activePredication);
+        this.props.onPlaceSelected(set_location(activePredication)); //dispatch
     };
 
     handleUpKey = () => {

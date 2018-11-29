@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
-import {Modal} from "semantic-ui-react";
-import {Button} from "semantic-ui-react";
+import {Modal,Button} from "semantic-ui-react";
+import {guestLogIn} from "../../Redux/actions/guestLoginAction";
 
 class GuestPopUpModal extends Component{
 
@@ -13,7 +13,7 @@ class GuestPopUpModal extends Component{
 
     handleSignIn=()=>{
         console.log(this.props);
-        this.props.redirectToSignIn();
+        this.props.dispatch(guestLogIn()); //dispatch sign In
     };
     handleClose=()=>{
         this.setState({isOpen:false})
@@ -23,6 +23,9 @@ class GuestPopUpModal extends Component{
         if(prevProps.isOpen !== this.props.isOpen){
             this.setState({isOpen:true})
         }
+    }
+    shouldComponentUpdate(nextProps,nextState){
+        return this.state.isOpen !== nextState.isOpen || nextProps.isOpen !== this.props.isOpen ;
     }
     render(){
         console.log("my post cliced");
