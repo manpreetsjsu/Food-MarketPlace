@@ -23,4 +23,4 @@ const GridLayout=(props)=>{
 
 };
 
-export default GridLayout;
+export default React.memo(GridLayout);

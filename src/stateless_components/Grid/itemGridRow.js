@@ -10,4 +10,4 @@ const gridRow = (props)=>{
     )
 };
 
-export default gridRow;
+export default React.memo(gridRow);
