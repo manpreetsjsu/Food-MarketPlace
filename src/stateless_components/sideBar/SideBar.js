@@ -5,13 +5,17 @@ import SellModal from '../sellModal/sellModal';
 import AutoComplete from '../GoogleAutocomplete/autoComplete';
 import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 import {connect} from "react-redux";
-import {guestLogIn} from "../../Redux/actions/guestLoginAction";
+import {memeberNewsfeed, memberMarketPlaceSwitch, showMemberPosts} from "../../Redux/actions/accountLoginAction";
+import {guestLogIn, guestLoginMarketPlace, guestLoginNewsfeed} from "../../Redux/actions/guestLoginAction";
 import GuestModal from '../Modals/GuestModal';
+
 import {
+    marketPlace_RESET,
     change_filters_state,
     set_location,
+    set_filters_status
 } from "../../Redux/actions/marketPlaceAction";
-import {marketPlaceCLickHandlerDispatcher,myPostsClickHandlerDispatcher,newsFeedClickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
+
 
 const style={
     position:'absolute',
@@ -106,7 +110,10 @@ class SideBar extends Component{
 
                     <List.Item className='spacingBetweenItems'>
                         { !this.props.guestLogin.status ?
-                            <SellModal ismodalopen={this.state.displaySellForm}>
+                            <SellModal isModalOpen={this.state.displaySellForm}
+                                       redirectToMyPosts={this.props.myPostsClickHandler}
+                                       accountLoginMarketPlace={this.props.accountLogin.marketPlace}
+                                        redirectToMarketPlace={this.props.memberMarketPlaceClickHandler}>
                                 <Button
                                     onClick={this.displaySellForm}
                                     name='sellItem'
@@ -155,6 +162,62 @@ class SideBar extends Component{
 
 };
 
+// take this action on cikcing marketplace icon when user is logged as guest
+//take this action on clicking when user is logged in as member
+
+function marketPlaceCLickHandlerDispatcher() {
+    console.log('clicked marketPlace Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().guestLogin.status && getState().guestLogin.newsFeed ){ // this if condition avoid extra re-rendering - optimization
+            dispatch(guestLoginMarketPlace());
+        }
+        else if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.showMemberPosts)){ // avoid extra-re-rendering - optimization
+            dispatch(memberMarketPlaceSwitch());
+        }
+        if(getState().marketPlace.disableFilters){ //avoid extra-re-rendering - optimization
+            //if marketplace filters were disabled,then enable
+            //@marketplace enable filters
+            dispatch(set_filters_status(false));
+        }
+        //always reset the market place for fetching posts and resetting everything back
+        dispatch(marketPlace_RESET());
+
+
+    };
+};
+
+function newsFeedClickHandlerDispatcher() {
+    console.log('clicked newsFeed Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().guestLogin.status && getState().guestLogin.marketPlace){
+            dispatch(guestLoginNewsfeed());
+        }
+        else if( getState().accountLogin.marketPlace || getState().accountLogin.showMemberPosts){
+            dispatch(memeberNewsfeed())
+        }
+        if(!getState().marketPlace.disableFilters){
+            // @news feed filters should be disabled = true
+            dispatch(set_filters_status(true));
+        }
+
+    };
+};
+
+function myPostsClickHandlerDispatcher() {
+    console.log('clicked myPosts Dispatcher');
+    return function(dispatch,getState) {
+        if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.marketPlace)){
+            dispatch(showMemberPosts());
+        }
+
+        if(!getState().marketPlace.disableFilters && getState().accountLogin.status){
+            // @my posts section - filters should be disabled i.disabled=true
+            dispatch(set_filters_status(true));
+        }
+
+    };
+};
+
 
 const mapStateToProps = (state) => {
     return {
@@ -166,8 +229,7 @@ const mapStateToProps = (state) => {
         accountLogin:{
             showMemberPosts:state.accountLogin.showMemberPosts,
             newsFeed: state.accountLogin.newsFeed,
-            marketPlace:state.accountLogin.marketPlace,
-            userInfo:state.accountLogin.userInfo
+            marketPlace:state.accountLogin.marketPlace
         },
         marketPlace:{
             reset:state.marketPlace.reset,

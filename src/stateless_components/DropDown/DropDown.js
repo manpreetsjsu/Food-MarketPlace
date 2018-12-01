@@ -32,7 +32,7 @@ class DropDownMenu extends Component{
 
     render(){
         return (
-            <Dropdown disabled={this.props.edit} value={this.state.value} placeholder='Category' fluid selection options={options} onChange={this.handleChange} />
+            <Dropdown value={this.state.value} placeholder='Category' fluid selection options={options} onChange={this.handleChange} />
 
         );
     }

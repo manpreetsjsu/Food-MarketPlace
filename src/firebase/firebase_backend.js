@@ -168,7 +168,6 @@ import firebase from "firebase";
         let db = firebase.firestore();
         return db.collection("posts").add({
             post_id: "",
-            userInfo:state.userInfo,
             category: state.category,
             location: state.location,
             title: state.title,
@@ -352,8 +351,6 @@ export const updateDataToFirebaseOldimage=(state)=>{
                     }
                     console.log("here are all posts form me signed in user!! below");
                     console.log(all_my_prev_posts);
-                    if(post_id.length ===0)
-                        success_callback('No items posted in marketplace');
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
@@ -429,7 +426,9 @@ export const  delete_from_category=(state)=>{
                 post_id.splice(index, 1);
             }
 
+
             return db.collection("category").doc(state.category).update({
+
 
                 post_location: post_id
             })

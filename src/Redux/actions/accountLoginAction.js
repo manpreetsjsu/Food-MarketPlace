@@ -31,9 +31,3 @@ export function memberLogOut(){
     }
 
 }
-
-export function reload_member_posts(){
-    return{
-        type:"RELOAD_MEMBER_POSTS"
-    }
-}
