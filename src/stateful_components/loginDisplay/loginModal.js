@@ -50,6 +50,7 @@ class LoginModal extends Component {
                         {/*<Segment raised>*/}
                             <Image size='medium' centered src={require('../../assets/images/shield_food_logo.png')}  />
 
+
                     <br></br>
                     <br></br>
                     <br></br>
