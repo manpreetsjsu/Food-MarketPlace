@@ -9,8 +9,6 @@ import FileInput from '../FileInput/FileInput';
 import FreshnessRating from '../FreshnessRating/freshnessRating';
 import {connect} from 'react-redux';
 
-
-
 import {
     uploadFile,
     postDataToFirebase,
@@ -23,19 +21,14 @@ import {
     delete_from_category,
     delete_from_posts,
 } from "../../firebase/firebase_backend";
-
-
-
-
-//import firebase from "firebase/index";
-
-
+import {myPostsClickHandlerDispatcher,marketPlaceCLickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
+import {reload_member_posts} from "../../Redux/actions/accountLoginAction";
 
 const PostSubmissionForm=(props)=>{
     return(
         <>
             <Form.Field>
-            <h2>Your item has been posted successfully on marketplace. Check My Posts or Marketplace Section! </h2>
+                <h2>Your request has been successfully processed! </h2>
             </Form.Field>
         </>
     )
@@ -46,9 +39,7 @@ const PostSubmissionForm=(props)=>{
 class SellForm extends Component{
     constructor(props){
         super(props);
-
         this.deleteButtonHandler=this.deleteButtonHandler.bind(this);
-
         this.state={
             post_id: props.userInfo ? props.userInfo.post_id : '',
             title: props.userInfo ? props.userInfo.title : '',
@@ -61,25 +52,31 @@ class SellForm extends Component{
             timestamp: props.userInfo ? props.userInfo.timestamp : '',
             oldImageUrl:props.userInfo ? props.userInfo.images : '',
             images: [],
-
-
-
-
-
+            userInfo:this.createUserInfoObject(this.props.accountLogin.userInfo),
             submissionComplete:false,
             clickedPostButton:false,
             errorInSubmission:false,
-            redirectToPostSection:false,
-            redirectToMarketPlace:false
         }
     }
+
+    createUserInfoObject=(obj)=>{
+        let userInfo={
+            displayName:obj.displayName,
+            uid:obj.uid,
+            photoURL:obj.photoURL,
+            email:obj.email,
+            phoneNumber:obj.phoneNumber
+        };
+        return userInfo
+    }
+    ;
 
     getCategoryValue=(category)=>{
         this.setState({category: category})
     };
 
     getItemLocation=(locationObject)=>{
-        this.setState({location: locationObject})
+        this.setState({location: locationObject.payload})
     };
 
     getFreshnessRating=(rating)=>{
@@ -123,30 +120,27 @@ class SellForm extends Component{
             if(this.validateForm()){ //validate sell form before posting
                 console.log('posting item...');
                 this.setState({clickedPostButton: true},
-
                     async () => {
                         try {
                             const download_url = await uploadFile(this.state);
                             const docRef = await postDataToFirebase(this.state,download_url);
                             await Promise.all([
-                                                appendIDToPost(docRef),
-                                                querySaveCategories(this.state.category,docRef),
-                                                savePostInUserData(docRef)
+                                appendIDToPost(docRef),
+                                querySaveCategories(this.state.category,docRef),
+                                savePostInUserData(docRef)
                             ]);
                             this.setState({submissionComplete:true})
                         } catch(e) {
                             console.error("Problem", e);
                             this.setState({errorInSubmission: true, clickedPostButton: false});
                         }
-
                     });
             }
         }
         else if(this.props.edit){ //user is editing the item
             if(this.validateForm()) { //validate sell form before posting
-                if (this.state.oldImageUrl==""){
+                if (this.state.oldImageUrl===""){ // user has uploaded new image while editing..
                     console.log('posting item...');
-
                     this.setState({clickedPostButton: true},
                         async () => {
                             try {
@@ -159,10 +153,8 @@ class SellForm extends Component{
                             }
 
                         });
-
-            }
-            else{
-
+                }
+                else{
                     //updating post with old image
                     this.setState({clickedPostButton:true},
                         async ()=>{
@@ -173,9 +165,7 @@ class SellForm extends Component{
                                 console.error("Problem", e);
                                 this.setState({errorInSubmission: true, clickedPostButton: false});
                             }
-                    });
-
-
+                        });
 
                 }
             }
@@ -184,15 +174,9 @@ class SellForm extends Component{
     };
 
     async deleteButtonHandler(){
-      // delete the item from firebase - sarang
-      // then update the myPosts section - reload - Manpreet
+        // delete the item from firebase - sarang
+        // then update the myPosts section - reload - Manpreet
         console.log('Deleting item...')
-        delete_from_posts(this.state);
-        delete_from_userid(this.state);
-        delete_from_category(this.state);
-
-
-
 
         let delete_promise_calls = Promise.all([
             delete_from_posts(this.state),
@@ -201,32 +185,30 @@ class SellForm extends Component{
         ]);
 
         try {
-           await delete_promise_calls ;
-           this.setState({submissionComplete:true})
+            await delete_promise_calls ;
+            this.setState({submissionComplete:true})
         } catch(e) {
             console.error("Problem", e);
             this.setState({errorInSubmission: true, clickedPostButton: false});
         }
     };
 
+    handleImageUpload= (file)=>{
+        console.log('handle image Upload in sell form');
+        this.setState({
+            images: update(this.state.images, {$push: [file]})
+        })
+    };
 
-
-     handleImageUpload= (file)=>{
-         console.log('handle image Upload in sell form');
-         this.setState({
-             images: update(this.state.images, {$push: [file]})
-         })
-     };
-
-     handleImageDeletion=(indexOfImage)=>{
-         console.log('handle image deletion in sell form - index to be deleted is : ' ,indexOfImage);
-         this.setState((prevState)=>{
-             return{
-                 // images: prevState.images.splice(indexOfImage,1)
-                 oldImageUrl:'',images: update(this.state.images, {$splice: [[indexOfImage,1]]})
-             }
-         })
-     };
+    handleImageDeletion=(indexOfImage)=>{
+        console.log('handle image deletion in sell form - index to be deleted is : ' ,indexOfImage);
+        this.setState((prevState)=>{
+            return{
+                // images: prevState.images.splice(indexOfImage,1)
+                oldImageUrl:'',images: update(this.state.images, {$splice: [[indexOfImage,1]]})
+            }
+        })
+    };
 
     shouldComponentUpdate(nextProps,nextState){
         console.log('[sellform.js] shouldComponentUpdate');
@@ -235,7 +217,7 @@ class SellForm extends Component{
 
     componentDidMount(){
 
-       // console.log('[sellform.js] componentDidMount');
+        // console.log('[sellform.js] componentDidMount');
     }
     componentWillMount(){
         if(this.props.userInfo && this.props.edit){
@@ -246,19 +228,34 @@ class SellForm extends Component{
         }
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps,prevState){
         console.log('[sellform.js] componentDidUpdate');
-        if(this.state.submissionComplete && !this.state.redirectToPostSection && this.props.accountLoginMarketPlace){
+        if(this.state.submissionComplete && this.props.accountLogin.marketPlace){
             //if user is currently at marketPlace section
             //redirect user to @ my Posts Section and reload the posts
-            this.setState({redirectToPostSection:true},()=>this.props.redirectToMyPosts()); //condition to break infinite loop in DidUpdate
+            this.setState({submissionComplete:true},()=>{
+                this.props.redirectToPostSection(this.props.history);
+            }); //condition to break infinite loop in DidUpdate
         }
-        else if( this.state.submissionComplete && !this.state.redirectToMarketPlace && !this.props.accountLoginMarketPlace ){
-            // if user is currently at My posts section or newsfeed section
-            //redirect user to marketplace
-            this.setState({redirectToMarketPlace:true},()=>this.props.redirectToMarketPlace());
+        else if( this.state.submissionComplete && !this.props.accountLogin.marketPlace){
+            // if user is currently at My posts section
+            this.setState({submissionComplete:true},()=>{
+                if(this.props.accountLogin.newsFeed){
+                    // if user is at newsFeed..redirect to myposts
+                    this.props.redirectToPostSection(this.props.history);
+                    return;
+                }
+                //update the my post section...
+                this.props.fetchMemberPosts();
+                this.props.closeSellModal(); // // close sell modal, hence sellModal Component gets Unmounted
+            });
         }
-
+        else if(this.state.submissionComplete && this.props.edit){
+            this.setState({submissionComplete:false},()=>{
+                this.props.fetchMemberPosts();
+                this.props.closeSellModal(); // // close sell modal, hence sellModal Component gets Unmounted
+            })
+        }
     }
 
     componentWillUnmount(){
@@ -273,8 +270,14 @@ class SellForm extends Component{
         if(!this.state.clickedPostButton){
             form = (
                 <>
+                    {this.state.errorInSubmission ?
+                        <Form.Field>
+                            <p>Failed to process your request</p>
+                        </Form.Field>
+                        : null
+                    }
                     <Form.Field>
-                        <DropDownMenu defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
+                        <DropDownMenu edit={this.props.edit} defaultValue={this.state.category} getCategoryValue={this.getCategoryValue}/>
                     </Form.Field>
 
                     <Form.Field>
@@ -346,7 +349,7 @@ class SellForm extends Component{
                 </>
             )
         }
-        else if(this.state.clickedPostButton && !this.state.submissionComplete){
+        else if(this.state.clickedPostButton && (!this.state.submissionComplete || !this.state.postUpdateComplete)){
             form=(
                 <>
                     <Form.Field>
@@ -355,11 +358,11 @@ class SellForm extends Component{
                 </>
             )
         }
-        else if(this.state.submissionComplete){
+        else if(this.state.submissionComplete || this.state.postUpdateComplete){
             form= (<PostSubmissionForm/>)
         }
 
-        else if(this.state.errorInSubmission){
+        else if(this.state.errorInSubmission){ // it never reaches here... dead code
             form=(
                 <Form.Field>
                     <h3>There was error while submitting your request. Please try again!</h3>
@@ -368,14 +371,34 @@ class SellForm extends Component{
         }
 
         return(
-                <Form>
-                    {form}
-                </Form>
+            <Form>
+                {form}
+            </Form>
 
         )
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        accountLogin:{
+            newsFeed:state.accountLogin.newsFeed,
+            marketPlace:state.accountLogin.marketPlace,
+            userInfo:state.accountLogin.userInfo,
+            reloadMemberPosts:state.accountLogin.reloadMemberPosts
+        }
 
+    };
+};
 
-export default SellForm
+const mapDispatchToProps = dispatch => {
+    return {
+        redirectToMarketPlace:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
+        redirectToPostSection:(urlHistory)=>{dispatch(myPostsClickHandlerDispatcher(urlHistory));},
+        fetchMemberPosts:()=>{dispatch(reload_member_posts())},
+        dispatch:(action)=>{dispatch(action)}
+
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(SellForm);

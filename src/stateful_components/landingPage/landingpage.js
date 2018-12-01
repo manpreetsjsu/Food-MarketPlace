@@ -5,15 +5,12 @@ import HeaderBar from "../../stateless_components/HeaderBar/HeaderBar";
 import SideBar from "../../stateless_components/sideBar/SideBar";
 import NewsFeed from '../../stateless_components/NewsFeed/NewsFeed'
 import Aux from '../../HOC/Auxillary'
-import {LoggedInContext} from "../../Context/LoggedInContext";
 import {connect} from "react-redux";
 import { memberLoginMarketPlace,memberLogOut} from "../../Redux/actions/accountLoginAction";
 import {guestLoginMarketPlace,guestLogIn} from "../../Redux/actions/guestLoginAction";
-
 import {Loader} from 'semantic-ui-react';
 import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
 import RenderGridElements from "../../stateless_components/Grid/RenderGridElements";
-import firebase from "firebase";
 import UserProfilePosts from '../../stateless_components/UserProfile/userProfile';
 
 
@@ -43,7 +40,7 @@ class LandingPage extends Component {
     //     console.log('[landing page ComponentWillReceiveProps update]');
     // }
 
-   
+
 
     render() {
         console.log('render method of landing page');
@@ -52,7 +49,6 @@ class LandingPage extends Component {
         let newsFeedSection = null;
         let marketPlacePageSection= null ;
         let userPostsSection = null ;
-
 
         if( this.props.guestLoginMarketPlace ||  this.props.accountLoginMarketPlace ){
             marketPlacePageSection = (
@@ -69,9 +65,7 @@ class LandingPage extends Component {
         else if(this.props.guestLoginNewsFeed || this.props.accountLoginNewsFeed ){
             newsFeedSection= (
                 <>
-                    <HeaderBar memberLogOut={()=>this.props.memberLogOut}
-                           guestLogIn={this.props.guestLogIn}/>
-
+                    <HeaderBar />
                     <SideBar/>
                     <NewsFeed/>
                 </>
@@ -83,17 +77,15 @@ class LandingPage extends Component {
                     <HeaderBar/>
                     <SideBar/>
                     <GridContainer >
-
                         <UserProfilePosts set_loading_status={this.props.set_loading_status}
-                                            reloadMemberPosts={this.props.accountLoginReloadMemberPosts}/>
-
+                                          reloadMemberPosts={this.props.accountLoginReloadMemberPosts}/>
                     </GridContainer>
                 </>
             )
         }
 
         else if (!this.props.guestLoginStatus || !this.props.accountLoginStatus){
-             landingPageOutput= (
+            landingPageOutput= (
 
                 <>
                     <video style={{height: 'auto', width:'100%', top: 0, padding: 0}}
@@ -111,12 +103,12 @@ class LandingPage extends Component {
         return (
             <Aux>
                 <>
-                {landingPageOutput}
-                {marketPlacePageSection}
-                {newsFeedSection}
-                {userPostsSection}
+                    {landingPageOutput}
+                    {marketPlacePageSection}
+                    {newsFeedSection}
+                    {userPostsSection}
 
-                {this.props.marketPlaceIsLoading && <Loader size='large' active/>}
+                    {this.props.marketPlaceIsLoading && <Loader size='large' active/>}
                 </>
             </Aux>
         );
@@ -126,18 +118,16 @@ class LandingPage extends Component {
 
 const mapStateToProps = (state) => {
     return {
-
-            guestLoginStatus : state.guestLogin.status,
-            guestLoginNewsFeed: state.guestLogin.newsFeed,
-            guestLoginMarketPlace:state.guestLogin.marketPlace,
-            accountLoginStatus: state.accountLogin.status,
-            accountLoginNewsFeed: state.accountLogin.newsFeed,
-            accountLoginMarketPlace: state.accountLogin.marketPlace,
-            accountLoginUserInfo: state.accountLogin.userInfo,
-            accountLoginShowMemberPosts:state.accountLogin.showMemberPosts,
-            accountLoginReloadMemberPosts: state.accountLogin.reloadMemberPosts,
-            marketPlaceIsLoading:state.marketPlace.isLoading,
-
+        guestLoginStatus : state.guestLogin.status,
+        guestLoginNewsFeed: state.guestLogin.newsFeed,
+        guestLoginMarketPlace:state.guestLogin.marketPlace,
+        accountLoginStatus: state.accountLogin.status,
+        accountLoginNewsFeed: state.accountLogin.newsFeed,
+        accountLoginMarketPlace: state.accountLogin.marketPlace,
+        accountLoginUserInfo: state.accountLogin.userInfo,
+        accountLoginShowMemberPosts:state.accountLogin.showMemberPosts,
+        accountLoginReloadMemberPosts: state.accountLogin.reloadMemberPosts,
+        marketPlaceIsLoading:state.marketPlace.isLoading,
 
 
     };
@@ -155,6 +145,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
-
-
-

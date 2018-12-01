@@ -9,8 +9,8 @@ import {Provider} from 'react-redux';
 import fire from './firebase/fire'; // this is required to initialize firbase app
 
 
-ReactDOM.render(<Provider store={store}>
-        <App /></Provider>,
+ReactDOM.render(
+        <App store={store}/>,
     document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
