@@ -22,30 +22,21 @@ class LandingPage extends Component {
     // componentWillMount(){
     //     console.log('[landing page] componentWillMount update]');
     // }
-    shouldComponentUpdate(nextProps,nextState){
-        console.log('[landing page] shouldComponent update]');
-        return true;
-        // return nextState.guestLogin.marketPlace !== this.state.guestLogin.marketPlace ||
-        //     nextState.guestLogin.newsFeed !== this.state.guestLogin.newsFeed || nextState.accountLogin.status !== this.state.accountLogin.status
-        //     || nextState.accountLogin.newsFeed !== this.state.accountLogin.newsFeed || nextState.accountLogin.marketPlace !== this.state.accountLogin.marketPlace
-        //     || nextState.marketPlace.location !== this.state.marketPlace.location || nextState.marketPlace.filters !== this.state.marketPlace.filters
-        //     ||  nextState.marketPlace.reset !== this.state.marketPlace.reset   ;
-    }
 
     //
     componentDidMount(){
         console.log('[landing page] componentDidMount update]');
     }
     //
-    // componentWillUpdate(){
-    //     console.log('[landing page] willComponent update]');
-    // }
+    componentWillUpdate(){
+        console.log('[landing page] willComponent update]');
+    }
     //
     // componentWillUnmount(){
     //     console.log('[landing page] componentWillUnmount update]');
     // }
     //
-    componentDidUpdate(){
+    componentDidUpdate(prevProps){
         console.log('[landing page componentDidUpdate update]');
     }
     // componentWillReceiveProps(){
@@ -63,26 +54,22 @@ class LandingPage extends Component {
         let userPostsSection = null ;
 
 
-        if( this.props.guestLogin.marketPlace ||  this.props.accountLogin.marketPlace ){
+        if( this.props.guestLoginMarketPlace ||  this.props.accountLoginMarketPlace ){
             marketPlacePageSection = (
 
                 <>
-                <HeaderBar/>
+                    <HeaderBar/>
                     <SideBar/>
-                <GridContainer >
-                    <RenderGridElements location={this.props.marketPlace.location}
-                                        reset={this.props.marketPlace.reset}
-                                        filterState={this.props.marketPlace.filters}
-
-                                        set_loading_status={this.props.set_loading_status}/>
-                </GridContainer>
+                    <GridContainer >
+                        <RenderGridElements />
+                    </GridContainer>
                 </>
             );
         }
-        else if(this.props.guestLogin.newsFeed || this.props.accountLogin.newsFeed ){
+        else if(this.props.guestLoginNewsFeed || this.props.accountLoginNewsFeed ){
             newsFeedSection= (
                 <>
-                <HeaderBar memberLogOut={()=>this.props.memberLogOut}
+                    <HeaderBar memberLogOut={()=>this.props.memberLogOut}
                            guestLogIn={this.props.guestLogIn}/>
 
                     <SideBar/>
@@ -90,19 +77,22 @@ class LandingPage extends Component {
                 </>
             );
         }
-        else if(this.props.accountLogin.status && this.props.accountLogin.showMemberPosts){
+        else if(this.props.accountLoginStatus && this.props.accountLoginShowMemberPosts){
             userPostsSection = (
                 <>
                     <HeaderBar/>
                     <SideBar/>
                     <GridContainer >
-                        <UserProfilePosts set_loading_status={this.props.set_loading_status}/>
+
+                        <UserProfilePosts set_loading_status={this.props.set_loading_status}
+                                            reloadMemberPosts={this.props.accountLoginReloadMemberPosts}/>
+
                     </GridContainer>
                 </>
             )
         }
 
-        else if (!this.props.guestLogin.status || !this.props.accountLogin.status){
+        else if (!this.props.guestLoginStatus || !this.props.accountLoginStatus){
              landingPageOutput= (
 
                 <>
@@ -120,14 +110,14 @@ class LandingPage extends Component {
 
         return (
             <Aux>
-                <LoggedInContext.Provider value={this.props.accountLogin}>
+                <>
                 {landingPageOutput}
                 {marketPlacePageSection}
                 {newsFeedSection}
                 {userPostsSection}
 
-                {this.props.marketPlace.isLoading && <Loader size='large' active/>}
-                </LoggedInContext.Provider>
+                {this.props.marketPlaceIsLoading && <Loader size='large' active/>}
+                </>
             </Aux>
         );
 
@@ -136,25 +126,19 @@ class LandingPage extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        guestLogin:{
-            status : state.guestLogin.status,
-            newsFeed: state.guestLogin.newsFeed,
-            marketPlace:state.guestLogin.marketPlace
-        },
-        accountLogin:{
-            status: state.accountLogin.status,
-            newsFeed: state.accountLogin.newsFeed,
-            marketPlace: state.accountLogin.marketPlace,
-            userInfo: state.accountLogin.userInfo,
-            showMemberPosts:state.accountLogin.showMemberPosts
 
-        },
-        marketPlace:{
-            isLoading:state.marketPlace.isLoading,
-            reset:state.marketPlace.reset,
-            location:state.marketPlace.location,
-            filters:state.marketPlace.filters
-        }
+            guestLoginStatus : state.guestLogin.status,
+            guestLoginNewsFeed: state.guestLogin.newsFeed,
+            guestLoginMarketPlace:state.guestLogin.marketPlace,
+            accountLoginStatus: state.accountLogin.status,
+            accountLoginNewsFeed: state.accountLogin.newsFeed,
+            accountLoginMarketPlace: state.accountLogin.marketPlace,
+            accountLoginUserInfo: state.accountLogin.userInfo,
+            accountLoginShowMemberPosts:state.accountLogin.showMemberPosts,
+            accountLoginReloadMemberPosts: state.accountLogin.reloadMemberPosts,
+            marketPlaceIsLoading:state.marketPlace.isLoading,
+
+
 
     };
 };

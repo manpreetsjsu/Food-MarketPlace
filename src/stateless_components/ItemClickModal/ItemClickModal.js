@@ -1,8 +1,8 @@
-import React,{Component} from 'react'
+import React,{PureComponent} from 'react'
 import {Button, Header, Image, Modal} from 'semantic-ui-react'
 import {FoodItemContext} from "../../Context/LoggedInContext";
 
-class OpenModal extends Component {
+class OpenModal extends PureComponent {
 
     constructor(props){
         super(props);

@@ -2,7 +2,12 @@ import React,{Component} from 'react'
 import  './Grid.css'
 import Multimap from 'multimap';
 import DisplayItems from './displayItems';
-import {download_all_Post_Data,download_category} from "../../firebase/firebase_backend";
+import {
+    download_all_Post_Data,
+    download_category
+} from "../../firebase/firebase_backend";
+import {set_loading_status} from "../../Redux/actions/marketPlaceAction";
+import {connect} from "react-redux";
 
 
 class RenderGridElements extends Component {
@@ -11,90 +16,74 @@ class RenderGridElements extends Component {
         super(props);
         this.deepClone= this.deepClone.bind(this);
         this.state = {
-            isLoading: false,
             data:[],
             filters:false,
             location:false,
             categories:''
         }
     };
+    fetchPosts=async()=>{
+        try {
+            this.props.set_loading_status(true);
+            const res= await download_all_Post_Data();
+            const categories = await download_category() ;
+            let result = this.multiMapCollection(res);
+            this.setState({data:res,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]},
+                ()=>this.props.set_loading_status(false));
+        } catch(e) {
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true});
+        }
+    };
+     fetchPostByLocationSort=async()=> {
+        try{
+            this.props.set_loading_status(true);
+            const res= await download_all_Post_Data();
+            const categories = await download_category() ;
+            this.setState({data:res,categories:categories,location:true},()=>this.sortByLocation());
+        }
+        catch(e){
+            console.error("Problem", e);
+            this.setState({errorInSubmission: true});
+        }
+
+    };
 
     componentDidMount(){
         console.log('[gridLayout.js ComponentDidMount]');
-        this.props.set_loading_status(true);
-        this.setState({isLoading:true},()=>{
-            download_all_Post_Data()
-                .then((res)=> download_category()
-                    .then((categories)=>{
-                        let result = this.multiMapCollection(res);
-                        this.props.set_loading_status(false);
-                        this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-                    })
-                )
-        });
-
-
+        this.fetchPosts();
     }
 
     componentDidUpdate(prevProps, prevState, snapsShot){
         console.log(this.state);
-        if(prevProps.reset !==this.props.reset ){
+        if(prevProps.marketPlaceReset !==this.props.marketPlaceReset ){
             console.log('reset');
             //reset the marketplace
-            this.props.set_loading_status(true);
-            this.setState({isLoading:true},()=>{
-                download_all_Post_Data()
-                    .then((res)=> download_category()
-                        .then((categories)=>{
-                            let result = this.multiMapCollection(res);
-                            this.setState({data:res,isLoading:false,categories: categories, sortedByIdCollection:result[0], sortedByLocationCollection :result[1],safe_sortByIdCollection:result[2]});
-                            this.props.set_loading_status(false);
-
-                        })
-                    )
-            });
+            this.fetchPosts();
             return;
         }
-        if(prevProps.location !== this.props.location){
+        if(prevProps.marketPlaceLocation !== this.props.marketPlaceLocation){
             console.log('location props are not same');
-            this.props.set_loading_status(true);
-            this.setState((updatedState)=>{
-                return({...updatedState,isLoading:true})
-            },
-                //callback
-                ()=> {
-                    download_all_Post_Data()
-                        .then((res)=> download_category()
-                            .then((categories)=>{
-                                this.setState({data:res, isLoading: true,categories:categories,location:true},()=>this.sortByLocation());
-                            })
-                        );
-                });//end setState
-
+            this.fetchPostByLocationSort();
         }
-        if(prevProps.filterState !== this.props.filterState){ // if filters are changed by user, initially all categories post are shown to user
+        if(prevProps.marketPlaceFilters !== this.props.marketPlaceFilters){ // if filters are changed by user, initially all categories post are shown to user
             console.log('filters applied');
-            this.setState({isLoading:true},()=>this.applyFilters(prevProps));
+            this.applyFilters(prevProps);
 
         }
-    }
-
-    shouldComponentUpdate(){
-        console.log('[gridLayout.js shouldComponentUpdate]');
-        return true;
     }
 
     //filters
     applyFilters=(prevProps)=>{
-        let keys = Object.keys(this.props.filterState); // return arrays of keys
+        let keys = Object.keys(this.props.marketPlaceFilters); // return arrays of keys
         console.log(keys);
         let new_entries = new Map();
         let delete_entries = []; // need ids of posts not be rendered
         keys.map((key)=>{
             console.log('inside map');
-            if(this.props.filterState[key] && !prevProps.filterState[key]){ // check if any category 's flag is set true && check it is not same as it was in old state
+            if(this.props.marketPlaceFilters[key] && !prevProps.marketPlaceFilters[key]){ // check if any category 's flag is set true && check it is not same as it was in old state
                 // hence we need to add to grid data
-                if(this.props.location !== ''){ //check if location has been turned on by user
+                if(this.props.marketPlaceLocation !== ''){ //check if location has been turned on by user
                     console.log('location turned on , filters on - adding entries');
                     console.log(key);
                     new_entries = this.filterOffLocation(key,new_entries);
@@ -113,7 +102,7 @@ class RenderGridElements extends Component {
                     })
                 }
             }
-            else if(!this.props.filterState[key] && prevProps.filterState[key]){ // if any category is set false  && check it is not same as it was in old state
+            else if(!this.props.marketPlaceFilters[key] && prevProps.marketPlaceFilters[key]){ // if any category is set false  && check it is not same as it was in old state
                 //delete the categories from result
                 console.log('deleteing entries');
                     console.log(key);
@@ -130,7 +119,7 @@ class RenderGridElements extends Component {
     filterOffLocation=(key,new_entries)=>{
         // if location is turned on, filter is turned off i.e a category needs to be result, hence push new_entries to result
 
-        let location_post_entries = this.state.sortedByLocationCollection.get(this.props.location.id); // return array of posts or undefined
+        let location_post_entries = this.state.sortedByLocationCollection.get(this.props.marketPlaceLocation.id); // return array of posts or undefined
         if(location_post_entries){ // if location has posts...
             this.state.categories[key].map((post_id)=>{
                 let post_entry=location_post_entries.find((each_entry)=>{
@@ -149,10 +138,10 @@ class RenderGridElements extends Component {
     applyFilterOnLocation=()=> {
         //checks if any filter is on i.e. if any category needs to be removed from the result
         // applies filters on location if user has turned off any category i.e remove entries
-        let keys = Object.keys(this.props.filterState); // return arrays of keys
+        let keys = Object.keys(this.props.marketPlaceFilters); // return arrays of keys
         let delete_entries = []; // need ids of posts not be rendered
         keys.map((key)=>{
-            if(!this.props.filterState[key] ){ // if any category is set false , apply that filter on location
+            if(!this.props.marketPlaceFilters[key] ){ // if any category is set false , apply that filter on location
                 //delete the categories from result
                 {
                     console.log(' applying filters on location by deleteing entries');
@@ -178,14 +167,12 @@ class RenderGridElements extends Component {
             let result_data = this.convert2DArrayto1D(new_data);
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,isLoading:false,filters:true,data:result_data.length>0 ? result_data : 'There are currently no items matching your search criteria.'
+                return{...updatedState,filters:true,data:result_data.length>0 ? result_data : 'There are currently no items matching your search criteria.'
                     ,sortedByIdCollection:new_sortedByIdCollection}
 
             });
         }
-        else{
-            this.setState({isLoading:false});
-        }
+
     };
 
     stateChangeByFiltersOff=(new_entries)=>{
@@ -200,12 +187,10 @@ class RenderGridElements extends Component {
             }
             console.log(result_data);
             this.setState((updatedState)=>{
-                return{...updatedState,isLoading:false,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
+                return{...updatedState,filters:true,data:result_data,sortedByIdCollection:new_sortedIdByCollection}
             });
         }
-        else{
-            this.setState({isLoading:false});
-        }
+
     };
 
     convert2DArrayto1D=(new_data)=>{
@@ -309,15 +294,15 @@ class RenderGridElements extends Component {
 
     sortByLocation=()=>{
         console.log("sorting by location");
-        let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.location.id); //return array or undefined
+        let itemsCollectionByLocation = this.state.sortedByLocationCollection.get(this.props.marketPlaceLocation.id); //return array or undefined
         if(itemsCollectionByLocation){ // if items are posted at specific location
             let new_sortedByIDCollection = this.ArrayToMultimap(itemsCollectionByLocation);
-            this.setState({isLoading:true,data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
+            this.setState({data: itemsCollectionByLocation,sortedByIdCollection: new_sortedByIDCollection},()=>this.applyFilterOnLocation());
         }
         else { // there are no items posted in the searched location, hence display nothing
             this.setState((updatedState)=> {
 
-                return({isLoading:false,data:'There are currently no items posted in this area. Please check back later.'
+                return({data:'There are currently no items posted in this area. Please check back later.'
                     ,sortedByIdCollection: updatedState.sortedByIdCollection ? updatedState.sortedByIdCollection.clear(): updatedState.sortedByIdCollection})
 
                 //sortedByIdCollection will be undefined since there are no posts in the selected location
@@ -333,10 +318,26 @@ class RenderGridElements extends Component {
             <>
                 {/*{ <p  className='foodTextCategory'></p>}*/}
 
-                    { <DisplayItems isLoading={this.state.isLoading} data={this.state.data}/>}
+                    { <DisplayItems data={this.state.data}/>}
             </>
         );
     }
 }
 
-export default RenderGridElements;
+const mapStateToProps = (state) => {
+    return {
+        marketPlaceReset:state.marketPlace.reset,
+        marketPlaceLocation:state.marketPlace.location,
+        marketPlaceFilters:state.marketPlace.filters
+        }
+
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        set_loading_status:(flag)=>{dispatch(set_loading_status(flag))},
+
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(RenderGridElements);

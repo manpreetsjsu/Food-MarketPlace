@@ -1,11 +1,11 @@
-import React,{Component} from 'react'
+import React,{PureComponent} from 'react'
 import { Card, Label,Icon } from 'semantic-ui-react'
 import Modal from '../ItemClickModal/ItemClickModal'
 import './Card.css'
 import {FoodItemContext} from "../../Context/LoggedInContext";
 import SellModal from '../sellModal/sellModal';
 
-class FoodItemCard extends Component {
+class FoodItemCard extends PureComponent {
     constructor(props){
         super(props);
         this.state={

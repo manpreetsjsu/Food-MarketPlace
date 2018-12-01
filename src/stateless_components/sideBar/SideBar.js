@@ -5,16 +5,10 @@ import SellModal from '../sellModal/sellModal';
 import AutoComplete from '../GoogleAutocomplete/autoComplete';
 import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 import {connect} from "react-redux";
-import {memeberNewsfeed, memberMarketPlaceSwitch, showMemberPosts} from "../../Redux/actions/accountLoginAction";
-import {guestLogIn, guestLoginMarketPlace, guestLoginNewsfeed} from "../../Redux/actions/guestLoginAction";
 import GuestModal from '../Modals/GuestModal';
+import {marketPlaceCLickHandlerDispatcher,myPostsClickHandlerDispatcher,newsFeedClickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
+import { PureComponent } from 'react';
 
-import {
-    marketPlace_RESET,
-    change_filters_state,
-    set_location,
-    set_filters_status
-} from "../../Redux/actions/marketPlaceAction";
 
 
 const style={
@@ -31,6 +25,23 @@ const modalContent2 = 'Want to sell something ?';
 
 class SideBar extends Component{
 
+    componentDidUpdate = prevProps => {
+        const name =
+            this.constructor.displayName || this.constructor.name || 'Component';
+        console.group(name);
+        Object.keys(prevProps).forEach(key => {
+            if (prevProps[key] !== this.props[key]) {
+                console.log(
+                    `property ${key} changed from ${prevProps[key]} to ${
+                        this.props[key]
+                        }`
+                );
+            }
+        });
+        console.groupEnd(name);
+    };
+
+
     constructor(props){
         super(props);
         this.state={
@@ -41,9 +52,9 @@ class SideBar extends Component{
     }
 
     displayPostClickModal=()=>{
-      this.setState((currentState)=>{
-       return({myPostOpenModal:!currentState.myPostOpenModal})
-      })
+        this.setState((currentState)=>{
+            return({myPostOpenModal:!currentState.myPostOpenModal})
+        })
     };
     displaySellItemClickModal=()=>{
         this.setState((currentState)=>{
@@ -56,18 +67,20 @@ class SideBar extends Component{
         })
     };
 
+
+
     render(){
         let marketPlace_highlight=false;
         let myPost_hightlight = false;
         let newsfeed_highlight = false;
 
-        if( this.props.guestLogin.marketPlace || this.props.accountLogin.marketPlace){
+        if( this.props.guestLoginMarketPlace || this.props.accountLoginMarketPlace){
             marketPlace_highlight=true;
         }
-        else if(this.props.guestLogin.newsFeed || this.props.accountLogin.newsFeed){
+        else if(this.props.guestLoginNewsFeed || this.props.accountLoginNewsFeed){
             newsfeed_highlight=true;
         }
-        else if(this.props.accountLogin.showMemberPosts){
+        else if(this.props.accountLoginShowMemberPosts){
             myPost_hightlight=true;
         }
 
@@ -77,7 +90,7 @@ class SideBar extends Component{
                 <List >
                     <List.Item as='a' className='spacingBetwems'>
 
-                        <Label onClick={ this.props.guestLogin.status ? this.props.guestMarketPlaceClickHandler : this.props.memberMarketPlaceClickHandler}
+                        <Label onClick={ this.props.guestLoginStatus ? this.props.guestMarketPlaceClickHandler : this.props.memberMarketPlaceClickHandler}
                                horizontal>
                             <Icon link size='huge' name='chess'/>
                             <p style={{fontSize:"20px"}}
@@ -85,23 +98,25 @@ class SideBar extends Component{
                         </Label>
                     </List.Item>
 
-                    <GuestModal redirectToSignIn={this.props.signInHandler} content={modalContent1} isOpen={this.state.myPostOpenModal}>
-                    <List.Item as='a' className='spacingBetweenItems'>
-                        <Label className={ myPost_hightlight ? "labelHighLight": ""}
-                               onClick={!this.props.guestLogin.status ? this.props.myPostsClickHandler : this.displayPostClickModal}
-                               size='huge'
-                               horizontal>
 
-                            My Posts
-                        </Label>
+                    <List.Item as='a' className='spacingBetweenItems'>
+                        <GuestModal dispatch={this.props.dispatch} content={modalContent1} isOpen={this.state.myPostOpenModal}>
+                            <Label className={ myPost_hightlight ? "labelHighLight": ""}
+                                   onClick={!this.props.guestLoginStatus ? this.props.myPostsClickHandler : this.displayPostClickModal}
+                                   size='huge'
+                                   horizontal>
+
+                                My Posts
+                            </Label>
+                        </GuestModal>
                     </List.Item>
-                    </GuestModal>
+
 
 
 
                     <List.Item  as='a' className='spacingBetweenItems'>
                         <Label className={newsfeed_highlight ? "labelHighLight" : ""}
-                               onClick={this.props.guestLogin.status ? this.props.guestNewsFeedClickHandler : this.props.memberNewsFeedClickHandler}
+                               onClick={this.props.guestLoginStatus ? this.props.guestNewsFeedClickHandler : this.props.memberNewsFeedClickHandler}
                                size='huge' horizontal>
 
                             News Feed
@@ -109,11 +124,8 @@ class SideBar extends Component{
                     </List.Item>
 
                     <List.Item className='spacingBetweenItems'>
-                        { !this.props.guestLogin.status ?
-                            <SellModal isModalOpen={this.state.displaySellForm}
-                                       redirectToMyPosts={this.props.myPostsClickHandler}
-                                       accountLoginMarketPlace={this.props.accountLogin.marketPlace}
-                                        redirectToMarketPlace={this.props.memberMarketPlaceClickHandler}>
+                        { !this.props.guestLoginStatus ?
+                            <SellModal ismodalopen={this.state.displaySellForm}>
                                 <Button
                                     onClick={this.displaySellForm}
                                     name='sellItem'
@@ -123,7 +135,7 @@ class SideBar extends Component{
                                 </Button>
                             </SellModal> :
 
-                            <GuestModal isOpen={this.state.sellItemOpenModal} content={modalContent2} redirectToSignIn={this.props.signInHandler}>
+                            <GuestModal isOpen={this.state.sellItemOpenModal} content={modalContent2} dispatch={this.props.dispatch}>
                                 <Button
                                     onClick={this.displaySellItemClickModal}
                                     name='sellItem'
@@ -137,9 +149,9 @@ class SideBar extends Component{
                     <List.Item className='spacingBetweenItems'>
                         <div style={{border:'1px solid lightGrey'}}/>
                         <p style={{fontSize:'20px',margin:'0px'}}>Filter By</p>
-                        <CheckBoxFilter filterState={this.props.filterState}
-                                        resetFilters={this.props.marketPlace.reset}
-                                        filters_status={this.props.marketPlace.disableFilters}   />
+                        <CheckBoxFilter dispatch={this.props.dispatch}
+                                        resetFilters={this.props.marketPlaceReset}
+                                        filters_status={this.props.marketPlaceDisableFilters}   />
 
                     </List.Item>
 
@@ -148,10 +160,10 @@ class SideBar extends Component{
                         <p style={{fontSize:'20px',margin:'0px'}}>Location</p>
 
                         {/*<Input size='mini' icon='location arrow' placeholder='Your Location'/>*/}
-                        <AutoComplete onPlaceSelected={this.props.filterByLocation}
+                        <AutoComplete onPlaceSelected={this.props.dispatch}
                                       inputClassName='locationInput'
-                                      reset={this.props.marketPlace.reset}
-                                      filters_status={this.props.marketPlace.disableFilters}/>
+                                      reset={this.props.marketPlaceReset}
+                                      filters_status={this.props.marketPlaceDisableFilters}/>
 
                     </List.Item>
 
@@ -162,84 +174,19 @@ class SideBar extends Component{
 
 };
 
-// take this action on cikcing marketplace icon when user is logged as guest
-//take this action on clicking when user is logged in as member
-
-function marketPlaceCLickHandlerDispatcher() {
-    console.log('clicked marketPlace Dispatcher');
-    return function(dispatch,getState) {
-        if(getState().guestLogin.status && getState().guestLogin.newsFeed ){ // this if condition avoid extra re-rendering - optimization
-            dispatch(guestLoginMarketPlace());
-        }
-        else if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.showMemberPosts)){ // avoid extra-re-rendering - optimization
-            dispatch(memberMarketPlaceSwitch());
-        }
-        if(getState().marketPlace.disableFilters){ //avoid extra-re-rendering - optimization
-            //if marketplace filters were disabled,then enable
-            //@marketplace enable filters
-            dispatch(set_filters_status(false));
-        }
-        //always reset the market place for fetching posts and resetting everything back
-        dispatch(marketPlace_RESET());
-
-
-    };
-};
-
-function newsFeedClickHandlerDispatcher() {
-    console.log('clicked newsFeed Dispatcher');
-    return function(dispatch,getState) {
-        if(getState().guestLogin.status && getState().guestLogin.marketPlace){
-            dispatch(guestLoginNewsfeed());
-        }
-        else if( getState().accountLogin.marketPlace || getState().accountLogin.showMemberPosts){
-            dispatch(memeberNewsfeed())
-        }
-        if(!getState().marketPlace.disableFilters){
-            // @news feed filters should be disabled = true
-            dispatch(set_filters_status(true));
-        }
-
-    };
-};
-
-function myPostsClickHandlerDispatcher() {
-    console.log('clicked myPosts Dispatcher');
-    return function(dispatch,getState) {
-        if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.marketPlace)){
-            dispatch(showMemberPosts());
-        }
-
-        if(!getState().marketPlace.disableFilters && getState().accountLogin.status){
-            // @my posts section - filters should be disabled i.disabled=true
-            dispatch(set_filters_status(true));
-        }
-
-    };
-};
-
 
 const mapStateToProps = (state) => {
     return {
-        guestLogin:{
-            status : state.guestLogin.status,
-            marketPlace:state.guestLogin.marketPlace,
-            newsFeed:state.guestLogin.newsFeed
-        },
-        accountLogin:{
-            showMemberPosts:state.accountLogin.showMemberPosts,
-            newsFeed: state.accountLogin.newsFeed,
-            marketPlace:state.accountLogin.marketPlace
-        },
-        marketPlace:{
-            reset:state.marketPlace.reset,
-            disableFilters:state.marketPlace.disableFilters,
-            filters:state.marketPlace.filters,
-
-
-        }
-
-    };
+        guestLoginStatus : state.guestLogin.status,
+        guestLoginMarketPlace:state.guestLogin.marketPlace,
+        guestLoginNewsFeed:state.guestLogin.newsFeed,
+        accountLoginShowMemberPosts:state.accountLogin.showMemberPosts,
+        accountLoginNewsFeed: state.accountLogin.newsFeed,
+        accountLoginMarketPlace:state.accountLogin.marketPlace,
+        marketPlaceReset:state.marketPlace.reset,
+        marketPlaceDisableFilters:state.marketPlace.disableFilters,
+        marketPlaceFilters:state.marketPlace.filters,
+    }
 };
 
 const mapDispatchToProps = dispatch => {
@@ -248,10 +195,8 @@ const mapDispatchToProps = dispatch => {
         guestNewsFeedClickHandler:()=>{dispatch(newsFeedClickHandlerDispatcher())},
         memberMarketPlaceClickHandler:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
         memberNewsFeedClickHandler:()=>{dispatch(newsFeedClickHandlerDispatcher())},
-        filterState:(filters)=>{dispatch(change_filters_state(filters));},
-        filterByLocation:(location)=>{dispatch(set_location(location));},
         myPostsClickHandler:()=>{dispatch(myPostsClickHandlerDispatcher());},
-        signInHandler:()=>{dispatch(guestLogIn())}
+        dispatch:(action)=>{dispatch(action)}
     }
 };
 
