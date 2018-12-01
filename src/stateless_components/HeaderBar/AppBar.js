@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Icon, Menu,Button } from 'semantic-ui-react'
-import {LoggedInContext} from '../../Context/LoggedInContext';
 import firebase from "firebase";
 import {guestLogIn} from "../../Redux/actions/guestLoginAction";
 import {memberLogOut} from "../../Redux/actions/accountLoginAction";
@@ -25,6 +24,7 @@ class AppBar extends Component {
                     // Sign-out successful.
                     console.log("sign out success");
                     that.props.memberLogOut();
+                    that.props.history.push('/');
                 }).catch(function(error) {
                     // An error happened.
                     console.log("sign out fail");
@@ -35,6 +35,7 @@ class AppBar extends Component {
         else{
             console.log("redirect user to login");
             this.props.guestLogIn();
+            this.props.history.push('/');
         }
     };
 

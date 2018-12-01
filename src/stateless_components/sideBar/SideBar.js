@@ -7,7 +7,7 @@ import CheckBoxFilter from '../CheckBoxFilter/checkBoxFilter';
 import {connect} from "react-redux";
 import GuestModal from '../Modals/GuestModal';
 import {marketPlaceCLickHandlerDispatcher,myPostsClickHandlerDispatcher,newsFeedClickHandlerDispatcher} from "../../Redux/actions/Dispatchers";
-import { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom'
 
 
 
@@ -67,7 +67,35 @@ class SideBar extends Component{
         })
     };
 
+    handleNewsFeedClick=()=>{
+      if(this.props.guestLoginStatus){
+          this.props.guestNewsFeedClickHandler();
+      }
+      else{
+          this.props.memberNewsFeedClickHandler();
+      }
+      this.props.history.push('/newsfeed');
+    };
 
+    handleMarketPlaceClick=()=>{
+        if(this.props.guestLoginStatus){
+            this.props.guestMarketPlaceClickHandler();
+        }
+        else{
+            this.props.memberMarketPlaceClickHandler();
+        }
+        this.props.history.push('/marketplace');
+    };
+
+    handleMyPostClick=()=>{
+        if(this.props.guestLoginStatus){
+            this.displayPostClickModal();
+        }
+        else{
+            this.props.myPostsClickHandler();
+            this.props.history.push('/myposts');
+        }
+    };
 
     render(){
         let marketPlace_highlight=false;
@@ -90,7 +118,7 @@ class SideBar extends Component{
                 <List >
                     <List.Item as='a' className='spacingBetwems'>
 
-                        <Label onClick={ this.props.guestLoginStatus ? this.props.guestMarketPlaceClickHandler : this.props.memberMarketPlaceClickHandler}
+                        <Label onClick={ this.handleMarketPlaceClick}
                                horizontal>
                             <Icon link size='huge' name='chess'/>
                             <p style={{fontSize:"20px"}}
@@ -100,9 +128,9 @@ class SideBar extends Component{
 
 
                     <List.Item as='a' className='spacingBetweenItems'>
-                        <GuestModal dispatch={this.props.dispatch} content={modalContent1} isOpen={this.state.myPostOpenModal}>
+                        <GuestModal history={this.props.history} dispatch={this.props.dispatch} content={modalContent1} isOpen={this.state.myPostOpenModal}>
                         <Label className={ myPost_hightlight ? "labelHighLight": ""}
-                               onClick={!this.props.guestLoginStatus ? this.props.myPostsClickHandler : this.displayPostClickModal}
+                               onClick={this.handleMyPostClick}
                                size='huge'
                                horizontal>
 
@@ -116,7 +144,7 @@ class SideBar extends Component{
 
                     <List.Item  as='a' className='spacingBetweenItems'>
                         <Label className={newsfeed_highlight ? "labelHighLight" : ""}
-                               onClick={this.props.guestLoginStatus ? this.props.guestNewsFeedClickHandler : this.props.memberNewsFeedClickHandler}
+                               onClick={this.handleNewsFeedClick }
                                size='huge' horizontal>
 
                             News Feed
@@ -125,7 +153,7 @@ class SideBar extends Component{
 
                     <List.Item className='spacingBetweenItems'>
                         { !this.props.guestLoginStatus ?
-                            <SellModal ismodalopen={this.state.displaySellForm}>
+                            <SellModal history={this.props.history} ismodalopen={this.state.displaySellForm}>
                                 <Button
                                     onClick={this.displaySellForm}
                                     name='sellItem'
@@ -135,7 +163,7 @@ class SideBar extends Component{
                                 </Button>
                             </SellModal> :
 
-                            <GuestModal isOpen={this.state.sellItemOpenModal} content={modalContent2} dispatch={this.props.dispatch}>
+                            <GuestModal history={this.props.history} isOpen={this.state.sellItemOpenModal} content={modalContent2} dispatch={this.props.dispatch}>
                                 <Button
                                     onClick={this.displaySellItemClickModal}
                                     name='sellItem'
@@ -200,4 +228,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)((SideBar));
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)((SideBar)));

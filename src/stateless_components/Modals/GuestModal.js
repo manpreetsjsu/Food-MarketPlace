@@ -14,6 +14,7 @@ class GuestPopUpModal extends Component{
     handleSignIn=()=>{
         console.log(this.props);
         this.props.dispatch(guestLogIn()); //dispatch sign In
+        this.props.history.push('/');
     };
     handleClose=()=>{
         this.setState({isOpen:false})

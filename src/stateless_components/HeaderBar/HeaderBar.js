@@ -8,7 +8,7 @@ const HeaderBar = (props) => {
             <Grid.Row>
                 <div style={{ width:'100%'}}>
                     <Grid.Column>
-                        <AppBar/>
+                        <AppBar {...props}/>
                     </Grid.Column>
                 </div>
             </Grid.Row>

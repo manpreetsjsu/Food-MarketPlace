@@ -40,10 +40,10 @@ class UserProfilePosts extends PureComponent {
         console.log('[UserProfile.js ComponentDidUpdate]');
         console.log(prevProps);
         console.log(this.props);
-
-        if(prevProps.reloadMemberPosts !== this.props.reloadMemberPosts){
+        let user = firebase.auth().currentUser;
+        if(prevProps.reloadMemberPosts !== this.props.reloadMemberPosts && user){
             console.log('fetching posts in update');
-            let user = firebase.auth().currentUser;
+
             this.props.set_loading_status(true);
             download_My_Post_Data(user.uid,this.success_callback,this.fail_callback);
         }
