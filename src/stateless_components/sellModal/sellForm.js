@@ -76,7 +76,7 @@ class SellForm extends Component{
     };
 
     getItemLocation=(locationObject)=>{
-        this.setState({location: locationObject})
+        this.setState({location: locationObject.payload})
     };
 
     getFreshnessRating=(rating)=>{
@@ -233,14 +233,16 @@ class SellForm extends Component{
         if(this.state.submissionComplete && this.props.accountLogin.marketPlace){
             //if user is currently at marketPlace section
             //redirect user to @ my Posts Section and reload the posts
-            this.setState({submissionComplete:true},()=>this.props.redirectToPostSection()); //condition to break infinite loop in DidUpdate
+            this.setState({submissionComplete:true},()=>{
+                this.props.redirectToPostSection(this.props.history);
+            }); //condition to break infinite loop in DidUpdate
         }
         else if( this.state.submissionComplete && !this.props.accountLogin.marketPlace){
             // if user is currently at My posts section
             this.setState({submissionComplete:true},()=>{
                 if(this.props.accountLogin.newsFeed){
                     // if user is at newsFeed..redirect to myposts
-                    this.props.redirectToPostSection();
+                    this.props.redirectToPostSection(this.props.history);
                     return;
                 }
                 //update the my post section...
@@ -392,8 +394,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         redirectToMarketPlace:()=>{dispatch(marketPlaceCLickHandlerDispatcher())},
-        redirectToPostSection:()=>{dispatch(myPostsClickHandlerDispatcher());},
-        fetchMemberPosts:()=>{dispatch(reload_member_posts())}
+        redirectToPostSection:(urlHistory)=>{dispatch(myPostsClickHandlerDispatcher(urlHistory));},
+        fetchMemberPosts:()=>{dispatch(reload_member_posts())},
+        dispatch:(action)=>{dispatch(action)}
+
     }
 };
 

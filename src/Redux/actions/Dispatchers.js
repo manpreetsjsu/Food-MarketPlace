@@ -25,7 +25,6 @@ export function marketPlaceCLickHandlerDispatcher() {
         //always reset the market place for fetching posts and resetting everything back
         dispatch(marketPlace_RESET());
 
-
     };
 };
 
@@ -46,11 +45,13 @@ export function newsFeedClickHandlerDispatcher() {
     };
 };
 
-export function myPostsClickHandlerDispatcher() {
+export function myPostsClickHandlerDispatcher(urlHistory=null) {
     console.log('clicked myPosts Dispatcher');
     return function(dispatch,getState) {
         if(getState().accountLogin.status && (getState().accountLogin.newsFeed || getState().accountLogin.marketPlace)){
             dispatch(showMemberPosts());
+            if(urlHistory)
+                urlHistory.push('/myposts');
         }
 
         if(!getState().marketPlace.disableFilters && getState().accountLogin.status){
@@ -75,3 +76,4 @@ export function fetchMemberPostDispatcher() {
 
     };
 };
+
