@@ -147,7 +147,7 @@ class SideBar extends Component{
                                onClick={this.handleNewsFeedClick }
                                size='huge' horizontal>
 
-                            News Feed
+                            Notifications       
                         </Label>
                     </List.Item>
 

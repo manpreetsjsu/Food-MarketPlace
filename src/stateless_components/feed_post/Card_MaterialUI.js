@@ -32,6 +32,10 @@ class FoodItemCard extends PureComponent {
             return ({isSellFormOpen:!currentState.isSellFormOpen})
         })
     };
+    unixtoTimeStamp=(t)=>{
+        var date=new Date(+t); //NB: use + before variable name
+        return date.toDateString() + ' ' + date.toLocaleTimeString();
+    };
 
     render(){
         return(
@@ -45,7 +49,8 @@ class FoodItemCard extends PureComponent {
                                 <Card.Header>{foodItemInfo.title}</Card.Header>
                                 <Card.Meta>
                                     <span className='date'>{foodItemInfo.category}</span>
-
+                                    <br></br>
+                                    <span className='date'>{this.unixtoTimeStamp(foodItemInfo.timestamp)}</span>
                                 </Card.Meta>
                             </Card.Content>
                             <Card.Content extra>
