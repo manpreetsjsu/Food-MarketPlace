@@ -27,6 +27,12 @@ class OpenModal extends PureComponent {
     closeButtonHandler=()=>{
       this.setState({isModalOpen:false})
     };
+
+    unixtoTimeStamp=(t)=>{
+        var date=new Date(+t); //NB: use + before variable name
+        return date.toDateString() + ' ' + date.toLocaleTimeString();
+    };
+
     render(){
         //console.log(this.state);
         //console.log(this.props);
@@ -49,7 +55,7 @@ class OpenModal extends PureComponent {
                                         <p>Location: {foodItemInfo.location.description}</p>
                                         <p>Description: {foodItemInfo.description}</p>
                                         <p>Price: ${foodItemInfo.price}</p>
-                                        <p>Posted on: {foodItemInfo.timestamp}</p>
+                                        <p>Posted on: {this.unixtoTimeStamp(foodItemInfo.timestamp)}</p>
                                         <p>Seller Info </p>
                                         <p>Contact :{foodItemInfo.contact}</p>
                                         {foodItemInfo.userInfo ?
